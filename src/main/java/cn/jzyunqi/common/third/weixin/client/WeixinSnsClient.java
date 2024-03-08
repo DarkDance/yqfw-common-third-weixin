@@ -25,7 +25,7 @@ import java.util.Optional;
  * @date 2018/5/22.
  */
 @Slf4j
-public class WeixinSnsHelper {
+public class WeixinSnsClient {
 
     /**
      * 通过code获取access_token的接口
@@ -61,7 +61,7 @@ public class WeixinSnsHelper {
 
     private ObjectMapper objectMapper;
 
-    public WeixinSnsHelper(String appId, String appSecret, WeixinType weixinType, RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public WeixinSnsClient(String appId, String appSecret, WeixinType weixinType, RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.appId = appId;
         this.appSecret = appSecret;
         this.weixinType = weixinType;

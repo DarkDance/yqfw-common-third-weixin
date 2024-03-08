@@ -1,6 +1,6 @@
 package cn.jzyunqi.common.third.weixin.interceptor;
 
-import cn.jzyunqi.common.third.weixin.client.WeixinPayV3Helper;
+import cn.jzyunqi.common.third.weixin.client.WeixinPayV3Client;
 import cn.jzyunqi.common.utils.IOUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
 import org.springframework.http.HttpRequest;
@@ -20,12 +20,12 @@ import java.util.Map;
  */
 public class WeixinPayV3HeaderInterceptor implements ClientHttpRequestInterceptor {
 
-    private final WeixinPayV3Helper weixinPayV3Helper;
+    private final WeixinPayV3Client weixinPayV3Client;
 
     private final List<String> whitelist;
 
-    public WeixinPayV3HeaderInterceptor(WeixinPayV3Helper weixinPayV3Helper, List<String> whitelist) {
-        this.weixinPayV3Helper = weixinPayV3Helper;
+    public WeixinPayV3HeaderInterceptor(WeixinPayV3Client weixinPayV3Client, List<String> whitelist) {
+        this.weixinPayV3Client = weixinPayV3Client;
         this.whitelist = whitelist;
     }
 
@@ -36,7 +36,7 @@ public class WeixinPayV3HeaderInterceptor implements ClientHttpRequestIntercepto
         if (!whitelist.contains(request.getURI().getPath()) && response.getStatusCode() == HttpStatus.OK) {
             Map<String, String> returnHeaderMap = response.getHeaders().toSingleValueMap();
             String bodyS = IOUtilPlus.toString(response.getBody(), StringUtilPlus.UTF_8);
-            weixinPayV3Helper.verifyHeader(returnHeaderMap, bodyS);
+            weixinPayV3Client.verifyHeader(returnHeaderMap, bodyS);
         }
         return response;
     }

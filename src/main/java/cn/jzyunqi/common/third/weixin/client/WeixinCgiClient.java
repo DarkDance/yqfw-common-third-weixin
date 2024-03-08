@@ -67,7 +67,7 @@ import java.util.stream.Stream;
  * @date 2018/5/29.
  */
 @Slf4j
-public class WeixinCgiHelper {
+public class WeixinCgiClient {
 
     /**
      * 获取用户授权
@@ -210,7 +210,7 @@ public class WeixinCgiHelper {
 
     private RedisHelper redisHelper;
 
-    public WeixinCgiHelper(Cache tokenCache, String appId, String appSecret, RestTemplate restTemplate, RedisHelper redisHelper) {
+    public WeixinCgiClient(Cache tokenCache, String appId, String appSecret, RestTemplate restTemplate, RedisHelper redisHelper) {
         this.appId = appId;
         this.appSecret = appSecret;
         this.restTemplate = restTemplate;
@@ -220,7 +220,7 @@ public class WeixinCgiHelper {
         this.jsApiTicketKey = "JS_API_TICKET:" + appId;
     }
 
-    public WeixinCgiHelper(Cache tokenCache, String appId, String appSecret, String msgToken, String msgEncodingAesKey, String userSyncUrl, RestTemplate restTemplate, RedisHelper redisHelper) {
+    public WeixinCgiClient(Cache tokenCache, String appId, String appSecret, String msgToken, String msgEncodingAesKey, String userSyncUrl, RestTemplate restTemplate, RedisHelper redisHelper) {
         this(tokenCache, appId, appSecret, restTemplate, redisHelper);
         this.msgToken = msgToken;
         this.msgEncodingAesKey = DigestUtilPlus.Base64.decodeBase64(msgEncodingAesKey);

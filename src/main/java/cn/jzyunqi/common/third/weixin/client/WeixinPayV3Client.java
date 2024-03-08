@@ -58,7 +58,7 @@ import java.util.Optional;
  * @date 2018/5/29.
  */
 @Slf4j
-public class WeixinPayV3Helper {
+public class WeixinPayV3Client {
 
     private static final String COMMON_ERROR_WX_UNIFIED_ORDER_ERROR = "common_error_wx_unified_order_error";
     private static final String COMMON_ERROR_WX_PLANT_CERT_ERROR = "common_error_wx_plant_cert_error";
@@ -132,7 +132,7 @@ public class WeixinPayV3Helper {
 
     private final Cache pemCache;
 
-    public WeixinPayV3Helper(String appId, String merchantId, String merchantPrivateKey, String merchantSerialNumber, String merchantAesKey, String payCallbackUrl, String refundCallbackUrl, RestTemplate restTemplate, ObjectMapper objectMapper, RedisHelper redisHelper, Cache pemCache) throws Exception {
+    public WeixinPayV3Client(String appId, String merchantId, String merchantPrivateKey, String merchantSerialNumber, String merchantAesKey, String payCallbackUrl, String refundCallbackUrl, RestTemplate restTemplate, ObjectMapper objectMapper, RedisHelper redisHelper, Cache pemCache) throws Exception {
         this.appId = appId;
         this.merchantId = merchantId;
         this.merchantPrivateKey = merchantPrivateKey;

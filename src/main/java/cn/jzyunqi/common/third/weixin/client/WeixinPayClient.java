@@ -37,7 +37,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 import javax.net.ssl.SSLContext;
-import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -52,7 +51,7 @@ import java.util.Map;
  * @date 2018/5/29.
  */
 @Slf4j
-public class WeixinPayHelper {
+public class WeixinPayClient {
 
     /**
      * 统一下单
@@ -85,11 +84,11 @@ public class WeixinPayHelper {
 
     private Map<String, String> supportAppIdMap;
 
-    public WeixinPayHelper(String merchantId, String merchantSecret, String callbackUrl, RestTemplate restTemplate, Map<String, String> supportAppIdMap) throws Exception {
+    public WeixinPayClient(String merchantId, String merchantSecret, String callbackUrl, RestTemplate restTemplate, Map<String, String> supportAppIdMap) throws Exception {
         this(merchantId, merchantSecret, callbackUrl, restTemplate, null, null, supportAppIdMap);
     }
 
-    public WeixinPayHelper(String merchantId, String merchantSecret, String callbackUrl, RestTemplate restTemplate, String refundCertFilePath, String refundCertFileSecret, Map<String, String> supportAppIdMap) throws Exception {
+    public WeixinPayClient(String merchantId, String merchantSecret, String callbackUrl, RestTemplate restTemplate, String refundCertFilePath, String refundCertFileSecret, Map<String, String> supportAppIdMap) throws Exception {
         this.merchantId = merchantId;
         this.merchantSecret = merchantSecret;
         this.refundCertFilePath = refundCertFilePath;
