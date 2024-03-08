@@ -45,28 +45,28 @@ public class WeixinSnsClient {
     /**
      * 应用唯一标识
      */
-    private String appId;
+    private final String appId;
 
     /**
      * 应用密钥
      */
-    private String appSecret;
+    private final String appSecret;
 
     /**
      * 应用类型
      */
-    private WeixinType weixinType;
+    private final WeixinType weixinType;
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
-    public WeixinSnsClient(String appId, String appSecret, WeixinType weixinType, RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public WeixinSnsClient(String appId, String appSecret, WeixinType weixinType) {
         this.appId = appId;
         this.appSecret = appSecret;
         this.weixinType = weixinType;
-        this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
+        this.restTemplate = new RestTemplate();
+        this.objectMapper = new ObjectMapper();
     }
 
     /**
