@@ -12,7 +12,6 @@ import cn.jzyunqi.common.third.weixin.model.InterfaceTokenRedisDto;
 import cn.jzyunqi.common.third.weixin.model.JsApiTicketRedisDto;
 import cn.jzyunqi.common.third.weixin.model.LineColorData;
 import cn.jzyunqi.common.third.weixin.model.MenuButtonData;
-import cn.jzyunqi.common.third.weixin.model.TmpMsgData;
 import cn.jzyunqi.common.third.weixin.request.ItemListParam;
 import cn.jzyunqi.common.third.weixin.request.MenuParam;
 import cn.jzyunqi.common.third.weixin.request.QrcodeParam;
@@ -722,25 +721,14 @@ public class WeixinCgiClient {
      * @param data 模板数据
      * @param page 跳转页面
      */
-    public void sendMpTemplateMessage(String toOpenId, String templateId, List<TmpMsgData> data, String page) throws BusinessException {
+    public void sendMpTemplateMessage(String toOpenId, String templateId, Map<String, Map<String, String>> data, String page) throws BusinessException {
         WeixinOpenRsp openRsp;
         try {
             URI weixinMsgSendUri = new URIBuilder(String.format(WX_SUBSCRIBE_SEND, this.getInterfaceToken())).build();
-
-            Map<String, Map<String, String>> realData = data.stream().collect(Collectors.toMap(TmpMsgData::getKey, o -> Optional.of(o).map(tmpMsgData -> {
-                Map<String, String> map = new HashMap<>();
-                map.put("value", tmpMsgData.getValue());
-                return map;
-            }).orElseGet(() -> {
-                Map<String, String> map = new HashMap<>();
-                map.put("value", null);
-                return map;
-            })));
-
             TmpMsgParam tmpMsgParam = new TmpMsgParam();
             tmpMsgParam.setToUser(toOpenId);
             tmpMsgParam.setTemplateId(templateId);
-            tmpMsgParam.setData(realData);
+            tmpMsgParam.setData(data);
             tmpMsgParam.setPage(page);
             //tmpMsgParam.setMiniProgramState();
             //tmpMsgParam.setLang();
