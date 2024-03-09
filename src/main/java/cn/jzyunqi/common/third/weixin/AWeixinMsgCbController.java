@@ -32,7 +32,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author wiiyaya
  * @date 2021/5/9.
  */
-public abstract class WeixinMsgCbController {
+public abstract class AWeixinMsgCbController {
 
     private static final String NOT_SUPPORT = "Not support now!";
 
