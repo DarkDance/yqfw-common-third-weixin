@@ -19,7 +19,7 @@ public class WeixinPayStrange implements PayHelper {
     }
 
     @Override
-    public Object signForPay(String uniqueNo, BigDecimal amount, int expiresInMinutes, boolean creditSupport, String remark, String openId) throws BusinessException {
-        return weixinPayV3Client.signForPay(uniqueNo, remark, amount, expiresInMinutes, openId);
+    public Object signForPay(String uniqueNo, String title, String desc, BigDecimal amount, int expiresInMinutes, boolean creditSupport, String openId) throws BusinessException {
+        return weixinPayV3Client.signForPay(uniqueNo, desc, amount, expiresInMinutes, openId);
     }
 }
