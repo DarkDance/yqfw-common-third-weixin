@@ -1,9 +1,9 @@
 package cn.jzyunqi.common.third.weixin.client;
 
 import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.third.weixin.enums.WeixinType;
-import cn.jzyunqi.common.third.weixin.response.UserInfoRsp;
-import cn.jzyunqi.common.third.weixin.response.UserTokenRsp;
+import cn.jzyunqi.common.third.weixin.model.enums.WeixinType;
+import cn.jzyunqi.common.third.weixin.model.response.UserInfoRsp;
+import cn.jzyunqi.common.third.weixin.model.response.UserTokenRsp;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
 import com.fasterxml.jackson.databind.ObjectMapper;

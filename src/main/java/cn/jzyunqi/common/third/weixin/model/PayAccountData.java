@@ -1,9 +1,10 @@
 package cn.jzyunqi.common.third.weixin.model;
 
-import cn.jzyunqi.common.third.weixin.enums.FundsAccount;
+import cn.jzyunqi.common.third.weixin.model.enums.FundsAccount;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -13,6 +14,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class PayAccountData implements Serializable {
+    @Serial
     private static final long serialVersionUID = -8836971743503652816L;
 
     /**

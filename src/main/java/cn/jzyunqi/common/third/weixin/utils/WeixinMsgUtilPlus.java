@@ -1,9 +1,9 @@
 package cn.jzyunqi.common.third.weixin.utils;
 
-import cn.jzyunqi.common.third.weixin.enums.MsgType;
-import cn.jzyunqi.common.third.weixin.model.ItemData;
-import cn.jzyunqi.common.third.weixin.request.ItemListParam;
-import cn.jzyunqi.common.third.weixin.request.ReplyMsgParam;
+import cn.jzyunqi.common.third.weixin.model.enums.MsgType;
+import cn.jzyunqi.common.third.weixin.model.request.item.ItemData;
+import cn.jzyunqi.common.third.weixin.model.request.ItemListParam;
+import cn.jzyunqi.common.third.weixin.model.request.ReplyMsgParam;
 import cn.jzyunqi.common.utils.BooleanUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
 
