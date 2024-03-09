@@ -4,12 +4,14 @@ import cn.jzyunqi.common.third.weixin.model.enums.TradeState;
 import cn.jzyunqi.common.third.weixin.model.enums.TradeType;
 import cn.jzyunqi.common.third.weixin.model.PayAmountData;
 import cn.jzyunqi.common.third.weixin.model.PayPayerData;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 /**
@@ -83,5 +85,17 @@ public class OrderQueryV3Rsp implements Serializable {
      * 支付者
      */
     private PayPayerData payer = new PayPayerData();
+
+    /**
+     * 支付金额
+     */
+    @JsonIgnore
+    private BigDecimal actualPayAmount;
+
+    /**
+     * 查询返回字符串
+     */
+    @JsonIgnore
+    private String responseStr;
 
 }

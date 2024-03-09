@@ -4,11 +4,13 @@ import cn.jzyunqi.common.third.weixin.model.enums.FundsAccount;
 import cn.jzyunqi.common.third.weixin.model.enums.RefundChannel;
 import cn.jzyunqi.common.third.weixin.model.enums.RefundStatus;
 import cn.jzyunqi.common.third.weixin.model.PayAmountData;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 /**
@@ -75,4 +77,15 @@ public class OrderRefundV3Rsp implements Serializable {
      */
     private PayAmountData amount = new PayAmountData();
 
+    /**
+     * 支付金额
+     */
+    @JsonIgnore
+    private BigDecimal actualRefundAmount;
+
+    /**
+     * 查询返回字符串
+     */
+    @JsonIgnore
+    private String responseStr;
 }

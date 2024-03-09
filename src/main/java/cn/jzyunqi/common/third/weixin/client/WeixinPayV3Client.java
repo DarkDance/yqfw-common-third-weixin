@@ -1,8 +1,6 @@
 package cn.jzyunqi.common.third.weixin.client;
 
 import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.feature.pay.OrderQueryResult;
-import cn.jzyunqi.common.feature.pay.OrderRefundResult;
 import cn.jzyunqi.common.feature.redis.Cache;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.client.interceptor.WeixinPayV3HeaderInterceptor;
@@ -232,7 +230,7 @@ public class WeixinPayV3Client {
      * @param payResultCb     回调密文
      * @return 解码结果
      */
-    public OrderQueryResult decryptPayCallback(Map<String, String> returnHeaderMap, String returnParam, PayResultCb payResultCb) {
+    public OrderQueryV3Rsp decryptPayCallback(Map<String, String> returnHeaderMap, String returnParam, PayResultCb payResultCb) {
         try {
             this.verifyHeader(returnHeaderMap, returnParam);
 
@@ -247,12 +245,9 @@ public class WeixinPayV3Client {
             );
             OrderQueryV3Rsp orderQueryV3Rsp = objectMapper.readValue(realCallback, OrderQueryV3Rsp.class);
             if (orderQueryV3Rsp.getTradeState() == TradeState.SUCCESS) {
-                OrderQueryResult dto = new OrderQueryResult();
-                dto.setOutTradeNo(orderQueryV3Rsp.getOutTradeNo()); //商户订单号
-                dto.setTransactionId(orderQueryV3Rsp.getTransactionId()); //微信支付订单号
-                dto.setTotalFee(new BigDecimal(orderQueryV3Rsp.getAmount().getPayerTotal()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_DOWN)); //订单总金额，单位为分
-                dto.setResponseStr("接口回调:" + objectMapper.writeValueAsString(orderQueryV3Rsp));
-                return dto;
+                orderQueryV3Rsp.setActualPayAmount(new BigDecimal(orderQueryV3Rsp.getAmount().getPayerTotal()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_DOWN)); //订单总金额，单位为分
+                orderQueryV3Rsp.setResponseStr("接口回调:" + objectMapper.writeValueAsString(orderQueryV3Rsp));
+                return orderQueryV3Rsp;
             } else {
                 log.error("======WeixinPayV3Helper decryptPayCallback result[{}] not success:", objectMapper.writeValueAsString(orderQueryV3Rsp));
                 return null;
@@ -270,7 +265,7 @@ public class WeixinPayV3Client {
      * @param outTradeNo    本地单号
      * @return 订单结果
      */
-    public OrderQueryResult queryPay(String transactionId, String outTradeNo) {
+    public OrderQueryV3Rsp queryPay(String transactionId, String outTradeNo) {
         try {
             String requestUrl;
             if (StringUtilPlus.isNotEmpty(transactionId)) {
@@ -288,12 +283,9 @@ public class WeixinPayV3Client {
             OrderQueryV3Rsp orderQueryRsp = Optional.ofNullable(sendRsp.getBody()).orElseGet(OrderQueryV3Rsp::new);
 
             if (orderQueryRsp.getTradeState() == TradeState.SUCCESS) {
-                OrderQueryResult dto = new OrderQueryResult();
-                dto.setOutTradeNo(orderQueryRsp.getOutTradeNo()); //商户订单号
-                dto.setTransactionId(orderQueryRsp.getTransactionId()); //微信支付订单号
-                dto.setTotalFee(new BigDecimal(orderQueryRsp.getAmount().getPayerTotal()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_DOWN)); //订单总金额，单位为分
-                dto.setResponseStr("主动请求:" + objectMapper.writeValueAsString(orderQueryRsp));
-                return dto;
+                orderQueryRsp.setActualPayAmount(new BigDecimal(orderQueryRsp.getAmount().getPayerTotal()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_DOWN)); //订单总金额，单位为分
+                orderQueryRsp.setResponseStr("主动请求:" + objectMapper.writeValueAsString(orderQueryRsp));
+                return orderQueryRsp;
             } else {
                 log.error("======WeixinPayV3Helper queryPay result[{}] not success:", objectMapper.writeValueAsString(orderQueryRsp));
                 return null;
@@ -310,7 +302,7 @@ public class WeixinPayV3Client {
      * @param payResultCb 回调密文
      * @return 解码结果
      */
-    public OrderQueryResult decryptRefundCallback(PayResultCb payResultCb) {
+    public OrderRefundV3Rsp decryptRefundCallback(PayResultCb payResultCb) {
         try {
             String cipherText = payResultCb.getResource().getCipherText();
             String nonce = payResultCb.getResource().getNonce();
@@ -323,12 +315,9 @@ public class WeixinPayV3Client {
             );
             OrderRefundV3Rsp orderRefundV3Rsp = objectMapper.readValue(realCallback, OrderRefundV3Rsp.class);
             if (orderRefundV3Rsp.getStatus() == RefundStatus.SUCCESS) {
-                OrderQueryResult dto = new OrderQueryResult();
-                dto.setOutTradeNo(orderRefundV3Rsp.getOutTradeNo()); //商户订单号
-                dto.setTransactionId(orderRefundV3Rsp.getTransactionId()); //微信支付订单号
-                dto.setTotalFee(new BigDecimal(orderRefundV3Rsp.getAmount().getPayerTotal()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_DOWN)); //订单总金额，单位为分
-                dto.setResponseStr(objectMapper.writeValueAsString(orderRefundV3Rsp));
-                return dto;
+                orderRefundV3Rsp.setActualRefundAmount(new BigDecimal(orderRefundV3Rsp.getAmount().getPayerTotal()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_DOWN)); //订单总金额，单位为分
+                orderRefundV3Rsp.setResponseStr(objectMapper.writeValueAsString(orderRefundV3Rsp));
+                return orderRefundV3Rsp;
             } else {
                 log.error("======WeixinPayV3Helper decryptRefundCallback result[{}] not success:", objectMapper.writeValueAsString(orderRefundV3Rsp));
                 return null;
@@ -349,7 +338,7 @@ public class WeixinPayV3Client {
      * @param refundDesc    退款描述
      * @return 退款结果
      */
-    public OrderRefundResult payRefund(String transactionId, String outRefundNo, BigDecimal totalFee, BigDecimal refundFee, String refundDesc) throws BusinessException {
+    public OrderRefundV3Rsp payRefund(String transactionId, String outRefundNo, BigDecimal totalFee, BigDecimal refundFee, String refundDesc) throws BusinessException {
         RefundOrderParam refundOrderParam = new RefundOrderParam();
         refundOrderParam.setTransactionId(transactionId);
         refundOrderParam.setOutRefundNo(outRefundNo);
@@ -370,11 +359,9 @@ public class WeixinPayV3Client {
             OrderRefundV3Rsp orderRefundRsp = Optional.ofNullable(sendRsp.getBody()).orElseGet(OrderRefundV3Rsp::new);
 
             if (orderRefundRsp.getStatus() == RefundStatus.SUCCESS) {
-                OrderRefundResult dto = new OrderRefundResult();
-                dto.setRefundId(orderRefundRsp.getRefundId());
-                dto.setRefundFee(new BigDecimal(orderRefundRsp.getAmount().getPayerRefund()).divide(new BigDecimal(100), 2, RoundingMode.DOWN));
-                dto.setResponseStr(objectMapper.writeValueAsString(orderRefundRsp));
-                return dto;
+                orderRefundRsp.setActualRefundAmount(new BigDecimal(orderRefundRsp.getAmount().getPayerRefund()).divide(new BigDecimal(100), 2, RoundingMode.DOWN));
+                orderRefundRsp.setResponseStr(objectMapper.writeValueAsString(orderRefundRsp));
+                return orderRefundRsp;
             } else {
                 log.error("======WeixinPayV3Helper payRefund result[{}] not success:", objectMapper.writeValueAsString(orderRefundRsp));
                 throw new BusinessException("common_error_wx_refund_failed");
