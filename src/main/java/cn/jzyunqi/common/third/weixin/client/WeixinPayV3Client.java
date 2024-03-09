@@ -6,7 +6,6 @@ import cn.jzyunqi.common.feature.pay.OrderRefundResult;
 import cn.jzyunqi.common.feature.redis.Cache;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.client.interceptor.WeixinPayV3HeaderInterceptor;
-import cn.jzyunqi.common.third.weixin.model.response.UnifiedOrderV3Result;
 import cn.jzyunqi.common.third.weixin.model.callback.PayResultCb;
 import cn.jzyunqi.common.third.weixin.model.enums.RefundStatus;
 import cn.jzyunqi.common.third.weixin.model.enums.TradeState;
@@ -16,6 +15,7 @@ import cn.jzyunqi.common.third.weixin.model.request.UnifiedOrderParam;
 import cn.jzyunqi.common.third.weixin.model.response.OrderQueryV3Rsp;
 import cn.jzyunqi.common.third.weixin.model.response.OrderRefundV3Rsp;
 import cn.jzyunqi.common.third.weixin.model.response.PlantCertRsp;
+import cn.jzyunqi.common.third.weixin.model.response.item.PrepayIdData;
 import cn.jzyunqi.common.third.weixin.model.response.UnifiedOrderV3Rsp;
 import cn.jzyunqi.common.third.weixin.model.response.item.PlantCertData;
 import cn.jzyunqi.common.utils.CollectionUtilPlus;
@@ -132,7 +132,7 @@ public class WeixinPayV3Client {
 
     private final Cache pemCache;
 
-    public WeixinPayV3Client(String appId, String merchantId, String merchantPrivateKey, String merchantSerialNumber, String merchantAesKey, String payCallbackUrl, String refundCallbackUrl, RestTemplate restTemplate, ObjectMapper objectMapper, RedisHelper redisHelper, Cache pemCache) throws Exception {
+    public WeixinPayV3Client(String appId, String merchantId, String merchantPrivateKey, String merchantSerialNumber, String merchantAesKey, String payCallbackUrl, String refundCallbackUrl, RedisHelper redisHelper, Cache pemCache) throws Exception {
         this.appId = appId;
         this.merchantId = merchantId;
         this.merchantPrivateKey = merchantPrivateKey;
@@ -140,8 +140,8 @@ public class WeixinPayV3Client {
         this.merchantAesKey = merchantAesKey;
         this.payCallbackUrl = payCallbackUrl;
         this.refundCallbackUrl = refundCallbackUrl;
-        this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
+        this.restTemplate = new RestTemplate();
+        this.objectMapper = new ObjectMapper();
         this.redisHelper = redisHelper;
         this.pemCache = pemCache;
 
@@ -172,7 +172,7 @@ public class WeixinPayV3Client {
      * @param openId           支付人微信id
      * @return 支付签名
      */
-    public UnifiedOrderV3Result signForPay(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes, String openId) throws BusinessException {
+    public UnifiedOrderV3Rsp signForPay(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes, String openId) throws BusinessException {
         UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
         unifiedOrderParam.setAppId(appId);
         unifiedOrderParam.setMchId(merchantId);
@@ -189,9 +189,9 @@ public class WeixinPayV3Client {
 
             URI uri = new URIBuilder(WX_PAY_DOMAIN + WX_PAY_JSAPI_ORDER_URL).build();
             RequestEntity<UnifiedOrderParam> requestEntity = new RequestEntity<>(unifiedOrderParam, headers, HttpMethod.POST, uri);
-            ResponseEntity<UnifiedOrderV3Rsp> sendRsp = restTemplate.exchange(requestEntity, UnifiedOrderV3Rsp.class);
-            UnifiedOrderV3Rsp unifiedOrderRsp = Optional.ofNullable(sendRsp.getBody()).orElseGet(UnifiedOrderV3Rsp::new);
-            String pkg = "prepay_id=" + unifiedOrderRsp.getPrepayId();
+            ResponseEntity<PrepayIdData> sendRsp = restTemplate.exchange(requestEntity, PrepayIdData.class);
+            PrepayIdData prepayIdData = Optional.ofNullable(sendRsp.getBody()).orElseGet(PrepayIdData::new);
+            String pkg = "prepay_id=" + prepayIdData.getPrepayId();
 
             String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
             Long timestamp = System.currentTimeMillis() / 1000;
@@ -203,14 +203,14 @@ public class WeixinPayV3Client {
             );
             String sign = DigestUtilPlus.RSA256.signPrivateKey(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(merchantPrivateKey), Boolean.TRUE);
 
-            UnifiedOrderV3Result unifiedOrderResult = new UnifiedOrderV3Result();
-            unifiedOrderResult.setNonceStr(nonceStr);
-            unifiedOrderResult.setTimeStamp(timestamp.toString());
-            unifiedOrderResult.setWeixinPackage(pkg);
-            unifiedOrderResult.setSignType("RSA");
-            unifiedOrderResult.setPaySign(sign);
-            unifiedOrderResult.setApplyPayNo(outTradeNo);
-            return unifiedOrderResult;
+            UnifiedOrderV3Rsp unifiedOrderV3Rsp = new UnifiedOrderV3Rsp();
+            unifiedOrderV3Rsp.setNonceStr(nonceStr);
+            unifiedOrderV3Rsp.setTimeStamp(timestamp.toString());
+            unifiedOrderV3Rsp.setWeixinPackage(pkg);
+            unifiedOrderV3Rsp.setSignType("RSA");
+            unifiedOrderV3Rsp.setPaySign(sign);
+            unifiedOrderV3Rsp.setApplyPayNo(outTradeNo);
+            return unifiedOrderV3Rsp;
 
         } catch (HttpClientErrorException e) {
             try {
