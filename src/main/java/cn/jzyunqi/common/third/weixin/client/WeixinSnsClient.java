@@ -78,21 +78,12 @@ public class WeixinSnsClient {
     public UserTokenRsp getUserAccessToken(String authCode) throws BusinessException {
         UserTokenRsp userTokenRsp;
         try {
-            URI accessTokenUri;
-            switch (weixinType) {
-                case OPEN:
-                case PUBLIC:
-                    accessTokenUri = new URIBuilder(String.format(WX_USER_TOKEN_URL, appId, appSecret, authCode)).build();
-                    break;
-                case MP:
-                    accessTokenUri = new URIBuilder(String.format(WX_MP_USER_TOKEN_URL, appId, appSecret, authCode)).build();
-                    break;
-                default:
-                    log.error("======WeixinSnsHelper getUserAccessToken weixinType error[{}]:", weixinType);
-                    throw new BusinessException("common_error_wx_get_auth_token_error");
-            }
+            URI accessTokenUri = switch (weixinType) {
+                case OPEN, PUBLIC -> new URIBuilder(String.format(WX_USER_TOKEN_URL, appId, appSecret, authCode)).build();
+                case MP -> new URIBuilder(String.format(WX_MP_USER_TOKEN_URL, appId, appSecret, authCode)).build();
+            };
 
-            RequestEntity requestEntity = new RequestEntity(HttpMethod.GET, accessTokenUri);
+            RequestEntity<Void> requestEntity = new RequestEntity<>(HttpMethod.GET, accessTokenUri);
             ResponseEntity<UserTokenRsp> weixinUserRsp = restTemplate.exchange(requestEntity, UserTokenRsp.class);
             userTokenRsp = Optional.ofNullable(weixinUserRsp.getBody()).orElseGet(UserTokenRsp::new);
         } catch (Exception e) {
@@ -117,7 +108,7 @@ public class WeixinSnsClient {
      */
     public UserInfoRsp getUserInfo(String openid, String userAccessToken) throws BusinessException {
         if (weixinType != WeixinType.OPEN) {
-            log.error("======WeixinSnsHelper getUserInfo weixinType error:", weixinType);
+            log.error("======WeixinSnsHelper getUserInfo weixinType[{}] error:", weixinType);
             throw new BusinessException("common_error_wx_get_user_info_error");
         }
         UserInfoRsp userInfoRsp;
@@ -145,7 +136,7 @@ public class WeixinSnsClient {
      */
     public <T> T getEncryptedDataInfo(String sessionKey, String rawData, String signature, String iv, String encryptedData, Class<T> classType) throws BusinessException {
         if (weixinType != WeixinType.MP) {
-            log.error("======WeixinSnsHelper getEncryptedDataInfo weixinType error:", weixinType);
+            log.error("======WeixinSnsHelper getEncryptedDataInfo weixinType[{}] error:", weixinType);
             throw new BusinessException("common_error_wx_get_encrypted_data_info_failed");
         }
         if (StringUtilPlus.isBlank(signature) || signature.equals(DigestUtilPlus.SHA.sign(rawData + sessionKey, DigestUtilPlus.SHAAlgo._1, Boolean.FALSE))) {

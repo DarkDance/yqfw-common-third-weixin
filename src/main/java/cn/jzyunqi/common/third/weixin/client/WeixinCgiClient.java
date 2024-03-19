@@ -161,12 +161,12 @@ public class WeixinCgiClient {
     /**
      * 公众号/小程序唯一凭证
      */
-    private String appId;
+    private final String appId;
 
     /**
      * 公众号/小程序唯一凭证密钥
      */
-    private String appSecret;
+    private final String appSecret;
 
     /**
      * 关联小程序唯一凭证
@@ -196,18 +196,18 @@ public class WeixinCgiClient {
     /**
      * 接口token key
      */
-    private String interfaceTokenKey;
+    private final String interfaceTokenKey;
 
     /**
      * js ticket key
      */
-    private String jsApiTicketKey;
+    private final String jsApiTicketKey;
 
-    private Cache tokenCache;
+    private final Cache tokenCache;
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
-    private RedisHelper redisHelper;
+    private final RedisHelper redisHelper;
 
     public WeixinCgiClient(Cache tokenCache, String appId, String appSecret, RestTemplate restTemplate, RedisHelper redisHelper) {
         this.appId = appId;
@@ -260,14 +260,7 @@ public class WeixinCgiClient {
         }
 
         String redirectUri = userSyncUrl + DigestUtilPlus.Base64.encodeBase64String(realPage.toString().getBytes());
-        String longUrl;
-        try {
-            longUrl = String.format(WX_PUBLIC_BASE_FMT_URL, appId, URLEncoder.encode(redirectUri, StringUtilPlus.UTF_8_S), infoScope);
-        } catch (UnsupportedEncodingException e) {
-            log.error("======WeixinCgiHelper prepareLongUrl encode error:", e);
-            throw new BusinessException("common_error_wx_prepare_long_url_error");
-        }
-        return longUrl;
+        return String.format(WX_PUBLIC_BASE_FMT_URL, appId, URLEncoder.encode(redirectUri, StringUtilPlus.UTF_8), infoScope);
     }
 
     /**
@@ -863,16 +856,9 @@ public class WeixinCgiClient {
     private byte[] pkcs7Encode(int count) {
         // 计算需要填充的位数
         int amountToPad = BLOCK_SIZE - (count % BLOCK_SIZE);
-        if (amountToPad == 0) {
-            amountToPad = BLOCK_SIZE;
-        }
         // 获得补位所用的字符
         char padChr = (char)(byte)(amountToPad & 0xFF);
-        StringBuilder tmp = new StringBuilder();
-        for (int index = 0; index < amountToPad; index++) {
-            tmp.append(padChr);
-        }
-        return tmp.toString().getBytes(StringUtilPlus.UTF_8);
+        return String.valueOf(padChr).repeat(amountToPad).getBytes(StringUtilPlus.UTF_8);
     }
 
     /**
