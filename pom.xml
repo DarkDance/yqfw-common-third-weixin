@@ -31,6 +31,12 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- 基本的第三方帮组组件 -->
         <dependency>
             <groupId>org.apache.commons</groupId>
