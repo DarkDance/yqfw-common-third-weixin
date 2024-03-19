@@ -41,7 +41,7 @@ public abstract class AWeixinPayCbController {
                 throw new BusinessException("common_weixin_pay_call_back_failed");
             }
         } else {
-            throw new BusinessException("common_weixin_pay_call_back_failed");
+            throw new BusinessException("common_weixin_pay_call_back_not_success");
         }
     }
 
