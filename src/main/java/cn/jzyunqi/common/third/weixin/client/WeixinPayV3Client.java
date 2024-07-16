@@ -130,7 +130,7 @@ public class WeixinPayV3Client {
 
     private final Cache pemCache;
 
-    public WeixinPayV3Client(String appId, String merchantId, String merchantPrivateKey, String merchantSerialNumber, String merchantAesKey, String payCallbackUrl, String refundCallbackUrl, RedisHelper redisHelper, Cache pemCache) throws Exception {
+    public WeixinPayV3Client(String appId, String merchantId, String merchantPrivateKey, String merchantSerialNumber, String merchantAesKey, String payCallbackUrl, String refundCallbackUrl, RedisHelper redisHelper, Cache pemCache) {
         this.appId = appId;
         this.merchantId = merchantId;
         this.merchantPrivateKey = merchantPrivateKey;
@@ -245,7 +245,7 @@ public class WeixinPayV3Client {
             );
             OrderQueryV3Rsp orderQueryV3Rsp = objectMapper.readValue(realCallback, OrderQueryV3Rsp.class);
             if (orderQueryV3Rsp.getTradeState() == TradeState.SUCCESS) {
-                orderQueryV3Rsp.setActualPayAmount(new BigDecimal(orderQueryV3Rsp.getAmount().getPayerTotal()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_DOWN)); //订单总金额，单位为分
+                orderQueryV3Rsp.setActualPayAmount(BigDecimal.valueOf(orderQueryV3Rsp.getAmount().getPayerTotal()).divide(BigDecimal.valueOf(100), 2,RoundingMode.DOWN)); //订单总金额，单位为分
                 orderQueryV3Rsp.setResponseStr("接口回调:" + objectMapper.writeValueAsString(orderQueryV3Rsp));
                 return orderQueryV3Rsp;
             } else {
@@ -283,7 +283,7 @@ public class WeixinPayV3Client {
             OrderQueryV3Rsp orderQueryRsp = Optional.ofNullable(sendRsp.getBody()).orElseGet(OrderQueryV3Rsp::new);
 
             if (orderQueryRsp.getTradeState() == TradeState.SUCCESS) {
-                orderQueryRsp.setActualPayAmount(new BigDecimal(orderQueryRsp.getAmount().getPayerTotal()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_DOWN)); //订单总金额，单位为分
+                orderQueryRsp.setActualPayAmount(BigDecimal.valueOf(orderQueryRsp.getAmount().getPayerTotal()).divide(BigDecimal.valueOf(100), 2, RoundingMode.DOWN)); //订单总金额，单位为分
                 orderQueryRsp.setResponseStr("主动请求:" + objectMapper.writeValueAsString(orderQueryRsp));
                 return orderQueryRsp;
             } else {
@@ -315,7 +315,7 @@ public class WeixinPayV3Client {
             );
             OrderRefundV3Rsp orderRefundV3Rsp = objectMapper.readValue(realCallback, OrderRefundV3Rsp.class);
             if (orderRefundV3Rsp.getStatus() == RefundStatus.SUCCESS) {
-                orderRefundV3Rsp.setActualRefundAmount(new BigDecimal(orderRefundV3Rsp.getAmount().getPayerTotal()).divide(new BigDecimal(100), 2, BigDecimal.ROUND_DOWN)); //订单总金额，单位为分
+                orderRefundV3Rsp.setActualRefundAmount(BigDecimal.valueOf(orderRefundV3Rsp.getAmount().getPayerTotal()).divide(BigDecimal.valueOf(100), 2, RoundingMode.DOWN)); //订单总金额，单位为分
                 orderRefundV3Rsp.setResponseStr(objectMapper.writeValueAsString(orderRefundV3Rsp));
                 return orderRefundV3Rsp;
             } else {
@@ -359,7 +359,7 @@ public class WeixinPayV3Client {
             OrderRefundV3Rsp orderRefundRsp = Optional.ofNullable(sendRsp.getBody()).orElseGet(OrderRefundV3Rsp::new);
 
             if (orderRefundRsp.getStatus() == RefundStatus.SUCCESS) {
-                orderRefundRsp.setActualRefundAmount(new BigDecimal(orderRefundRsp.getAmount().getPayerRefund()).divide(new BigDecimal(100), 2, RoundingMode.DOWN));
+                orderRefundRsp.setActualRefundAmount(BigDecimal.valueOf(orderRefundRsp.getAmount().getPayerRefund()).divide(BigDecimal.valueOf(100), 2, RoundingMode.DOWN));
                 orderRefundRsp.setResponseStr(objectMapper.writeValueAsString(orderRefundRsp));
                 return orderRefundRsp;
             } else {
