@@ -1,10 +1,9 @@
 package cn.jzyunqi.common.third.weixin;
 
 import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.third.weixin.client.WeixinPayV3Client;
+import cn.jzyunqi.common.feature.pay.PayCallbackDto;
+import cn.jzyunqi.common.feature.pay.VerifyPayResult;
 import cn.jzyunqi.common.third.weixin.model.callback.PayResultCb;
-import cn.jzyunqi.common.third.weixin.model.response.OrderQueryV3Rsp;
-import cn.jzyunqi.common.utils.StringUtilPlus;
 import jakarta.annotation.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,12 +17,12 @@ import java.math.BigDecimal;
  * 微信回调接口
  *
  * @author wiiyaya
- * @date 2021/5/9.
+ * @since 2021/5/9.
  */
 public abstract class AWeixinPayCbController {
 
     @Resource
-    private WeixinPayV3Client weixinPayV3Client;
+    private WeixinPayStrange weixinPayStrange;
 
     /**
      * 微信支付回调
@@ -33,25 +32,38 @@ public abstract class AWeixinPayCbController {
     @RequestMapping
     @ResponseBody
     public void payApplyWeixinCallback(@RequestBody PayResultCb payResultCb, @RequestBody String body, @RequestHeader HttpHeaders headers) throws BusinessException {
-        if (StringUtilPlus.equalsIgnoreCase(payResultCb.getEventType(), "TRANSACTION.SUCCESS")) {
-            OrderQueryV3Rsp orderQueryV3Rsp = weixinPayV3Client.decryptPayCallback(headers.toSingleValueMap(), body, payResultCb);
-            if(orderQueryV3Rsp != null){
-                paySuccess(orderQueryV3Rsp.getOutTradeNo(), orderQueryV3Rsp.getTransactionId(), orderQueryV3Rsp.getActualPayAmount(), orderQueryV3Rsp.getResponseStr());
-            }else{
-                throw new BusinessException("common_weixin_pay_call_back_failed");
-            }
-        } else {
-            throw new BusinessException("common_weixin_pay_call_back_not_success");
+        //组装回调对象
+        PayCallbackDto payCallbackDto = new PayCallbackDto();
+        payCallbackDto.setApplyPayNo(null); //支付申请单号
+        payCallbackDto.setActualPayType(null); //实际支付方式
+        payCallbackDto.setActualPayNo(null); //实际支付单号
+        payCallbackDto.setActualPayAmount(null); //实际支付金额
+        payCallbackDto.setReturnHeaderMap(headers.toSingleValueMap());//支付接口返回header
+        payCallbackDto.setReturnParamMap(null); //支付接口返回的参数
+        payCallbackDto.setReturnParam(body); //支付接口返回的参数JSON字符串
+        payCallbackDto.setReturnParamObject(payResultCb); //支付接口返回的参数对象
+
+        VerifyPayResult result = weixinPayStrange.verifyPayCallback(payCallbackDto);
+        switch (result) {
+            case SUCCESS:
+                this.paySuccess(payCallbackDto.getApplyPayNo(), payCallbackDto.getActualPayNo(), payCallbackDto.getActualPayAmount(), payCallbackDto.getReturnParam());
+                break;
+            case IGNORE:
+                break;
+            case FAILED:
+                throw new BusinessException("common_weixin_pay_call_back_failed", payCallbackDto.getActualPayType());
+            default:
+                break;
         }
     }
 
     /**
      * 支付成功回调
      *
-     * @param applyPayNo 申请支付订单号
-     * @param actualPayNo 实际支付订单号
+     * @param applyPayNo      申请支付订单号
+     * @param actualPayNo     实际支付订单号
      * @param actualPayAmount 实际支付金额
-     * @param returnParam 返回参数
+     * @param returnParam     返回参数
      */
     protected abstract void paySuccess(String applyPayNo, String actualPayNo, BigDecimal actualPayAmount, String returnParam);
 }

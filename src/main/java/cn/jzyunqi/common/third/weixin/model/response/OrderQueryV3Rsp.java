@@ -87,13 +87,13 @@ public class OrderQueryV3Rsp implements Serializable {
     private PayPayerData payer = new PayPayerData();
 
     /**
-     * 支付金额
+     * 支付金额(非接口返回，手动计算)
      */
     @JsonIgnore
     private BigDecimal actualPayAmount;
 
     /**
-     * 查询返回字符串
+     * 查询返回字符串(非接口返回，手动拼接)
      */
     @JsonIgnore
     private String responseStr;
