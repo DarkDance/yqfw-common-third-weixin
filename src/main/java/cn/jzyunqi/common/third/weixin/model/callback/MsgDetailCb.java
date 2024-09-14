@@ -10,6 +10,8 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
+
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -22,6 +24,7 @@ import java.io.Serializable;
 @XmlRootElement(name = "xml")
 @XmlAccessorType(XmlAccessType.FIELD)//字段绑定到XML，默认PROPERTY为get/set方法绑定
 public class MsgDetailCb implements Serializable {
+    @Serial
     private static final long serialVersionUID = 3741348562928513685L;
 
     /**

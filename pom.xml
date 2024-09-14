@@ -10,11 +10,11 @@
 
     <groupId>cn.jzyunqi</groupId>
     <artifactId>yqfw-common-third-weixin</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.5-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <yqfw.version>0.0.4-SNAPSHOT</yqfw.version>
+        <yqfw.version>0.0.5-SNAPSHOT</yqfw.version>
         <commons-io.version>2.15.1</commons-io.version>
     </properties>
 
@@ -66,4 +66,18 @@
         </dependency>
     </dependencies>
 
+    <repositories>
+        <repository>
+            <id>yqfw-repository</id>
+            <url>https://gitee.com/wiiyaya/maven-repository/raw/master</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>

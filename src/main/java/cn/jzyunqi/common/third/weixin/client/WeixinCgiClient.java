@@ -62,6 +62,7 @@ import java.util.stream.Stream;
 
 /**
  * 大部分为公众号接口
+ *
  * @author wiiyaya
  * @date 2018/5/29.
  */
@@ -149,11 +150,11 @@ public class WeixinCgiClient {
 
     private static final String RESPONSE_MSG =
             "<xml>\n"
-            + "<Encrypt><![CDATA[%1$s]]></Encrypt>\n"
-            + "<MsgSignature><![CDATA[%2$s]]></MsgSignature>\n"
-            + "<TimeStamp>%3$s</TimeStamp>\n"
-            + "<Nonce><![CDATA[%4$s]]></Nonce>\n"
-            + "</xml>";
+                    + "<Encrypt><![CDATA[%1$s]]></Encrypt>\n"
+                    + "<MsgSignature><![CDATA[%2$s]]></MsgSignature>\n"
+                    + "<TimeStamp>%3$s</TimeStamp>\n"
+                    + "<Nonce><![CDATA[%4$s]]></Nonce>\n"
+                    + "</xml>";
 
     private static final String REPLAY_MESSAGE_FAILED = "failed";
     private static final String REPLAY_MESSAGE_SUCCESS = "success";
@@ -232,6 +233,7 @@ public class WeixinCgiClient {
 
         /**
          * 根据消息内容回复相应的信息
+         *
          * @param decryptNotice 解密后的消息
          * @return null -> 代表成功 / 其它代表返回数据
          */
@@ -241,7 +243,7 @@ public class WeixinCgiClient {
     /**
      * 组装同步网址
      *
-     * @param redirectPage 转发页面
+     * @param redirectPage   转发页面
      * @param redirectParams 页面参数
      * @return 网址
      */
@@ -250,11 +252,11 @@ public class WeixinCgiClient {
         realPage.append(redirectPage);
         realPage.append("?_=");
         realPage.append(System.currentTimeMillis());
-        if(CollectionUtilPlus.Map.isNotEmpty(redirectParams)){
+        if (CollectionUtilPlus.Map.isNotEmpty(redirectParams)) {
             realPage.append("&");
             realPage.append(CollectionUtilPlus.Map.getUrlParam(redirectParams, false, false, true));
         }
-        if(StringUtilPlus.isNotBlank(hash)){
+        if (StringUtilPlus.isNotBlank(hash)) {
             realPage.append("#/");
             realPage.append(hash);
         }
@@ -307,7 +309,7 @@ public class WeixinCgiClient {
     /**
      * 获得jsapi_ticket权限签名
      *
-     * @param url   需要签名的url
+     * @param url 需要签名的url
      * @return 签名结果
      */
     public Map<String, Object> getJsApiTicket(String url) throws BusinessException {
@@ -410,8 +412,8 @@ public class WeixinCgiClient {
                 searchResult.setMenu(new MenuParam());
             }
             return searchResult;
-        }else{
-            if(searchResult == null){
+        } else {
+            if (searchResult == null) {
                 searchResult = new MenuInfoRsp();
             }
             log.error("======WeixinCgiHelper searchAllMenu 200 error [{}][{}]:", searchResult.getErrorCode(), searchResult.getErrorMsg());
@@ -490,9 +492,9 @@ public class WeixinCgiClient {
         UploadMediaRsp uploadMediaRsp;
         try {
             URI materialAddUri;
-            if(BooleanUtilPlus.isTrue(forMass)){
+            if (BooleanUtilPlus.isTrue(forMass)) {
                 materialAddUri = new URIBuilder(String.format(WX_TMP_MTL_ADD, this.getInterfaceToken(), materialType)).build();
-            }else{
+            } else {
                 materialAddUri = new URIBuilder(String.format(WX_PPT_MTL_ADD, this.getInterfaceToken(), materialType)).build();
             }
 
@@ -501,7 +503,7 @@ public class WeixinCgiClient {
 
             MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
             params.add("media", resource);
-            if(BooleanUtilPlus.isFalse(forMass) && materialType == MsgType.video){
+            if (BooleanUtilPlus.isFalse(forMass) && materialType == MsgType.video) {
                 params.add("description", String.format("{\"title\":\"%s\", \"introduction\":\"%s\"}", videoTitle, videoIntroduction));
             }
 
@@ -515,7 +517,7 @@ public class WeixinCgiClient {
 
         if (uploadMediaRsp != null && uploadMediaRsp.getErrorCode() == null) {
             return uploadMediaRsp;
-        }else{
+        } else {
             if (uploadMediaRsp == null) {
                 uploadMediaRsp = new UploadMediaRsp();
             }
@@ -531,9 +533,9 @@ public class WeixinCgiClient {
         UploadMediaRsp uploadMediaRsp;
         try {
             URI articlesAddUri;
-            if(BooleanUtilPlus.isTrue(forMass)){
+            if (BooleanUtilPlus.isTrue(forMass)) {
                 articlesAddUri = new URIBuilder(String.format(WX_TMP_MTL_ART_ADD, this.getInterfaceToken())).build();
-            }else{
+            } else {
                 articlesAddUri = new URIBuilder(String.format(WX_PPT_MTL_ART_ADD, this.getInterfaceToken())).build();
             }
 
@@ -550,7 +552,7 @@ public class WeixinCgiClient {
 
         if (uploadMediaRsp != null && uploadMediaRsp.getErrorCode() == null) {
             return uploadMediaRsp;
-        }else{
+        } else {
             if (uploadMediaRsp == null) {
                 uploadMediaRsp = new UploadMediaRsp();
             }
@@ -586,7 +588,7 @@ public class WeixinCgiClient {
 
         if (uploadMediaRsp != null && uploadMediaRsp.getErrorCode() == null) {
             return uploadMediaRsp;
-        }else{
+        } else {
             if (uploadMediaRsp == null) {
                 uploadMediaRsp = new UploadMediaRsp();
             }
@@ -602,9 +604,9 @@ public class WeixinCgiClient {
         MassRsp massRsp;
         try {
             URI sendArticlesUri;
-            if(BooleanUtilPlus.isTrue(preview)){
+            if (BooleanUtilPlus.isTrue(preview)) {
                 sendArticlesUri = new URIBuilder(String.format(WX_MASS_PREVIEW, this.getInterfaceToken())).build();
-            }else {
+            } else {
                 sendArticlesUri = new URIBuilder(String.format(WX_MASS_SEND, this.getInterfaceToken())).build();
             }
 
@@ -621,7 +623,7 @@ public class WeixinCgiClient {
 
         if (massRsp != null && "0".equals(massRsp.getErrorCode())) {
             return massRsp;
-        }else{
+        } else {
             if (massRsp == null) {
                 massRsp = new MassRsp();
             }
@@ -676,13 +678,15 @@ public class WeixinCgiClient {
      *
      * @param msgSimpleCb url参数
      * @param msgDetailCb notice对象
-     * @param callback 回调
+     * @param callback    回调
      * @return 回复，根据情况返回回调数据或"failed"或"success"
      */
     public Object replyMessageNotice(MsgSimpleCb msgSimpleCb, MsgDetailCb msgDetailCb, MessageReplyCallback callback) {
         //验证安全签名，如果有消息体，校验后解码消息体
         if (msgDetailCb == null) {//没有消息体，属于连接测试
-            return signString(msgToken, msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce()).equals(msgSimpleCb.getSignature()) ? msgSimpleCb.getEchostr() : REPLAY_MESSAGE_FAILED;
+            String needSign = signString(msgToken, msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce()).equals(msgSimpleCb.getSignature()) ? msgSimpleCb.getEchostr() : REPLAY_MESSAGE_FAILED;
+            log.debug("======WeixinCgiHelper replyMessageNotice needSign:{}, echostr:{}", needSign, msgSimpleCb.getEchostr());
+            return needSign;
         } else {
             if (StringUtilPlus.isNotEmpty(msgDetailCb.getEncrypt())) {//消息是密文传输，需要解密
                 String selfMsgSignature = signString(msgToken, msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce(), msgDetailCb.getEncrypt());//组装消息验证码
@@ -691,13 +695,14 @@ public class WeixinCgiClient {
                 }
                 //解密消息
                 msgDetailCb = decryptMsg(msgDetailCb.getEncrypt());
-                if(msgDetailCb == null){
+                if (msgDetailCb == null) {
                     return REPLAY_MESSAGE_FAILED;
                 }
             }
 
             try {
                 Object reply = callback.prepareReplyMessage(msgDetailCb);
+                log.debug("======WeixinCgiHelper replyMessageNotice reply:{}", reply);
                 return reply == null ? REPLAY_MESSAGE_SUCCESS : reply;
             } catch (BusinessException e) {
                 log.error("======WeixinCgiHelper replyMessageNotice error:", e);
@@ -709,10 +714,10 @@ public class WeixinCgiClient {
     /**
      * 发送小程序消息
      *
-     * @param toOpenId 发送给谁
+     * @param toOpenId   发送给谁
      * @param templateId 模板内容id
-     * @param data 模板数据
-     * @param page 跳转页面
+     * @param data       模板数据
+     * @param page       跳转页面
      */
     public void sendMpTemplateMessage(String toOpenId, String templateId, Map<String, Map<String, String>> data, String page) throws BusinessException {
         WeixinOpenRsp openRsp;
@@ -758,7 +763,7 @@ public class WeixinCgiClient {
             qrcodeParam.setPage(page);
             qrcodeParam.setWidth(430);
             qrcodeParam.setAutoColor(Boolean.FALSE);
-            qrcodeParam.setLineColor(new LineColorData(0,0,0));
+            qrcodeParam.setLineColor(new LineColorData(0, 0, 0));
             qrcodeParam.setHyAline(Boolean.FALSE);
 
             RequestEntity<QrcodeParam> requestEntity = new RequestEntity<>(qrcodeParam, HttpMethod.POST, weixinUserInfoUri);
@@ -857,7 +862,7 @@ public class WeixinCgiClient {
         // 计算需要填充的位数
         int amountToPad = BLOCK_SIZE - (count % BLOCK_SIZE);
         // 获得补位所用的字符
-        char padChr = (char)(byte)(amountToPad & 0xFF);
+        char padChr = (char) (byte) (amountToPad & 0xFF);
         return String.valueOf(padChr).repeat(amountToPad).getBytes(StringUtilPlus.UTF_8);
     }
 

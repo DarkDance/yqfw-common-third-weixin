@@ -22,6 +22,7 @@ import cn.jzyunqi.common.third.weixin.model.request.ReplyMsgParam;
 import cn.jzyunqi.common.third.weixin.utils.WeixinMsgUtilPlus;
 import cn.jzyunqi.common.utils.BeanUtilPlus;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author wiiyaya
  * @date 2021/5/9.
  */
+@Slf4j
 public abstract class AWeixinMsgCbController {
 
     private static final String NOT_SUPPORT = "Not support now!";
@@ -49,6 +51,7 @@ public abstract class AWeixinMsgCbController {
     @RequestMapping
     @ResponseBody
     public Object userMessageCallback(MsgSimpleCb msgSimpleCb, @RequestBody(required = false) MsgDetailCb msgDetailCb) {
+        log.debug("receive msg from weixin, msgSimpleCb:{}, msgDetailCb:{}", msgSimpleCb, msgDetailCb);
         return weixinCgiClient.replyMessageNotice(msgSimpleCb, msgDetailCb, decryptNotice -> {
             switch (decryptNotice.getMsgType()) {
                 case text -> {return this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));}

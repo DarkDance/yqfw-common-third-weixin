@@ -1,5 +1,6 @@
 package cn.jzyunqi.common.third.weixin.model.callback.item;
 
+import cn.jzyunqi.common.third.weixin.model.enums.EventType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,4 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EventMsgData extends BaseMsgData{
+
+    private EventType event;
 }

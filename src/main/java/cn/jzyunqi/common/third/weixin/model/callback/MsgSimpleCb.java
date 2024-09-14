@@ -3,6 +3,7 @@ package cn.jzyunqi.common.third.weixin.model.callback;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -12,6 +13,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class MsgSimpleCb implements Serializable {
+    @Serial
     private static final long serialVersionUID = 6125983649333864559L;
 
     private String signature;
