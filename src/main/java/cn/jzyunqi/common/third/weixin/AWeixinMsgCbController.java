@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * 微信回调接口
  *
  * @author wiiyaya
- * @date 2021/5/9.
+ * @since 2021/5/9.
  */
 @Slf4j
 public abstract class AWeixinMsgCbController {

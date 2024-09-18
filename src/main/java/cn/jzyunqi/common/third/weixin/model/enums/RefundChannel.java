@@ -2,7 +2,7 @@ package cn.jzyunqi.common.third.weixin.model.enums;
 
 /**
  * @author wiiyaya
- * @date 2021/7/21.
+ * @since 2021/7/21.
  */
 public enum RefundChannel {
 

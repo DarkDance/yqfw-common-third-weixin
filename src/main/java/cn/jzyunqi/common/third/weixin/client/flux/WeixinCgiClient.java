@@ -64,7 +64,7 @@ import java.util.stream.Stream;
 
 /**
  * @author wiiyaya
- * @date 2024/3/19
+ * @since 2024/3/19
  */
 @Slf4j
 public class WeixinCgiClient {

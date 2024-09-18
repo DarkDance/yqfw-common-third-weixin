@@ -2,7 +2,7 @@ package cn.jzyunqi.common.third.weixin.model.enums;
 
 /**
  * @author shenhui
- * @date 2016/5/20.
+ * @since 2016/5/20.
  */
 public enum TradeState {
     /**

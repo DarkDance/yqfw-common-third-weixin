@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  * @author wiiyaya
- * @date 2018/8/18.
+ * @since 2018/8/18.
  */
 public class WeixinMsgUtilPlus {
 

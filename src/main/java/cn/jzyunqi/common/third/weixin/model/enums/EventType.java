@@ -4,7 +4,7 @@ import jakarta.xml.bind.annotation.XmlEnum;
 
 /**
  * @author wiiyaya
- * @date 2018/8/18.
+ * @since 2018/8/18.
  */
 @XmlEnum
 public enum EventType {

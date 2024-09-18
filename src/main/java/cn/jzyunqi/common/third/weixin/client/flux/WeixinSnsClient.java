@@ -19,7 +19,7 @@ import java.time.Duration;
 
 /**
  * @author wiiyaya
- * @date 2024/3/19
+ * @since 2024/3/19
  */
 @Slf4j
 public class WeixinSnsClient {
@@ -57,7 +57,7 @@ public class WeixinSnsClient {
     public UserTokenRsp getUserAccessToken(String authCode) throws BusinessException {
         UserTokenRsp userTokenRsp;
         try {
-            if(weixinType == WeixinType.MP){
+            if(weixinType == WeixinType.MINI_APP){
                 userTokenRsp = proxy.getWxMpserAccessToken(appId, appSecret, authCode);
             }else {
                 userTokenRsp = proxy.getWxUserAccessToken(appId, appSecret, authCode);
@@ -107,7 +107,7 @@ public class WeixinSnsClient {
      * 签名校验
      */
     public <T> T getEncryptedDataInfo(String sessionKey, String rawData, String signature, String iv, String encryptedData, Class<T> classType) throws BusinessException {
-        if (weixinType != WeixinType.MP) {
+        if (weixinType != WeixinType.MINI_APP) {
             log.error("======WeixinSnsHelper getEncryptedDataInfo weixinType[{}] error:", weixinType);
             throw new BusinessException("common_error_wx_get_encrypted_data_info_failed");
         }

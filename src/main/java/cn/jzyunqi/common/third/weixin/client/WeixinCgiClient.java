@@ -64,7 +64,7 @@ import java.util.stream.Stream;
  * 大部分为公众号接口
  *
  * @author wiiyaya
- * @date 2018/5/29.
+ * @since 2018/5/29.
  */
 @Slf4j
 public class WeixinCgiClient {

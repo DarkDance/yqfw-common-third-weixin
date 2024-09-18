@@ -22,7 +22,7 @@ import java.util.Optional;
  * 大部分为开放平台用户相关接口
  *
  * @author wiiyaya
- * @date 2018/5/22.
+ * @since 2018/5/22.
  */
 @Slf4j
 public class WeixinSnsClient {
@@ -79,8 +79,8 @@ public class WeixinSnsClient {
         UserTokenRsp userTokenRsp;
         try {
             URI accessTokenUri = switch (weixinType) {
-                case OPEN, PUBLIC -> new URIBuilder(String.format(WX_USER_TOKEN_URL, appId, appSecret, authCode)).build();
-                case MP -> new URIBuilder(String.format(WX_MP_USER_TOKEN_URL, appId, appSecret, authCode)).build();
+                case OPEN, MP -> new URIBuilder(String.format(WX_USER_TOKEN_URL, appId, appSecret, authCode)).build();
+                case MINI_APP -> new URIBuilder(String.format(WX_MP_USER_TOKEN_URL, appId, appSecret, authCode)).build();
             };
 
             RequestEntity<Void> requestEntity = new RequestEntity<>(HttpMethod.GET, accessTokenUri);
@@ -135,7 +135,7 @@ public class WeixinSnsClient {
      * 签名校验
      */
     public <T> T getEncryptedDataInfo(String sessionKey, String rawData, String signature, String iv, String encryptedData, Class<T> classType) throws BusinessException {
-        if (weixinType != WeixinType.MP) {
+        if (weixinType != WeixinType.MINI_APP) {
             log.error("======WeixinSnsHelper getEncryptedDataInfo weixinType[{}] error:", weixinType);
             throw new BusinessException("common_error_wx_get_encrypted_data_info_failed");
         }
