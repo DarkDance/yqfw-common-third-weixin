@@ -353,7 +353,7 @@ public class WeixinCgiClient {
      * @param openId openId
      * @return 用户信息
      */
-    public MpUserInfoRsp getPublicUserInfo(String openId) throws BusinessException {
+    public MpUserInfoRsp getMpUserInfo(String openId) throws BusinessException {
         MpUserInfoRsp userInfoRsp;
         try {
             URI weixinUserInfoUri = new URIBuilder(String.format(WX_USER_INFO_URL, this.getInterfaceToken(), openId)).build();
