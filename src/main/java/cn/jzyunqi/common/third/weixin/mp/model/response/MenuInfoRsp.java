@@ -1,6 +1,7 @@
 package cn.jzyunqi.common.third.weixin.mp.model.response;
 
 import cn.jzyunqi.common.third.weixin.mp.model.request.MenuParam;
+import cn.jzyunqi.common.third.weixin.common.response.WeixinRsp;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,7 +14,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class MenuInfoRsp extends WeixinOpenRsp {
+public class MenuInfoRsp extends WeixinRsp {
     @Serial
     private static final long serialVersionUID = 1047190426231490578L;
 

@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.mp.model.response;
+package cn.jzyunqi.common.third.weixin.common.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class WeixinOpenRsp implements Serializable {
+public class WeixinRsp implements Serializable {
     @Serial
     private static final long serialVersionUID = -6792109548151994746L;
 

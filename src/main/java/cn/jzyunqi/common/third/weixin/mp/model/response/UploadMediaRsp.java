@@ -1,6 +1,7 @@
 package cn.jzyunqi.common.third.weixin.mp.model.response;
 
 import cn.jzyunqi.common.third.weixin.mp.model.enums.MsgType;
+import cn.jzyunqi.common.third.weixin.common.response.WeixinRsp;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,7 @@ import java.io.Serial;
 @Getter
 @Setter
 @ToString
-public class UploadMediaRsp extends WeixinOpenRsp {
+public class UploadMediaRsp extends WeixinRsp {
     @Serial
     private static final long serialVersionUID = 7921679008435737891L;
 

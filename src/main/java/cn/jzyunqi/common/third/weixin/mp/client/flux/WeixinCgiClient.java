@@ -22,8 +22,8 @@ import cn.jzyunqi.common.third.weixin.mp.model.response.JsApiTicketRsp;
 import cn.jzyunqi.common.third.weixin.mp.model.response.MassRsp;
 import cn.jzyunqi.common.third.weixin.mp.model.response.MenuInfoRsp;
 import cn.jzyunqi.common.third.weixin.mp.model.response.UploadMediaRsp;
-import cn.jzyunqi.common.third.weixin.mp.model.response.UserBaseInfoRsp;
-import cn.jzyunqi.common.third.weixin.mp.model.response.WeixinOpenRsp;
+import cn.jzyunqi.common.third.weixin.mp.model.response.MpUserInfoRsp;
+import cn.jzyunqi.common.third.weixin.common.response.WeixinRsp;
 import cn.jzyunqi.common.utils.BooleanUtilPlus;
 import cn.jzyunqi.common.utils.CollectionUtilPlus;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
@@ -289,8 +289,8 @@ public class WeixinCgiClient {
      * @param openId openId
      * @return 用户信息
      */
-    public UserBaseInfoRsp getPublicUserInfo(String openId) throws BusinessException {
-        UserBaseInfoRsp userInfoRsp;
+    public MpUserInfoRsp getPublicUserInfo(String openId) throws BusinessException {
+        MpUserInfoRsp userInfoRsp;
         try {
             userInfoRsp =  proxy.getPublicUserInfo(this.getInterfaceToken(), openId);
         } catch (Exception e) {
@@ -302,7 +302,7 @@ public class WeixinCgiClient {
             return userInfoRsp;
         } else {
             if (userInfoRsp == null) {
-                userInfoRsp = new UserBaseInfoRsp();
+                userInfoRsp = new MpUserInfoRsp();
             }
             log.error("======WeixinCgiHelper getPublicUserInfo 200 error[{}][{}]", userInfoRsp.getErrorCode(), userInfoRsp.getErrorMsg());
             throw new BusinessException("common_error_wx_get_public_user_info_failed");
@@ -385,7 +385,7 @@ public class WeixinCgiClient {
      * 删除原有菜单(含特殊菜单)
      */
     public void deleteAllMenu() throws BusinessException {
-        WeixinOpenRsp deleteMenuRsp;
+        WeixinRsp deleteMenuRsp;
         try {
             deleteMenuRsp = proxy.deleteAllMenu(this.getInterfaceToken());
         } catch (Exception e) {
@@ -395,7 +395,7 @@ public class WeixinCgiClient {
 
         if (deleteMenuRsp == null || !"0".equals(deleteMenuRsp.getErrorCode())) {
             if (deleteMenuRsp == null) {
-                deleteMenuRsp = new WeixinOpenRsp();
+                deleteMenuRsp = new WeixinRsp();
             }
             log.error("======WeixinCgiHelper deleteAllMenu 200 error [{}][{}]:", deleteMenuRsp.getErrorCode(), deleteMenuRsp.getErrorMsg());
             throw new BusinessException("common_error_wx_delete_menu_failed");
@@ -604,7 +604,7 @@ public class WeixinCgiClient {
      * @param page 跳转页面
      */
     public void sendMpTemplateMessage(String toOpenId, String templateId, Map<String, Map<String, String>> data, String page) throws BusinessException {
-        WeixinOpenRsp openRsp;
+        WeixinRsp openRsp;
         try {
             TmpMsgParam tmpMsgParam = new TmpMsgParam();
             tmpMsgParam.setToUser(toOpenId);
@@ -789,7 +789,7 @@ public class WeixinCgiClient {
         JsApiTicketRsp getJsApiTicket(@RequestParam("access_token") String interfaceToken);
 
         @GetExchange("/user/info?lang=zh_CN")
-        UserBaseInfoRsp getPublicUserInfo(@RequestParam("access_token") String interfaceToken, @RequestParam String openid);
+        MpUserInfoRsp getPublicUserInfo(@RequestParam("access_token") String interfaceToken, @RequestParam String openid);
 
         @GetExchange("/menu/get")
         MenuInfoRsp getAllMenu(@RequestParam("access_token") String interfaceToken);
@@ -798,7 +798,7 @@ public class WeixinCgiClient {
         MenuInfoRsp addDefaultMenu(@RequestParam("access_token") String interfaceToken, @RequestBody MenuParam menuParam);
 
         @GetExchange("/menu/delete")
-        WeixinOpenRsp deleteAllMenu(@RequestParam("access_token") String interfaceToken);
+        WeixinRsp deleteAllMenu(@RequestParam("access_token") String interfaceToken);
 
         @PostExchange(url = "/media/upload", contentType = MediaType.MULTIPART_FORM_DATA_VALUE)
         UploadMediaRsp addTempMaterial(@RequestParam("access_token") String interfaceToken, @RequestParam MsgType type, @RequestBody MultiValueMap<String, Object> params);
@@ -822,7 +822,7 @@ public class WeixinCgiClient {
         MassRsp sendArticles(@RequestParam("access_token") String interfaceToken, @RequestBody ReplyMsgParam replyMsgParam);
 
         @PostExchange(url = "/message/subscribe/send")
-        WeixinOpenRsp sendMpTemplateMessage(@RequestParam("access_token") String interfaceToken, @RequestBody TmpMsgParam tmpMsgParam);
+        WeixinRsp sendMpTemplateMessage(@RequestParam("access_token") String interfaceToken, @RequestBody TmpMsgParam tmpMsgParam);
 
         @PostExchange(url = "/wxa/getwxacodeunlimit")
         ResponseEntity<byte[]> getMpSceneCode(@RequestParam("access_token") String interfaceToken, @RequestBody QrcodeParam qrcodeParam);

@@ -22,8 +22,8 @@ import cn.jzyunqi.common.third.weixin.mp.model.response.JsApiTicketRsp;
 import cn.jzyunqi.common.third.weixin.mp.model.response.MassRsp;
 import cn.jzyunqi.common.third.weixin.mp.model.response.MenuInfoRsp;
 import cn.jzyunqi.common.third.weixin.mp.model.response.UploadMediaRsp;
-import cn.jzyunqi.common.third.weixin.mp.model.response.UserBaseInfoRsp;
-import cn.jzyunqi.common.third.weixin.mp.model.response.WeixinOpenRsp;
+import cn.jzyunqi.common.third.weixin.mp.model.response.MpUserInfoRsp;
+import cn.jzyunqi.common.third.weixin.common.response.WeixinRsp;
 import cn.jzyunqi.common.utils.BooleanUtilPlus;
 import cn.jzyunqi.common.utils.CollectionUtilPlus;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
@@ -353,13 +353,13 @@ public class WeixinCgiClient {
      * @param openId openId
      * @return 用户信息
      */
-    public UserBaseInfoRsp getPublicUserInfo(String openId) throws BusinessException {
-        UserBaseInfoRsp userInfoRsp;
+    public MpUserInfoRsp getPublicUserInfo(String openId) throws BusinessException {
+        MpUserInfoRsp userInfoRsp;
         try {
             URI weixinUserInfoUri = new URIBuilder(String.format(WX_USER_INFO_URL, this.getInterfaceToken(), openId)).build();
 
             RequestEntity<Map<String, String>> requestEntity = new RequestEntity<>(HttpMethod.GET, weixinUserInfoUri);
-            ResponseEntity<UserBaseInfoRsp> weixinUserRsp = restTemplate.exchange(requestEntity, UserBaseInfoRsp.class);
+            ResponseEntity<MpUserInfoRsp> weixinUserRsp = restTemplate.exchange(requestEntity, MpUserInfoRsp.class);
             userInfoRsp = weixinUserRsp.getBody();
         } catch (Exception e) {
             log.error("======WeixinCgiHelper getPublicUserInfo other error:", e);
@@ -370,7 +370,7 @@ public class WeixinCgiClient {
             return userInfoRsp;
         } else {
             if (userInfoRsp == null) {
-                userInfoRsp = new UserBaseInfoRsp();
+                userInfoRsp = new MpUserInfoRsp();
             }
             log.error("======WeixinCgiHelper getPublicUserInfo 200 error[{}][{}]", userInfoRsp.getErrorCode(), userInfoRsp.getErrorMsg());
             throw new BusinessException("common_error_wx_get_public_user_info_failed");
@@ -463,12 +463,12 @@ public class WeixinCgiClient {
      * 删除原有菜单(含特殊菜单)
      */
     public void deleteAllMenu() throws BusinessException {
-        WeixinOpenRsp deleteMenuRsp;
+        WeixinRsp deleteMenuRsp;
         try {
             URI deleteMenuUri = new URIBuilder(String.format(WX_MENU_DEL, this.getInterfaceToken())).build();
 
             RequestEntity<String> requestEntity = new RequestEntity<>(HttpMethod.GET, deleteMenuUri);
-            ResponseEntity<WeixinOpenRsp> deleteRsp = restTemplate.exchange(requestEntity, WeixinOpenRsp.class);
+            ResponseEntity<WeixinRsp> deleteRsp = restTemplate.exchange(requestEntity, WeixinRsp.class);
             deleteMenuRsp = deleteRsp.getBody();
         } catch (Exception e) {
             log.error("======WeixinCgiHelper deleteAllMenu other error:", e);
@@ -477,7 +477,7 @@ public class WeixinCgiClient {
 
         if (deleteMenuRsp == null || !"0".equals(deleteMenuRsp.getErrorCode())) {
             if (deleteMenuRsp == null) {
-                deleteMenuRsp = new UserBaseInfoRsp();
+                deleteMenuRsp = new MpUserInfoRsp();
             }
             log.error("======WeixinCgiHelper deleteAllMenu 200 error [{}][{}]:", deleteMenuRsp.getErrorCode(), deleteMenuRsp.getErrorMsg());
             throw new BusinessException("common_error_wx_delete_menu_failed");
@@ -719,7 +719,7 @@ public class WeixinCgiClient {
      * @param page       跳转页面
      */
     public void sendMpTemplateMessage(String toOpenId, String templateId, Map<String, Map<String, String>> data, String page) throws BusinessException {
-        WeixinOpenRsp openRsp;
+        WeixinRsp openRsp;
         try {
             URI weixinMsgSendUri = new URIBuilder(String.format(WX_SUBSCRIBE_SEND, this.getInterfaceToken())).build();
             TmpMsgParam tmpMsgParam = new TmpMsgParam();
@@ -731,9 +731,9 @@ public class WeixinCgiClient {
             //tmpMsgParam.setLang();
 
             RequestEntity<TmpMsgParam> requestEntity = new RequestEntity<>(tmpMsgParam, HttpMethod.POST, weixinMsgSendUri);
-            ResponseEntity<WeixinOpenRsp> sendRsp = restTemplate.exchange(requestEntity, WeixinOpenRsp.class);
+            ResponseEntity<WeixinRsp> sendRsp = restTemplate.exchange(requestEntity, WeixinRsp.class);
 
-            openRsp = Optional.ofNullable(sendRsp.getBody()).orElseGet(WeixinOpenRsp::new);
+            openRsp = Optional.ofNullable(sendRsp.getBody()).orElseGet(WeixinRsp::new);
         } catch (Exception e) {
             log.error("======WeixinCgiHelper sendWpTemplateMessage other error:", e);
             throw new BusinessException("common_error_wx_send_template_message_error");

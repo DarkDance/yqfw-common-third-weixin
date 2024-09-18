@@ -1,5 +1,6 @@
 package cn.jzyunqi.common.third.weixin.mp.model.response;
 
+import cn.jzyunqi.common.third.weixin.common.response.WeixinRsp;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +13,7 @@ import java.io.Serial;
  */
 @Getter
 @Setter
-public class InterfaceTokenRsp extends WeixinOpenRsp {
+public class InterfaceTokenRsp extends WeixinRsp {
     @Serial
     private static final long serialVersionUID = 1783807609363500904L;
 

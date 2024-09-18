@@ -1,33 +1,46 @@
-package cn.jzyunqi.common.third.weixin.mp.client.flux;
+package cn.jzyunqi.common.third.weixin.open.client;
 
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.third.weixin.common.enums.WeixinType;
-import cn.jzyunqi.common.third.weixin.mp.model.response.UserBaseInfoRsp;
-import cn.jzyunqi.common.third.weixin.mp.model.response.UserTokenRsp;
+import cn.jzyunqi.common.third.weixin.open.model.response.Oauth2UserTokenRsp;
+import cn.jzyunqi.common.third.weixin.open.model.response.OpenUserInfoRsp;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.support.WebClientAdapter;
-import org.springframework.web.service.annotation.GetExchange;
-import org.springframework.web.service.annotation.HttpExchange;
-import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+import org.apache.hc.core5.net.URIBuilder;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
-import java.time.Duration;
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
 
 /**
+ * 大部分为开放平台用户相关接口
+ *
  * @author wiiyaya
- * @since 2024/3/19
+ * @since 2018/5/22.
  */
 @Slf4j
 public class WeixinSnsClient {
 
     /**
-     * 请求代理
+     * 通过code获取access_token的接口
      */
-    private final WeixinSnsClient.Proxy proxy;
+    private static final String WX_USER_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code";
+
+    /**
+     * 通过code获取access_token的接口
+     */
+    private static final String WX_MP_USER_TOKEN_URL = "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code";
+
+    /**
+     * 通过个人授权获取用户个人信息
+     */
+    private static final String WX_USER_INFO_URL = "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s";
 
     /**
      * 应用唯一标识
@@ -44,24 +57,36 @@ public class WeixinSnsClient {
      */
     private final WeixinType weixinType;
 
+    private final RestTemplate restTemplate;
+
     private final ObjectMapper objectMapper;
 
     public WeixinSnsClient(String appId, String appSecret, WeixinType weixinType) {
         this.appId = appId;
         this.appSecret = appSecret;
         this.weixinType = weixinType;
-        this.proxy = initProxy();
+        this.restTemplate = new RestTemplate();
         this.objectMapper = new ObjectMapper();
     }
 
-    public UserTokenRsp getUserAccessToken(String authCode) throws BusinessException {
-        UserTokenRsp userTokenRsp;
+    /**
+     * 通过code获取access_token
+     *
+     * @param authCode 用户换取access_token的code
+     * @return UserTokenRsp
+     */
+    public Oauth2UserTokenRsp getUserAccessToken(String authCode) throws BusinessException {
+        Oauth2UserTokenRsp userTokenRsp;
         try {
-            if(weixinType == WeixinType.MINI_APP){
-                userTokenRsp = proxy.getWxMpserAccessToken(appId, appSecret, authCode);
-            }else {
-                userTokenRsp = proxy.getWxUserAccessToken(appId, appSecret, authCode);
-            }
+            URI accessTokenUri = switch (weixinType) {
+                case OPEN, MP -> new URIBuilder(String.format(WX_USER_TOKEN_URL, appId, appSecret, authCode)).build();
+                case MINI_APP ->
+                        new URIBuilder(String.format(WX_MP_USER_TOKEN_URL, appId, appSecret, authCode)).build();
+            };
+
+            RequestEntity<Void> requestEntity = new RequestEntity<>(HttpMethod.GET, accessTokenUri);
+            ResponseEntity<Oauth2UserTokenRsp> weixinUserRsp = restTemplate.exchange(requestEntity, Oauth2UserTokenRsp.class);
+            userTokenRsp = Optional.ofNullable(weixinUserRsp.getBody()).orElseGet(Oauth2UserTokenRsp::new);
         } catch (Exception e) {
             log.error("======WeixinSnsHelper getUserAccessToken other error[{}]:", weixinType, e);
             throw new BusinessException("common_error_wx_get_auth_token_error");
@@ -82,14 +107,18 @@ public class WeixinSnsClient {
      * @param userAccessToken access_token
      * @return 用户信息
      */
-    public UserBaseInfoRsp getUserInfo(String openid, String userAccessToken) throws BusinessException {
+    public OpenUserInfoRsp getUserInfo(String openid, String userAccessToken) throws BusinessException {
         if (weixinType != WeixinType.OPEN) {
             log.error("======WeixinSnsHelper getUserInfo weixinType[{}] error:", weixinType);
             throw new BusinessException("common_error_wx_get_user_info_error");
         }
-        UserBaseInfoRsp userInfoRsp;
+        OpenUserInfoRsp userInfoRsp;
         try {
-            userInfoRsp = proxy.getUserInfo(userAccessToken, openid);
+            URI weixinUserInfoUri = new URIBuilder(String.format(WX_USER_INFO_URL, userAccessToken, openid)).build();
+
+            RequestEntity<Map<String, String>> requestEntity = new RequestEntity<>(HttpMethod.GET, weixinUserInfoUri);
+            ResponseEntity<OpenUserInfoRsp> weixinUserRsp = restTemplate.exchange(requestEntity, OpenUserInfoRsp.class);
+            userInfoRsp = Optional.ofNullable(weixinUserRsp.getBody()).orElseGet(OpenUserInfoRsp::new);
         } catch (Exception e) {
             log.error("======WeixinSnsHelper getUserInfo other error:", e);
             throw new BusinessException("common_error_wx_get_user_info_error");
@@ -122,25 +151,5 @@ public class WeixinSnsClient {
         } else {
             throw new BusinessException("common_error_wx_get_encrypted_data_signature_failed");
         }
-    }
-
-    @HttpExchange(url = "https://api.weixin.qq.com/sns", accept = {"application/json"})
-    public interface Proxy {
-        @GetExchange("/oauth2/access_token?grant_type=authorization_code")
-        UserTokenRsp getWxUserAccessToken(@RequestParam String appid, @RequestParam String secret, @RequestParam String code);
-
-        @GetExchange("/jscode2session?grant_type=authorization_code")
-        UserTokenRsp getWxMpserAccessToken(@RequestParam String appid, @RequestParam String secret, @RequestParam String code);
-
-        @GetExchange("/userinfo")
-        UserBaseInfoRsp getUserInfo(@RequestParam("access_token") String accessToken, @RequestParam("openid") String openId);
-    }
-
-    private WeixinSnsClient.Proxy initProxy() {
-        WebClient webClient = WebClient.builder().build();
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
-        webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
-        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
-        return factory.createClient(WeixinSnsClient.Proxy.class);
     }
 }
