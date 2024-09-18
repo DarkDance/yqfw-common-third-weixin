@@ -52,7 +52,7 @@ public abstract class AWeixinMsgCbController {
      * @param msgDetailCb 消息详细
      * @return 根据情况返回回调数据或"failed"或"success"
      */
-    @RequestMapping
+    @RequestMapping(consumes = "text/xml", produces = "text/xml")
     @ResponseBody
     public Object userMessageCallback(MsgSimpleCb msgSimpleCb, @RequestBody(required = false) MsgDetailCb msgDetailCb, @RequestHeader Map<String, String[]> headers) {
         log.debug("""
