@@ -21,11 +21,15 @@ import cn.jzyunqi.common.third.weixin.model.callback.item.WxCardMsgData;
 import cn.jzyunqi.common.third.weixin.model.request.ReplyMsgParam;
 import cn.jzyunqi.common.third.weixin.utils.WeixinMsgUtilPlus;
 import cn.jzyunqi.common.utils.BeanUtilPlus;
+import cn.jzyunqi.common.utils.CurrentUserUtils;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Map;
 
 /**
  * 微信回调接口
@@ -50,8 +54,17 @@ public abstract class AWeixinMsgCbController {
      */
     @RequestMapping
     @ResponseBody
-    public Object userMessageCallback(MsgSimpleCb msgSimpleCb, @RequestBody(required = false) MsgDetailCb msgDetailCb) {
-        log.debug("receive msg from weixin, msgSimpleCb:{}, msgDetailCb:{}", msgSimpleCb, msgDetailCb);
+    public Object userMessageCallback(MsgSimpleCb msgSimpleCb, @RequestBody(required = false) MsgDetailCb msgDetailCb, @RequestHeader Map<String, String[]> headers) {
+        log.debug("""
+
+                        ======Request Header : {}
+                        ======Request Params : {}
+                        ======Request Body   : {}
+                        """,
+                headers,
+                msgSimpleCb,
+                msgDetailCb
+        );
         return weixinCgiClient.replyMessageNotice(msgSimpleCb, msgDetailCb, decryptNotice -> {
             switch (decryptNotice.getMsgType()) {
                 case text -> {return this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));}
