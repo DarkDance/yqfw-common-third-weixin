@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.mp.model.enums;
+package cn.jzyunqi.common.third.weixin.pay.model.enums;
 
 /**
  * @author wiiyaya

@@ -1,7 +1,7 @@
 package cn.jzyunqi.common.third.weixin.pay.model.response;
 
-import cn.jzyunqi.common.third.weixin.mp.model.enums.FundsAccount;
-import cn.jzyunqi.common.third.weixin.mp.model.enums.RefundChannel;
+import cn.jzyunqi.common.third.weixin.pay.model.enums.FundsAccount;
+import cn.jzyunqi.common.third.weixin.pay.model.enums.RefundChannel;
 import cn.jzyunqi.common.third.weixin.pay.model.enums.RefundStatus;
 import cn.jzyunqi.common.third.weixin.pay.model.PayAmountData;
 import com.fasterxml.jackson.annotation.JsonIgnore;

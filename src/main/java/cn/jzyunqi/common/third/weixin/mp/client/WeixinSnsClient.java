@@ -1,7 +1,7 @@
 package cn.jzyunqi.common.third.weixin.mp.client;
 
 import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.third.weixin.mp.model.enums.WeixinType;
+import cn.jzyunqi.common.third.weixin.common.enums.WeixinType;
 import cn.jzyunqi.common.third.weixin.mp.model.response.UserBaseInfoRsp;
 import cn.jzyunqi.common.third.weixin.mp.model.response.UserTokenRsp;
 import cn.jzyunqi.common.utils.DigestUtilPlus;

@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.mp.model.enums;
+package cn.jzyunqi.common.third.weixin.common.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

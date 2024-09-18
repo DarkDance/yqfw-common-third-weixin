@@ -1,7 +1,7 @@
 package cn.jzyunqi.common.third.weixin.pay.model.response;
 
 import cn.jzyunqi.common.third.weixin.pay.model.enums.TradeState;
-import cn.jzyunqi.common.third.weixin.mp.model.enums.TradeType;
+import cn.jzyunqi.common.third.weixin.common.enums.TradeType;
 import cn.jzyunqi.common.third.weixin.pay.model.PayAmountData;
 import cn.jzyunqi.common.third.weixin.pay.model.PayPayerData;
 import com.fasterxml.jackson.annotation.JsonIgnore;
