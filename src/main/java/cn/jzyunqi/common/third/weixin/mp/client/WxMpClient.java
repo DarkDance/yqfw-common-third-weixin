@@ -12,6 +12,7 @@ import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialSearchParam;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialSearchRsp;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialVideoRsp;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMediaData;
+import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuRsp;
 import cn.jzyunqi.common.third.weixin.mp.token.model.ClientTokenData;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import cn.jzyunqi.common.third.weixin.mp.WxMpConfig;
@@ -201,7 +202,7 @@ public class WxMpClient {
         }
 
         //自定义菜单 - 获取自定义菜单配置(只能查询API定义的菜单)
-        public WxMenuData selfMenuGet() throws BusinessException {
+        public WxMenuRsp selfMenuGet() throws BusinessException {
             return wxMpMenuApiProxy.selfMenuGet(getClientToken());
         }
     }
