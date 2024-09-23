@@ -1,6 +1,6 @@
-package cn.jzyunqi.common.third.weixin.mp.model.callback.item;
+package cn.jzyunqi.common.third.weixin.mp.callback.model;
 
-import cn.jzyunqi.common.third.weixin.mp.model.enums.EventType;
+import cn.jzyunqi.common.third.weixin.mp.callback.enums.EventType;
 import lombok.Getter;
 import lombok.Setter;
 

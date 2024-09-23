@@ -10,7 +10,7 @@ import cn.jzyunqi.common.third.weixin.mp.kefu.model.WxMpKfMsgListRsp;
 import cn.jzyunqi.common.third.weixin.mp.kefu.model.WxMpKfSessionData;
 import cn.jzyunqi.common.third.weixin.mp.kefu.model.WxMpKfSessionListRsp;
 import cn.jzyunqi.common.third.weixin.mp.kefu.model.WxMpKfTypingParam;
-import cn.jzyunqi.common.third.weixin.mp.model.request.ReplyMsgParam;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,7 +58,7 @@ public interface WxMpKfApiProxy {
 
     //客服消息 - 发消息
     @PostExchange(url = "/cgi-bin/message/custom/send")
-    String sendKefuMessageWithResponse(@RequestParam String access_token, @RequestBody ReplyMsgParam request) throws BusinessException;
+    String sendKefuMessageWithResponse(@RequestParam String access_token, @RequestBody ReplyMsgData request) throws BusinessException;
 
     //客服消息 - 发送客服输入状态
     @PostExchange(url = "/cgi-bin/message/custom/typing")

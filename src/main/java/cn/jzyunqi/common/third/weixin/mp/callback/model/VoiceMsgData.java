@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.mp.model.callback.item;
+package cn.jzyunqi.common.third.weixin.mp.callback.model;
 
 import lombok.Getter;
 import lombok.Setter;

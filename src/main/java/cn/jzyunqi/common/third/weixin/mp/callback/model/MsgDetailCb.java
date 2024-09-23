@@ -1,7 +1,7 @@
-package cn.jzyunqi.common.third.weixin.mp.model.callback;
+package cn.jzyunqi.common.third.weixin.mp.callback.model;
 
-import cn.jzyunqi.common.third.weixin.mp.model.enums.EventType;
-import cn.jzyunqi.common.third.weixin.mp.model.enums.MsgType;
+import cn.jzyunqi.common.third.weixin.mp.callback.enums.EventType;
+import cn.jzyunqi.common.third.weixin.mp.callback.enums.MsgType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;

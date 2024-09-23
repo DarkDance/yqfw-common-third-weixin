@@ -29,8 +29,8 @@ import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuData;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuTryMatchParam;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMpSelfMenuInfoRsp;
 import cn.jzyunqi.common.third.weixin.mp.kefu.enums.TypingType;
-import cn.jzyunqi.common.third.weixin.mp.model.redis.ClientTokenRedisDto;
-import cn.jzyunqi.common.third.weixin.mp.model.request.ReplyMsgParam;
+import cn.jzyunqi.common.third.weixin.mp.token.model.ClientTokenRedisDto;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
 import cn.jzyunqi.common.utils.DateTimeUtilPlus;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -112,7 +112,7 @@ public class WxMpClient {
         }
 
         //客服消息 - 发消息
-        public String sendKefuMessageWithResponse(ReplyMsgParam request) throws BusinessException {
+        public String sendKefuMessageWithResponse(ReplyMsgData request) throws BusinessException {
             return wxMpKefuApiProxy.sendKefuMessageWithResponse(getClientToken(), request);
         }
 

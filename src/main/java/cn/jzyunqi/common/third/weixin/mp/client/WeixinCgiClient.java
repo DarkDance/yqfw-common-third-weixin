@@ -5,16 +5,14 @@ import cn.jzyunqi.common.feature.redis.Cache;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.mp.model.enums.InfoScope;
 import cn.jzyunqi.common.third.weixin.mp.model.request.item.LineColorData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.MsgDetailCb;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.MsgSimpleCb;
-import cn.jzyunqi.common.third.weixin.mp.model.redis.JsApiTicketRedisDto;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
+import cn.jzyunqi.common.third.weixin.mp.token.model.JsApiTicketRedisDto;
 import cn.jzyunqi.common.third.weixin.mp.model.request.QrcodeParam;
-import cn.jzyunqi.common.third.weixin.mp.model.request.ReplyMsgParam;
-import cn.jzyunqi.common.third.weixin.mp.message.model.WxMpTemplateMsgParam;
-import cn.jzyunqi.common.third.weixin.mp.model.response.JsApiTicketRsp;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
+import cn.jzyunqi.common.third.weixin.mp.token.model.JsApiTicketRsp;
 import cn.jzyunqi.common.third.weixin.mp.model.response.MassRsp;
 import cn.jzyunqi.common.third.weixin.mp.model.response.MpUserInfoRsp;
-import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import cn.jzyunqi.common.utils.BooleanUtilPlus;
 import cn.jzyunqi.common.utils.CollectionUtilPlus;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
@@ -304,7 +302,7 @@ public class WeixinCgiClient {
     /**
      * 根据标签进行群发
      */
-    public MassRsp sendArticles(ReplyMsgParam replyMsgParam, Boolean preview) throws BusinessException {
+    public MassRsp sendArticles(ReplyMsgData replyMsgParam, Boolean preview) throws BusinessException {
         MassRsp massRsp;
         try {
             URI sendArticlesUri;
@@ -317,7 +315,7 @@ public class WeixinCgiClient {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            RequestEntity<ReplyMsgParam> requestEntity = new RequestEntity<>(replyMsgParam, headers, HttpMethod.POST, sendArticlesUri);
+            RequestEntity<ReplyMsgData> requestEntity = new RequestEntity<>(replyMsgParam, headers, HttpMethod.POST, sendArticlesUri);
             ResponseEntity<MassRsp> responseEntity = restTemplate.exchange(requestEntity, MassRsp.class);
             massRsp = responseEntity.getBody();
         } catch (Exception e) {

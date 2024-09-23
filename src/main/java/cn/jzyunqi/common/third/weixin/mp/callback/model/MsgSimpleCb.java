@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.mp.model.callback;
+package cn.jzyunqi.common.third.weixin.mp.callback.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,7 +6,6 @@ import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.lang.annotation.Target;
 
 /**
  * @author wiiyaya

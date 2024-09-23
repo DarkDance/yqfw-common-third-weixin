@@ -1,26 +1,25 @@
-package cn.jzyunqi.common.third.weixin.mp;
+package cn.jzyunqi.common.third.weixin.mp.callback;
 
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.third.weixin.mp.client.WeixinCgiClient;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.MsgDetailCb;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.MsgSimpleCb;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.EventMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.ImageMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.LinkMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.LocationMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.MiniProgramPageMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.MpNewsMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.MusicMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.NewsMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.ShortVideoMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.TextMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.ThumbMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.TransferCustomerServiceMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.VideoMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.VoiceMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.callback.item.WxCardMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.request.ReplyMsgParam;
-import cn.jzyunqi.common.third.weixin.mp.utils.WeixinMsgUtilPlus;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.EventMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.ImageMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.LinkMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.LocationMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.MiniProgramPageMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.MpNewsMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.MusicMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.NewsMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.ShortVideoMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.TextMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.ThumbMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.TransferCustomerServiceMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.VideoMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.VoiceMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.WxCardMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
 import cn.jzyunqi.common.utils.BeanUtilPlus;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -120,63 +119,63 @@ public abstract class AWxMpMsgCbController {
         });
     }
 
-    protected ReplyMsgParam processMiniProgramPageMsg(MiniProgramPageMsgData miniProgramPageMsgData) throws BusinessException {
+    protected ReplyMsgData processMiniProgramPageMsg(MiniProgramPageMsgData miniProgramPageMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(miniProgramPageMsgData.getToUserName(), miniProgramPageMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    protected ReplyMsgParam processTransferCustomerServiceMsg(TransferCustomerServiceMsgData transferCustomerServiceMsgData) throws BusinessException {
+    protected ReplyMsgData processTransferCustomerServiceMsg(TransferCustomerServiceMsgData transferCustomerServiceMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(transferCustomerServiceMsgData.getToUserName(), transferCustomerServiceMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    protected ReplyMsgParam processEventMsg(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processEventMsg(EventMsgData eventMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    protected ReplyMsgParam processLinkMsg(LinkMsgData linkMsgData) throws BusinessException {
+    protected ReplyMsgData processLinkMsg(LinkMsgData linkMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(linkMsgData.getToUserName(), linkMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    protected ReplyMsgParam processLocationMsg(LocationMsgData locationMsgData) throws BusinessException {
+    protected ReplyMsgData processLocationMsg(LocationMsgData locationMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(locationMsgData.getToUserName(), locationMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    protected ReplyMsgParam processWxCardMsg(WxCardMsgData wxCardMsgData) throws BusinessException {
+    protected ReplyMsgData processWxCardMsg(WxCardMsgData wxCardMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(wxCardMsgData.getToUserName(), wxCardMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    protected ReplyMsgParam processMpNewsMsg(MpNewsMsgData mpNewsMsgData) throws BusinessException {
+    protected ReplyMsgData processMpNewsMsg(MpNewsMsgData mpNewsMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(mpNewsMsgData.getToUserName(), mpNewsMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    protected ReplyMsgParam processNewsMsg(NewsMsgData newsMsgData) throws BusinessException {
+    protected ReplyMsgData processNewsMsg(NewsMsgData newsMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(newsMsgData.getToUserName(), newsMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    protected ReplyMsgParam processMusicMsg(MusicMsgData musicMsgData) throws BusinessException {
+    protected ReplyMsgData processMusicMsg(MusicMsgData musicMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(musicMsgData.getToUserName(), musicMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    private ReplyMsgParam processShortVideoMsg(ShortVideoMsgData shortVideoMsgData) throws BusinessException {
+    private ReplyMsgData processShortVideoMsg(ShortVideoMsgData shortVideoMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(shortVideoMsgData.getToUserName(), shortVideoMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    private ReplyMsgParam processThumbMsg(ThumbMsgData thumbMsgData) throws BusinessException {
+    private ReplyMsgData processThumbMsg(ThumbMsgData thumbMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(thumbMsgData.getToUserName(), thumbMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    protected ReplyMsgParam processVideoMsg(VideoMsgData videoMsgData) throws BusinessException {
+    protected ReplyMsgData processVideoMsg(VideoMsgData videoMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(videoMsgData.getToUserName(), videoMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    protected ReplyMsgParam processVoiceMsg(VoiceMsgData voiceMsgData) throws BusinessException {
+    protected ReplyMsgData processVoiceMsg(VoiceMsgData voiceMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(voiceMsgData.getToUserName(), voiceMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    protected ReplyMsgParam processImageMsg(ImageMsgData imageMsgData) throws BusinessException {
+    protected ReplyMsgData processImageMsg(ImageMsgData imageMsgData) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(imageMsgData.getToUserName(), imageMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
-    protected ReplyMsgParam processTextMsg(TextMsgData textMsgCb) throws BusinessException {
+    protected ReplyMsgData processTextMsg(TextMsgData textMsgCb) throws BusinessException {
         return WeixinMsgUtilPlus.prepareTextReply(textMsgCb.getToUserName(), textMsgCb.getFromUserName(), NOT_SUPPORT);
     }
 }

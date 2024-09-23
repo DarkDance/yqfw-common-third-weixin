@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.mp.model.callback.item;
+package cn.jzyunqi.common.third.weixin.mp.callback.model;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,5 +9,6 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class NewsMsgData extends BaseMsgData{
+public class LinkMsgData extends BaseMsgData{
 }
+

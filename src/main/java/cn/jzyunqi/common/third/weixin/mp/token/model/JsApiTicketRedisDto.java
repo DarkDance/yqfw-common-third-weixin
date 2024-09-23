@@ -1,9 +1,8 @@
-package cn.jzyunqi.common.third.weixin.mp.model.redis;
+package cn.jzyunqi.common.third.weixin.mp.token.model;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -13,14 +12,13 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
-public class ClientTokenRedisDto implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -3361217292124952710L;
+public class JsApiTicketRedisDto implements Serializable {
+    private static final long serialVersionUID = -1882849843222236844L;
 
     /**
-     * 授权token
+     * 授权ticket
      */
-    private String token;
+    private String ticket;
 
     /**
      * 过期时间

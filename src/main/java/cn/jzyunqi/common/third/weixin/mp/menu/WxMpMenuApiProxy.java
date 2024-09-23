@@ -6,6 +6,7 @@ import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuData;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuTryMatchParam;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMpSelfMenuInfoRsp;
+import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuRsp;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
@@ -48,5 +49,5 @@ public interface WxMpMenuApiProxy {
 
     //自定义菜单 - 获取自定义菜单配置(只能查询API定义的菜单)
     @GetExchange(url = "/cgi-bin/menu/get")
-    WxMenuData selfMenuGet(@RequestParam String access_token) throws BusinessException;
+    WxMenuRsp selfMenuGet(@RequestParam String access_token) throws BusinessException;
 }

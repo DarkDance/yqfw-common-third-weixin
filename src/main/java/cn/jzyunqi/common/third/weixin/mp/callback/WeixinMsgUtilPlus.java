@@ -1,9 +1,9 @@
-package cn.jzyunqi.common.third.weixin.mp.utils;
+package cn.jzyunqi.common.third.weixin.mp.callback;
 
-import cn.jzyunqi.common.third.weixin.mp.model.enums.MsgType;
+import cn.jzyunqi.common.third.weixin.mp.callback.enums.MsgType;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpItemData;
 import cn.jzyunqi.common.third.weixin.mp.model.request.ItemListParam;
-import cn.jzyunqi.common.third.weixin.mp.model.request.ReplyMsgParam;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
 import cn.jzyunqi.common.utils.BooleanUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
 
@@ -24,8 +24,8 @@ public class WeixinMsgUtilPlus {
      * @param content      内容
      * @return 模型
      */
-    public static ReplyMsgParam prepareTextReply(@Nullable String fromUserName, String toOpenId, String content){
-        ReplyMsgParam textReply = new ReplyMsgParam();
+    public static ReplyMsgData prepareTextReply(@Nullable String fromUserName, String toOpenId, String content){
+        ReplyMsgData textReply = new ReplyMsgData();
         textReply.setToUserName(toOpenId);
         textReply.setFromUserName(fromUserName);
         textReply.setCreateTime((int) System.currentTimeMillis());
@@ -46,8 +46,8 @@ public class WeixinMsgUtilPlus {
      * @param mediaId      媒体ID
      * @return 模型
      */
-    public static ReplyMsgParam prepareImageReply(@Nullable String fromUserName, String toOpenId, String mediaId){
-        ReplyMsgParam imageReply = new ReplyMsgParam();
+    public static ReplyMsgData prepareImageReply(@Nullable String fromUserName, String toOpenId, String mediaId){
+        ReplyMsgData imageReply = new ReplyMsgData();
         imageReply.setToUserName(toOpenId);
         imageReply.setFromUserName(fromUserName);
         imageReply.setCreateTime((int) System.currentTimeMillis());
@@ -67,8 +67,8 @@ public class WeixinMsgUtilPlus {
      * @param mediaId      媒体ID
      * @return 模型
      */
-    public static ReplyMsgParam prepareVoiceReply(@Nullable String fromUserName, String toOpenId, String mediaId){
-        ReplyMsgParam voiceReply = new ReplyMsgParam();
+    public static ReplyMsgData prepareVoiceReply(@Nullable String fromUserName, String toOpenId, String mediaId){
+        ReplyMsgData voiceReply = new ReplyMsgData();
         voiceReply.setToUserName(toOpenId);
         voiceReply.setFromUserName(fromUserName);
         voiceReply.setCreateTime((int) System.currentTimeMillis());
@@ -91,8 +91,8 @@ public class WeixinMsgUtilPlus {
      * @param thumbMediaId 缩略图的媒体ID
      * @return 模型
      */
-    public static ReplyMsgParam prepareVideoReply(@Nullable String fromUserName, String toOpenId, String title, String description, String mediaId, @Nullable String thumbMediaId){
-        ReplyMsgParam videoReply = new ReplyMsgParam();
+    public static ReplyMsgData prepareVideoReply(@Nullable String fromUserName, String toOpenId, String title, String description, String mediaId, @Nullable String thumbMediaId){
+        ReplyMsgData videoReply = new ReplyMsgData();
         videoReply.setToUserName(toOpenId);
         videoReply.setFromUserName(fromUserName);
         videoReply.setCreateTime((int) System.currentTimeMillis());
@@ -119,8 +119,8 @@ public class WeixinMsgUtilPlus {
      * @param thumbMediaId 媒体ID
      * @return 模型
      */
-    public static ReplyMsgParam prepareMusicReply(@Nullable String fromUserName, String toOpenId, String title, String description, String musicUrl, String hqMusicUrl, String thumbMediaId){
-        ReplyMsgParam musicReply = new ReplyMsgParam();
+    public static ReplyMsgData prepareMusicReply(@Nullable String fromUserName, String toOpenId, String title, String description, String musicUrl, String hqMusicUrl, String thumbMediaId){
+        ReplyMsgData musicReply = new ReplyMsgData();
         musicReply.setToUserName(toOpenId);
         musicReply.setFromUserName(fromUserName);
         musicReply.setCreateTime((int) System.currentTimeMillis());
@@ -162,8 +162,8 @@ public class WeixinMsgUtilPlus {
      * @param itemDataList 内容列表
      * @return 模型
      */
-    public static ReplyMsgParam prepareArticlesReply(@Nullable String fromUserName, String toOpenId, List<WxMpItemData> itemDataList){
-        ReplyMsgParam articlesReply = new ReplyMsgParam();
+    public static ReplyMsgData prepareArticlesReply(@Nullable String fromUserName, String toOpenId, List<WxMpItemData> itemDataList){
+        ReplyMsgData articlesReply = new ReplyMsgData();
         articlesReply.setToUserName(toOpenId);
         articlesReply.setFromUserName(fromUserName);
         articlesReply.setCreateTime((int) System.currentTimeMillis());
@@ -184,8 +184,8 @@ public class WeixinMsgUtilPlus {
      * @param mediaId   媒体ID
      * @return 模型
      */
-    public static ReplyMsgParam prepareMPArticlesReply(String toOpenId, String mediaId){
-        ReplyMsgParam replyMsgParam = new ReplyMsgParam();
+    public static ReplyMsgData prepareMPArticlesReply(String toOpenId, String mediaId){
+        ReplyMsgData replyMsgParam = new ReplyMsgData();
         replyMsgParam.setToUserName(toOpenId);
         replyMsgParam.setMsgType(MsgType.mpnews);
 
@@ -237,8 +237,8 @@ public class WeixinMsgUtilPlus {
      * @param toOpenId   消息接收方
      * @param cardId     code码
      */
-    public static ReplyMsgParam prepareWxCardReply(String toOpenId, String cardId){
-        ReplyMsgParam replyMsgParam = new ReplyMsgParam();
+    public static ReplyMsgData prepareWxCardReply(String toOpenId, String cardId){
+        ReplyMsgData replyMsgParam = new ReplyMsgData();
         replyMsgParam.setToUserName(toOpenId);
         replyMsgParam.setMsgType(MsgType.wxcard);
 
@@ -256,8 +256,8 @@ public class WeixinMsgUtilPlus {
      * @param csAccount    客服账号(可以为空)
      * @return 模型
      */
-    public static ReplyMsgParam prepareCSTransferReply(String fromUserName, String toOpenId, String csAccount){
-        ReplyMsgParam reply = new ReplyMsgParam();
+    public static ReplyMsgData prepareCSTransferReply(String fromUserName, String toOpenId, String csAccount){
+        ReplyMsgData reply = new ReplyMsgData();
         reply.setToUserName(toOpenId);
         reply.setFromUserName(fromUserName);
         reply.setCreateTime((int) System.currentTimeMillis());
