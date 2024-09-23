@@ -1,7 +1,7 @@
-package cn.jzyunqi.common.third.weixin.mp.model.request.item;
+package cn.jzyunqi.common.third.weixin.mp.menu.model;
 
-import cn.jzyunqi.common.third.weixin.mp.model.enums.ButtonType;
-import cn.jzyunqi.common.third.weixin.mp.model.enums.ClickType;
+import cn.jzyunqi.common.third.weixin.mp.menu.enums.ButtonType;
+import cn.jzyunqi.common.third.weixin.mp.menu.enums.ClickType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class MenuButtonData implements Serializable {
+public class WxMenuButtonData implements Serializable {
     @Serial
     private static final long serialVersionUID = -4706066149001165271L;
 
@@ -57,5 +57,5 @@ public class MenuButtonData implements Serializable {
      * 子菜单列表
      */
     @JsonProperty("sub_button")
-    private List<MenuButtonData> subButton;
+    private List<WxMenuButtonData> subButton;
 }

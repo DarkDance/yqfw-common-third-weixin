@@ -3,27 +3,18 @@ package cn.jzyunqi.common.third.weixin.mp.client;
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.redis.Cache;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
-import cn.jzyunqi.common.third.weixin.mp.model.enums.ButtonType;
 import cn.jzyunqi.common.third.weixin.mp.model.enums.InfoScope;
-import cn.jzyunqi.common.third.weixin.mp.model.enums.MsgType;
 import cn.jzyunqi.common.third.weixin.mp.model.request.item.LineColorData;
-import cn.jzyunqi.common.third.weixin.mp.model.request.item.MenuButtonData;
 import cn.jzyunqi.common.third.weixin.mp.model.callback.MsgDetailCb;
 import cn.jzyunqi.common.third.weixin.mp.model.callback.MsgSimpleCb;
-import cn.jzyunqi.common.third.weixin.mp.model.redis.InterfaceTokenRedisDto;
 import cn.jzyunqi.common.third.weixin.mp.model.redis.JsApiTicketRedisDto;
-import cn.jzyunqi.common.third.weixin.mp.model.request.ItemListParam;
-import cn.jzyunqi.common.third.weixin.mp.model.request.MenuParam;
 import cn.jzyunqi.common.third.weixin.mp.model.request.QrcodeParam;
 import cn.jzyunqi.common.third.weixin.mp.model.request.ReplyMsgParam;
-import cn.jzyunqi.common.third.weixin.mp.model.request.TmpMsgParam;
-import cn.jzyunqi.common.third.weixin.mp.model.response.InterfaceTokenRsp;
+import cn.jzyunqi.common.third.weixin.mp.message.model.WxMpTemplateMsgParam;
 import cn.jzyunqi.common.third.weixin.mp.model.response.JsApiTicketRsp;
 import cn.jzyunqi.common.third.weixin.mp.model.response.MassRsp;
-import cn.jzyunqi.common.third.weixin.mp.model.response.MenuInfoRsp;
-import cn.jzyunqi.common.third.weixin.mp.model.response.UploadMediaRsp;
 import cn.jzyunqi.common.third.weixin.mp.model.response.MpUserInfoRsp;
-import cn.jzyunqi.common.third.weixin.common.response.WeixinRsp;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import cn.jzyunqi.common.utils.BooleanUtilPlus;
 import cn.jzyunqi.common.utils.CollectionUtilPlus;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
@@ -36,14 +27,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.hc.core5.net.URIBuilder;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
@@ -52,7 +40,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -66,17 +53,13 @@ import java.util.stream.Stream;
  * @since 2018/5/29.
  */
 @Slf4j
+@Deprecated
 public class WeixinCgiClient {
 
     /**
      * 获取用户授权
      */
     private static final String WX_PUBLIC_BASE_FMT_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=#wechat_redirect";
-
-    /**
-     * 获取access_token
-     */
-    private static final String WX_INTERFACE_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
 
     /**
      * 获得jsapi_ticket
@@ -89,32 +72,10 @@ public class WeixinCgiClient {
     private static final String WX_USER_INFO_URL = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN";
 
     /**
-     * 公众号菜单查询、新增、删除
-     */
-    private static final String WX_MENU_GET = "https://api.weixin.qq.com/cgi-bin/menu/get?access_token=%s";
-    private static final String WX_MENU_ADD = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s";
-    private static final String WX_MENU_DEL = "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=%s";
-
-    /**
      * 临时素材处理接口
      */
-    private static final String WX_TMP_MTL_ADD = "https://api.weixin.qq.com/cgi-bin/media/upload?access_token=%s&type=%s"; //新增临时素材
     private static final String WX_TMP_MTL_ART_ADD = "https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=%s"; //上传原创图文消息
-    private static final String WX_TMP_MTL_ART_IMG = "https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=%s"; //上传图文消息内的图片获取图片url
-    //private static final String WX_TMP_MTL_ART_VIDEO = "https://api.weixin.qq.com/cgi-bin/media/uploadvideo?access_token=%s"; //群推视频素材(需要先使用media/upload上传，再通过该接口上传)
-    //private static final String WX_TMP_MTL_GET = "https://api.weixin.qq.com/cgi-bin/media/get"; //获取临时素材
-    //private static final String WX_TMP_MTL_JS_GET = "https://api.weixin.qq.com/cgi-bin/media/get/jssdk"; //高清语音素材获取接口
 
-    /**
-     * 永久素材处理接口
-     */
-    private static final String WX_PPT_MTL_ADD = "https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=%s&type=%s"; //新增永久非图文素材
-    private static final String WX_PPT_MTL_ART_ADD = "https://api.weixin.qq.com/cgi-bin/material/add_news?access_token=%s"; //新增永久图文素材
-    //private static final String WX_PPT_MTL_ART_EDIT = "https://api.weixin.qq.com/cgi-bin/material/update_news"; //修改永久图文素材
-    //private static final String WX_PPT_MTL_GET = "https://api.weixin.qq.com/cgi-bin/material/get_material"; //获取永久素材
-    //private static final String WX_PPT_MTL_DEL = "https://api.weixin.qq.com/cgi-bin/material/del_material"; //删除永久素材
-    //private static final String WX_PPT_MTL_COUNT = "https://api.weixin.qq.com/cgi-bin/material/get_materialcount"; //获取素材总数
-    //private static final String WX_PPT_MTL_LIST = "https://api.weixin.qq.com/cgi-bin/material/batchget_material"; //获取素材列表
 
     /**
      * 原创推文
@@ -126,11 +87,6 @@ public class WeixinCgiClient {
     //private static final String WX_MASS_STATUS_GET = "https://api.weixin.qq.com/cgi-bin/message/mass/get?access_token=ACCESS_TOKEN"; //查询群发消息发送状态
     //private static final String WX_MASS_SPEED_GET = "https://api.weixin.qq.com/cgi-bin/message/mass/speed/get?access_token=ACCESS_TOKEN"; //查询群发速度
     //private static final String WX_MASS_SPEED_EDIT = "https://api.weixin.qq.com/cgi-bin/message/mass/speed/set?access_token=ACCESS_TOKEN"; //设置群发速度
-
-    /**
-     * 订阅消息推送
-     */
-    private static final String WX_SUBSCRIBE_SEND = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=%s";//下发用户主动订阅的消息，用来代旧版本的替模板消息
 
     /**
      * 获取小程序二维码
@@ -270,39 +226,7 @@ public class WeixinCgiClient {
      * @return 获取access_token
      */
     public String getInterfaceToken() throws BusinessException {
-        InterfaceTokenRedisDto tokenResult = (InterfaceTokenRedisDto) redisHelper.vGet(tokenCache, interfaceTokenKey);
-        if (tokenResult != null && LocalDateTime.now().isBefore(tokenResult.getExpireTime())) {
-            return tokenResult.getToken();
-        }
-
-        InterfaceTokenRsp interfaceTokenRsp;
-        try {
-            URI accessTokenUri = new URIBuilder(String.format(WX_INTERFACE_TOKEN_URL, appId, appSecret)).build();
-
-            RequestEntity<Map<String, String>> requestEntity = new RequestEntity<>(HttpMethod.GET, accessTokenUri);
-            ResponseEntity<InterfaceTokenRsp> weixinUserRsp = restTemplate.exchange(requestEntity, InterfaceTokenRsp.class);
-            interfaceTokenRsp = weixinUserRsp.getBody();
-        } catch (Exception e) {
-            log.error("======WeixinCgiHelper getInterfaceToken other error:", e);
-            throw new BusinessException("common_error_wx_get_interface_token_error");
-        }
-
-        //微信不管成功还是失败，返回的都是200，需要通过额外的字段来判断是否真的成功
-        if (interfaceTokenRsp != null && StringUtilPlus.isEmpty(interfaceTokenRsp.getErrorCode())) {
-            //把token放入缓存
-            tokenResult = new InterfaceTokenRedisDto();
-            tokenResult.setToken(interfaceTokenRsp.getAccessToken()); //获取到的凭证
-            tokenResult.setExpireTime(LocalDateTime.now().plusSeconds(interfaceTokenRsp.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
-            redisHelper.vPut(tokenCache, interfaceTokenKey, tokenResult);
-
-            return interfaceTokenRsp.getAccessToken();
-        } else {
-            if (interfaceTokenRsp == null) {
-                interfaceTokenRsp = new InterfaceTokenRsp();
-            }
-            log.error("======WeixinCgiHelper getInterfaceToken 200 error[{}][{}]", interfaceTokenRsp.getErrorCode(), interfaceTokenRsp.getErrorMsg());
-            throw new BusinessException("common_error_wx_get_interface_token_failed");
-        }
+        return null;
     }
 
     /**
@@ -374,225 +298,6 @@ public class WeixinCgiClient {
             }
             log.error("======WeixinCgiHelper getPublicUserInfo 200 error[{}][{}]", userInfoRsp.getErrorCode(), userInfoRsp.getErrorMsg());
             throw new BusinessException("common_error_wx_get_public_user_info_failed");
-        }
-    }
-
-    /**
-     * 查找全部目录
-     */
-    public MenuInfoRsp getAllMenu() throws BusinessException {
-        MenuInfoRsp searchResult;
-        try {
-            URI menuSearchUri = new URIBuilder(String.format(WX_MENU_GET, this.getInterfaceToken())).build();
-
-            RequestEntity<String> requestEntity = new RequestEntity<>(HttpMethod.GET, menuSearchUri);
-            ResponseEntity<MenuInfoRsp> wxMenuRsp = restTemplate.exchange(requestEntity, MenuInfoRsp.class);
-
-            searchResult = wxMenuRsp.getBody();
-        } catch (Exception e) {
-            log.error("======WeixinCgiHelper searchAllMenu other error:", e);
-            throw new BusinessException("common_error_wx_select_menu_error");
-        }
-
-        if (searchResult != null && StringUtilPlus.isBlank(searchResult.getErrorCode())) {
-            //处理非微信属性
-            if (searchResult.getMenu() != null) {
-                for (MenuButtonData menuButtonData : searchResult.getMenu().getButton()) {
-                    if (CollectionUtilPlus.Collection.isEmpty(menuButtonData.getSubButton())) {
-                        menuButtonData.setButtonType(ButtonType.BUTTON);
-                    } else {
-                        menuButtonData.setButtonType(ButtonType.SUB_MENU);
-                        for (MenuButtonData model : menuButtonData.getSubButton()) {
-                            model.setButtonType(ButtonType.BUTTON);
-                        }
-                    }
-                }
-            } else {//没有找到默认目录
-                searchResult.setMenu(new MenuParam());
-            }
-            return searchResult;
-        } else {
-            if (searchResult == null) {
-                searchResult = new MenuInfoRsp();
-            }
-            log.error("======WeixinCgiHelper searchAllMenu 200 error [{}][{}]:", searchResult.getErrorCode(), searchResult.getErrorMsg());
-            throw new BusinessException("common_error_wx_select_menu_failed");
-        }
-    }
-
-    /**
-     * 新增菜单
-     */
-    public void addDefaultMenu(MenuParam menuParam) throws BusinessException {
-        MenuInfoRsp createResult;
-        try {
-            URI reg = new URIBuilder(String.format(WX_MENU_ADD, this.getInterfaceToken())).build();
-
-            Iterator<MenuButtonData> buttonIt = menuParam.getButton().iterator();
-            while (buttonIt.hasNext()) {
-                MenuButtonData button = buttonIt.next();
-                if (button.getButtonType() == null) {
-                    buttonIt.remove();
-                } else {
-                    if (button.getButtonType() == ButtonType.BUTTON) {
-                        button.setSubButton(null);
-                    } else {
-                        button.getSubButton().removeIf(subButton -> subButton.getType() == null);
-                    }
-                }
-            }
-
-            RequestEntity<MenuParam> requestEntity = new RequestEntity<>(menuParam, HttpMethod.POST, reg);
-            ResponseEntity<MenuInfoRsp> createRsp = restTemplate.exchange(requestEntity, MenuInfoRsp.class);
-            createResult = createRsp.getBody();
-        } catch (Exception e) {
-            log.error("======WeixinCgiHelper addDefaultMenu other error:", e);
-            throw new BusinessException("common_error_wx_create_menu_error");
-        }
-
-        if (createResult == null || !"0".equals(createResult.getErrorCode())) {
-            if (createResult == null) {
-                createResult = new MenuInfoRsp();
-            }
-            log.error("======WeixinCgiHelper addDefaultMenu 200 error [{}][{}]:", createResult.getErrorCode(), createResult.getErrorMsg());
-            throw new BusinessException("common_error_wx_create_menu_failed");
-        }
-    }
-
-    /**
-     * 删除原有菜单(含特殊菜单)
-     */
-    public void deleteAllMenu() throws BusinessException {
-        WeixinRsp deleteMenuRsp;
-        try {
-            URI deleteMenuUri = new URIBuilder(String.format(WX_MENU_DEL, this.getInterfaceToken())).build();
-
-            RequestEntity<String> requestEntity = new RequestEntity<>(HttpMethod.GET, deleteMenuUri);
-            ResponseEntity<WeixinRsp> deleteRsp = restTemplate.exchange(requestEntity, WeixinRsp.class);
-            deleteMenuRsp = deleteRsp.getBody();
-        } catch (Exception e) {
-            log.error("======WeixinCgiHelper deleteAllMenu other error:", e);
-            throw new BusinessException("common_error_wx_delete_menu_error");
-        }
-
-        if (deleteMenuRsp == null || !"0".equals(deleteMenuRsp.getErrorCode())) {
-            if (deleteMenuRsp == null) {
-                deleteMenuRsp = new MpUserInfoRsp();
-            }
-            log.error("======WeixinCgiHelper deleteAllMenu 200 error [{}][{}]:", deleteMenuRsp.getErrorCode(), deleteMenuRsp.getErrorMsg());
-            throw new BusinessException("common_error_wx_delete_menu_failed");
-        }
-    }
-
-    /**
-     * 非图文素材添加 image, voice, video, thumb
-     */
-    public UploadMediaRsp addMaterial(MsgType materialType, Resource resource, Boolean forMass, String videoTitle, String videoIntroduction) throws BusinessException {
-        UploadMediaRsp uploadMediaRsp;
-        try {
-            URI materialAddUri;
-            if (BooleanUtilPlus.isTrue(forMass)) {
-                materialAddUri = new URIBuilder(String.format(WX_TMP_MTL_ADD, this.getInterfaceToken(), materialType)).build();
-            } else {
-                materialAddUri = new URIBuilder(String.format(WX_PPT_MTL_ADD, this.getInterfaceToken(), materialType)).build();
-            }
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-            MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-            params.add("media", resource);
-            if (BooleanUtilPlus.isFalse(forMass) && materialType == MsgType.video) {
-                params.add("description", String.format("{\"title\":\"%s\", \"introduction\":\"%s\"}", videoTitle, videoIntroduction));
-            }
-
-            RequestEntity<MultiValueMap<String, Object>> requestEntity = new RequestEntity<>(params, headers, HttpMethod.POST, materialAddUri);
-            ResponseEntity<UploadMediaRsp> responseEntity = restTemplate.exchange(requestEntity, UploadMediaRsp.class);
-            uploadMediaRsp = responseEntity.getBody();
-        } catch (Exception e) {
-            log.error("======WeixinCgiHelper addMaterial other error:", e);
-            throw new BusinessException("common_error_wx_mtl_add_error");
-        }
-
-        if (uploadMediaRsp != null && uploadMediaRsp.getErrorCode() == null) {
-            return uploadMediaRsp;
-        } else {
-            if (uploadMediaRsp == null) {
-                uploadMediaRsp = new UploadMediaRsp();
-            }
-            log.error("======WeixinCgiHelper addMaterial 200 error [{}][{}]:", uploadMediaRsp.getErrorCode(), uploadMediaRsp.getErrorMsg());
-            throw new BusinessException("common_error_wx_mtl_add_failed");
-        }
-    }
-
-    /**
-     * 图文素材添加
-     */
-    public UploadMediaRsp addArticle(ItemListParam itemListParam, Boolean forMass) throws BusinessException {
-        UploadMediaRsp uploadMediaRsp;
-        try {
-            URI articlesAddUri;
-            if (BooleanUtilPlus.isTrue(forMass)) {
-                articlesAddUri = new URIBuilder(String.format(WX_TMP_MTL_ART_ADD, this.getInterfaceToken())).build();
-            } else {
-                articlesAddUri = new URIBuilder(String.format(WX_PPT_MTL_ART_ADD, this.getInterfaceToken())).build();
-            }
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            RequestEntity<ItemListParam> requestEntity = new RequestEntity<>(itemListParam, headers, HttpMethod.POST, articlesAddUri);
-            ResponseEntity<UploadMediaRsp> responseEntity = restTemplate.exchange(requestEntity, UploadMediaRsp.class);
-            uploadMediaRsp = responseEntity.getBody();
-        } catch (Exception e) {
-            log.error("======WeixinCgiHelper addTempArticle other error:", e);
-            throw new BusinessException("common_error_wx_tmp_mtl_art_add_error");
-        }
-
-        if (uploadMediaRsp != null && uploadMediaRsp.getErrorCode() == null) {
-            return uploadMediaRsp;
-        } else {
-            if (uploadMediaRsp == null) {
-                uploadMediaRsp = new UploadMediaRsp();
-            }
-            log.error("======WeixinCgiHelper addTempArticle 200 error [{}][{}]:", uploadMediaRsp.getErrorCode(), uploadMediaRsp.getErrorMsg());
-            throw new BusinessException("common_error_wx_tmp_mtl_art_add_failed");
-        }
-    }
-
-    /**
-     * 图文素材内容图片添加
-     * 备注：微信解析问题，boundary
-     * content-type=[multipart/form-data;boundary=u0JYZ2dbc3BfS4IqmZjyV-iBOOu-Ag] spring 4.3
-     * content-type=[multipart/form-data;boundary=wTm6jLai3X7i8US3jkKnB8aT0atk8ORUM;charset=UTF-8] spring 5.0(FormHttpMessageConverter, boundary和charset顺序问题？)
-     */
-    public UploadMediaRsp addArticleImage(Resource resource) throws BusinessException {
-        UploadMediaRsp uploadMediaRsp;
-        try {
-            URI mtlArtImgAddUri = new URIBuilder(String.format(WX_TMP_MTL_ART_IMG, this.getInterfaceToken())).build();
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
-            MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
-            params.add("media", resource);
-
-            RequestEntity<MultiValueMap<String, Object>> requestEntity = new RequestEntity<>(params, headers, HttpMethod.POST, mtlArtImgAddUri);
-            ResponseEntity<UploadMediaRsp> responseEntity = restTemplate.exchange(requestEntity, UploadMediaRsp.class);
-            uploadMediaRsp = responseEntity.getBody();
-        } catch (Exception e) {
-            log.error("======WeixinCgiHelper addArticleImage other error:", e);
-            throw new BusinessException("common_error_wx_mtl_art_img_error");
-        }
-
-        if (uploadMediaRsp != null && uploadMediaRsp.getErrorCode() == null) {
-            return uploadMediaRsp;
-        } else {
-            if (uploadMediaRsp == null) {
-                uploadMediaRsp = new UploadMediaRsp();
-            }
-            log.error("======WeixinCgiHelper addArticleImage 200 error [{}][{}]:", uploadMediaRsp.getErrorCode(), uploadMediaRsp.getErrorMsg());
-            throw new BusinessException("common_error_wx_mtl_art_img_failed");
         }
     }
 
@@ -707,41 +412,6 @@ public class WeixinCgiClient {
                 log.error("======WeixinCgiHelper replyMessageNotice error:", e);
                 return REPLAY_MESSAGE_FAILED;
             }
-        }
-    }
-
-    /**
-     * 发送小程序消息
-     *
-     * @param toOpenId   发送给谁
-     * @param templateId 模板内容id
-     * @param data       模板数据
-     * @param page       跳转页面
-     */
-    public void sendMpTemplateMessage(String toOpenId, String templateId, Map<String, Map<String, String>> data, String page) throws BusinessException {
-        WeixinRsp openRsp;
-        try {
-            URI weixinMsgSendUri = new URIBuilder(String.format(WX_SUBSCRIBE_SEND, this.getInterfaceToken())).build();
-            TmpMsgParam tmpMsgParam = new TmpMsgParam();
-            tmpMsgParam.setToUser(toOpenId);
-            tmpMsgParam.setTemplateId(templateId);
-            tmpMsgParam.setData(data);
-            tmpMsgParam.setPage(page);
-            //tmpMsgParam.setMiniProgramState();
-            //tmpMsgParam.setLang();
-
-            RequestEntity<TmpMsgParam> requestEntity = new RequestEntity<>(tmpMsgParam, HttpMethod.POST, weixinMsgSendUri);
-            ResponseEntity<WeixinRsp> sendRsp = restTemplate.exchange(requestEntity, WeixinRsp.class);
-
-            openRsp = Optional.ofNullable(sendRsp.getBody()).orElseGet(WeixinRsp::new);
-        } catch (Exception e) {
-            log.error("======WeixinCgiHelper sendWpTemplateMessage other error:", e);
-            throw new BusinessException("common_error_wx_send_template_message_error");
-        }
-
-        if (!"0".equals(openRsp.getErrorCode())) {
-            log.error("======WeixinCgiHelper sendWpTemplateMessage 200 error [{}][{}]:", openRsp.getErrorCode(), openRsp.getErrorMsg());
-            throw new BusinessException("common_error_wx_send_template_message_failed");
         }
     }
 

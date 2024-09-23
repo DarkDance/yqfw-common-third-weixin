@@ -1,7 +1,6 @@
-package cn.jzyunqi.common.third.weixin.mp.model.request;
+package cn.jzyunqi.common.third.weixin.mp.menu.model;
 
-import cn.jzyunqi.common.third.weixin.mp.model.request.item.MatchRuleData;
-import cn.jzyunqi.common.third.weixin.mp.model.request.item.MenuButtonData;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,7 +15,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class MenuParam implements Serializable {
+public class WxMenuData extends WeixinRsp implements Serializable {
     @Serial
     private static final long serialVersionUID = -7895223754676094123L;
 
@@ -29,11 +28,11 @@ public class MenuParam implements Serializable {
     /**
      * 目录按钮
      */
-    private List<MenuButtonData> button;
+    private List<WxMenuButtonData> button;
 
     /**
      * 个性化规则
      */
     @JsonProperty("matchrule")
-    private MatchRuleData matchRule;
+    private WxMenuRuleData matchRule;
 }

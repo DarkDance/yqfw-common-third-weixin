@@ -1,6 +1,6 @@
 package cn.jzyunqi.common.third.weixin.open.model.response;
 
-import cn.jzyunqi.common.third.weixin.common.response.WeixinRsp;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;

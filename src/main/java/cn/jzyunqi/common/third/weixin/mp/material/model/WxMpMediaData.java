@@ -1,7 +1,7 @@
-package cn.jzyunqi.common.third.weixin.mp.model.response;
+package cn.jzyunqi.common.third.weixin.mp.material.model;
 
-import cn.jzyunqi.common.third.weixin.mp.model.enums.MsgType;
-import cn.jzyunqi.common.third.weixin.common.response.WeixinRsp;
+import cn.jzyunqi.common.third.weixin.mp.material.enums.MaterialType;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,14 +16,14 @@ import java.io.Serial;
 @Getter
 @Setter
 @ToString
-public class UploadMediaRsp extends WeixinRsp {
+public class WxMpMediaData extends WeixinRsp {
     @Serial
     private static final long serialVersionUID = 7921679008435737891L;
 
     /**
      * 类型
      */
-    private MsgType type;
+    private MaterialType type;
 
     /**
      * media_id

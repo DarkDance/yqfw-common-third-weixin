@@ -1,7 +1,7 @@
 package cn.jzyunqi.common.third.weixin.mp.utils;
 
 import cn.jzyunqi.common.third.weixin.mp.model.enums.MsgType;
-import cn.jzyunqi.common.third.weixin.mp.model.request.item.ItemData;
+import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpItemData;
 import cn.jzyunqi.common.third.weixin.mp.model.request.ItemListParam;
 import cn.jzyunqi.common.third.weixin.mp.model.request.ReplyMsgParam;
 import cn.jzyunqi.common.utils.BooleanUtilPlus;
@@ -32,7 +32,7 @@ public class WeixinMsgUtilPlus {
         textReply.setMsgType(MsgType.text);
         textReply.setContent(content);
 
-        ItemData text = new ItemData();
+        WxMpItemData text = new WxMpItemData();
         text.setContent(content);
         textReply.setText(text);
         return textReply;
@@ -53,7 +53,7 @@ public class WeixinMsgUtilPlus {
         imageReply.setCreateTime((int) System.currentTimeMillis());
         imageReply.setMsgType(MsgType.image);
 
-        ItemData image = new ItemData();
+        WxMpItemData image = new WxMpItemData();
         image.setMediaId(mediaId);
         imageReply.setImage(image);
         return imageReply;
@@ -74,7 +74,7 @@ public class WeixinMsgUtilPlus {
         voiceReply.setCreateTime((int) System.currentTimeMillis());
         voiceReply.setMsgType(MsgType.voice);
 
-        ItemData voice = new ItemData();
+        WxMpItemData voice = new WxMpItemData();
         voice.setMediaId(mediaId);
         voiceReply.setVoice(voice);
         return voiceReply;
@@ -98,7 +98,7 @@ public class WeixinMsgUtilPlus {
         videoReply.setCreateTime((int) System.currentTimeMillis());
         videoReply.setMsgType(MsgType.video);
 
-        ItemData video = new ItemData();
+        WxMpItemData video = new WxMpItemData();
         video.setTitle(title);
         video.setDescription(description);
         video.setMediaId(mediaId);
@@ -126,7 +126,7 @@ public class WeixinMsgUtilPlus {
         musicReply.setCreateTime((int) System.currentTimeMillis());
         musicReply.setMsgType(MsgType.music);
 
-        ItemData music = new ItemData();
+        WxMpItemData music = new WxMpItemData();
         music.setTitle(title);
         music.setDescription(description);
         music.setMusicUrl(musicUrl);
@@ -145,8 +145,8 @@ public class WeixinMsgUtilPlus {
      * @param url         跳转链接
      * @return 模型
      */
-    public static ItemData prepareArticleReplyItem(String title, String description, String picUrl, String url){
-        ItemData itemData = new ItemData();
+    public static WxMpItemData prepareArticleReplyItem(String title, String description, String picUrl, String url){
+        WxMpItemData itemData = new WxMpItemData();
         itemData.setTitle(title);
         itemData.setDescription(description);
         itemData.setPicUrl(picUrl);
@@ -162,7 +162,7 @@ public class WeixinMsgUtilPlus {
      * @param itemDataList 内容列表
      * @return 模型
      */
-    public static ReplyMsgParam prepareArticlesReply(@Nullable String fromUserName, String toOpenId, List<ItemData> itemDataList){
+    public static ReplyMsgParam prepareArticlesReply(@Nullable String fromUserName, String toOpenId, List<WxMpItemData> itemDataList){
         ReplyMsgParam articlesReply = new ReplyMsgParam();
         articlesReply.setToUserName(toOpenId);
         articlesReply.setFromUserName(fromUserName);
@@ -189,7 +189,7 @@ public class WeixinMsgUtilPlus {
         replyMsgParam.setToUserName(toOpenId);
         replyMsgParam.setMsgType(MsgType.mpnews);
 
-        ItemData mpNewsModel = new ItemData();
+        WxMpItemData mpNewsModel = new WxMpItemData();
         mpNewsModel.setMediaId(mediaId);
         replyMsgParam.setMpArticles(mpNewsModel);
         return replyMsgParam;
@@ -207,8 +207,8 @@ public class WeixinMsgUtilPlus {
      * @param showCoverPic 	是否显示封面
      * @return 模型
      */
-    public static ItemData prepareMaterialArticle(String title, String thumbMediaId, String content, String digest, String author, String contentSourceUrl, Boolean showCoverPic){
-        ItemData itemData = new ItemData();
+    public static WxMpItemData prepareMaterialArticle(String title, String thumbMediaId, String content, String digest, String author, String contentSourceUrl, Boolean showCoverPic){
+        WxMpItemData itemData = new WxMpItemData();
         itemData.setThumbMediaId(thumbMediaId);
         itemData.setAuthor(author);
         itemData.setTitle(title);
@@ -225,7 +225,7 @@ public class WeixinMsgUtilPlus {
      * @param itemDataList 内容列表
      * @return 模型
      */
-    public static ItemListParam prepareMaterialArticlesReply(List<ItemData> itemDataList){
+    public static ItemListParam prepareMaterialArticlesReply(List<WxMpItemData> itemDataList){
         ItemListParam itemListParam = new ItemListParam();
         itemListParam.setArticles(itemDataList);
         return itemListParam;
@@ -242,7 +242,7 @@ public class WeixinMsgUtilPlus {
         replyMsgParam.setToUserName(toOpenId);
         replyMsgParam.setMsgType(MsgType.wxcard);
 
-        ItemData wxCardModel = new ItemData();
+        WxMpItemData wxCardModel = new WxMpItemData();
         wxCardModel.setCardId(cardId);
         replyMsgParam.setWxCard(wxCardModel);
         return replyMsgParam;
@@ -264,7 +264,7 @@ public class WeixinMsgUtilPlus {
         reply.setMsgType(MsgType.transfer_customer_service);
 
         if (StringUtilPlus.isNotEmpty(csAccount)) {
-            ItemData csAcc = new ItemData();
+            WxMpItemData csAcc = new WxMpItemData();
             csAcc.setKfAccount(csAccount);
             reply.setCsAcc(csAcc);
         }

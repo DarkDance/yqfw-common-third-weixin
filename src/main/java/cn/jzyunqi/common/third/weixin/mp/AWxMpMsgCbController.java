@@ -38,7 +38,7 @@ import java.util.Map;
  * @since 2021/5/9.
  */
 @Slf4j
-public abstract class AWeixinMsgCbController {
+public abstract class AWxMpMsgCbController {
 
     private static final String NOT_SUPPORT = "Not support now!";
 

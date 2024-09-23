@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.mp.model.request.item;
+package cn.jzyunqi.common.third.weixin.mp.menu.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class MatchRuleData implements Serializable {
+public class WxMenuRuleData implements Serializable {
     @Serial
     private static final long serialVersionUID = 8284573062912140027L;
 

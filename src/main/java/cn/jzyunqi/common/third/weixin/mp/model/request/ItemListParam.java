@@ -1,6 +1,6 @@
 package cn.jzyunqi.common.third.weixin.mp.model.request;
 
-import cn.jzyunqi.common.third.weixin.mp.model.request.item.ItemData;
+import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpItemData;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,5 +24,5 @@ public class ItemListParam implements Serializable {
 
     @JsonProperty("articles")
     @XmlElement(name = "item")
-    private List<ItemData> articles;
+    private List<WxMpItemData> articles;
 }

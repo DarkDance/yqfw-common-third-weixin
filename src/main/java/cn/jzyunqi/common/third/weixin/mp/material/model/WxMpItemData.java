@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.mp.model.request.item;
+package cn.jzyunqi.common.third.weixin.mp.material.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -20,7 +20,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ItemData implements Serializable {
+public class WxMpItemData implements Serializable {
     @Serial
     private static final long serialVersionUID = 8926590897226459420L;
     /**

@@ -1,7 +1,7 @@
 package cn.jzyunqi.common.third.weixin.mp.model.request;
 
 import cn.jzyunqi.common.third.weixin.mp.model.enums.MsgType;
-import cn.jzyunqi.common.third.weixin.mp.model.request.item.ItemData;
+import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpItemData;
 import cn.jzyunqi.common.third.weixin.mp.model.request.item.MassFilterData;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -75,35 +75,35 @@ public class ReplyMsgParam implements Serializable {
      */
     @JsonProperty("text")
     @XmlTransient
-    private ItemData text;
+    private WxMpItemData text;
 
     /**
      * 图片消息：消息内容
      */
     @JsonProperty("image")
     @XmlElement(name = "Image")
-    private ItemData image;
+    private WxMpItemData image;
 
     /**
      * 语音消息：消息内容
      */
     @JsonProperty("voice")
     @XmlElement(name = "Voice")
-    private ItemData voice;
+    private WxMpItemData voice;
 
     /**
      * 视频消息：消息内容
      */
     @JsonProperty("video")
     @XmlElement(name = "Video")
-    private ItemData video;
+    private WxMpItemData video;
 
     /**
      * 音乐消息：消息内容
      */
     @JsonProperty("music")
     @XmlElement(name = "Music")
-    private ItemData music;
+    private WxMpItemData music;
 
     /**
      * 图文消息：消息数量
@@ -124,21 +124,21 @@ public class ReplyMsgParam implements Serializable {
      */
     @JsonProperty("mpnews")
     @XmlTransient
-    private ItemData mpArticles;
+    private WxMpItemData mpArticles;
 
     /**
      * 发送卡券：消息内容
      */
     @JsonProperty("wxcard")
     @XmlTransient
-    private ItemData wxCard;
+    private WxMpItemData wxCard;
 
     /**
      * 客服账号：转移至客服使用
      */
     @JsonProperty("customservice")
     @XmlElement(name = "TransInfo")
-    private ItemData csAcc;
+    private WxMpItemData csAcc;
 
     /**
      * 图文消息被判定为转载时，是否继续群发。 1为继续群发（转载），0为停止群发。 该参数默认为0。

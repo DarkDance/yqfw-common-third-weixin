@@ -1,7 +1,7 @@
 package cn.jzyunqi.common.third.weixin.mp.model.response;
 
-import cn.jzyunqi.common.third.weixin.mp.model.request.MenuParam;
-import cn.jzyunqi.common.third.weixin.common.response.WeixinRsp;
+import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuData;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,10 +21,10 @@ public class MenuInfoRsp extends WeixinRsp {
     /**
      * 默认目录
      */
-    private MenuParam menu;
+    private WxMenuData menu;
 
     /**
      * 个性化目录
      */
-    private List<MenuParam> conditional;
+    private List<WxMenuData> conditional;
 }
