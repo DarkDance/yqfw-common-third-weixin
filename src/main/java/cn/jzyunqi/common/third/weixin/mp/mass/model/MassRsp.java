@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.mp.model.response;
+package cn.jzyunqi.common.third.weixin.mp.mass.model;
 
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import com.fasterxml.jackson.annotation.JsonProperty;

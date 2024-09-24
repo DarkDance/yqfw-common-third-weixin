@@ -17,6 +17,8 @@ import cn.jzyunqi.common.third.weixin.mp.kefu.model.WxMpKfMsgListRsp;
 import cn.jzyunqi.common.third.weixin.mp.kefu.model.WxMpKfSessionData;
 import cn.jzyunqi.common.third.weixin.mp.kefu.model.WxMpKfSessionListRsp;
 import cn.jzyunqi.common.third.weixin.mp.kefu.model.WxMpKfTypingParam;
+import cn.jzyunqi.common.third.weixin.mp.mass.WxMpMassApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.mass.model.MassRsp;
 import cn.jzyunqi.common.third.weixin.mp.material.WxMpMaterialApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.material.enums.MaterialType;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialCountData;
@@ -51,8 +53,10 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.service.annotation.GetExchange;
 
 import java.io.File;
 import java.io.InputStream;
@@ -95,6 +99,9 @@ public class WxMpClient {
     private WxMpUserApiProxy wxMpUserApiProxy;
 
     @Resource
+    private WxMpMassApiProxy wxMpMassApiProxy;
+
+    @Resource
     private WxMpConfig wxMpConfig;
 
     @Resource
@@ -105,6 +112,7 @@ public class WxMpClient {
     public final Material material = new Material();
     public final Callback cb = new Callback();
     public final User user = new User();
+    public final Mass mass = new Mass();
 
     public class Kefu {
         //客服管理 - 添加客服账号（添加后不可用，需要再邀请）
@@ -519,6 +527,17 @@ public class WxMpClient {
         public MpUserData userInfo(String openid, String lang) throws BusinessException {
             lang = StringUtilPlus.defaultString(lang, "zh_CN");
             return wxMpUserApiProxy.userInfo(getClientToken(), openid, lang);
+        }
+    }
+
+    public class Mass {
+        //基础消息能力 - 群发接口 - 根据标签进行群发
+        MassRsp massGroupMessageSend(ReplyMsgData request, boolean preview) throws BusinessException {
+            if (preview) {
+                return wxMpMassApiProxy.massMessagePreview(getClientToken(), request);
+            } else {
+                return wxMpMassApiProxy.massGroupMessageSend(getClientToken(), request);
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.mp.model.request;
+package cn.jzyunqi.common.third.weixin.mp.callback.model;
 
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpItemData;
 import com.fasterxml.jackson.annotation.JsonProperty;

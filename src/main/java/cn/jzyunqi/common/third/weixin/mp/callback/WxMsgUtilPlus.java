@@ -2,7 +2,7 @@ package cn.jzyunqi.common.third.weixin.mp.callback;
 
 import cn.jzyunqi.common.third.weixin.mp.callback.enums.MsgType;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpItemData;
-import cn.jzyunqi.common.third.weixin.mp.model.request.ItemListParam;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.ItemListParam;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
 import cn.jzyunqi.common.utils.BooleanUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;

@@ -2,8 +2,6 @@ package cn.jzyunqi.common.third.weixin.mp.callback.model;
 
 import cn.jzyunqi.common.third.weixin.mp.callback.enums.MsgType;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpItemData;
-import cn.jzyunqi.common.third.weixin.mp.model.request.ItemListParam;
-import cn.jzyunqi.common.third.weixin.mp.model.request.item.MassFilterData;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

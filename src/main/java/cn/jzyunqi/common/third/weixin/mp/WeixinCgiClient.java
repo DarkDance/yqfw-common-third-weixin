@@ -3,14 +3,11 @@ package cn.jzyunqi.common.third.weixin.mp;
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.redis.Cache;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
-import cn.jzyunqi.common.third.weixin.mp.model.enums.InfoScope;
 import cn.jzyunqi.common.third.weixin.mp.model.request.item.LineColorData;
 import cn.jzyunqi.common.third.weixin.mp.model.request.QrcodeParam;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
-import cn.jzyunqi.common.third.weixin.mp.model.response.MassRsp;
-import cn.jzyunqi.common.third.weixin.mp.user.model.MpUserData;
+import cn.jzyunqi.common.third.weixin.mp.mass.model.MassRsp;
 import cn.jzyunqi.common.utils.BooleanUtilPlus;
-import cn.jzyunqi.common.utils.CollectionUtilPlus;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
 import lombok.extern.slf4j.Slf4j;
@@ -24,9 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
-import java.net.URLEncoder;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -38,13 +33,6 @@ import java.util.Optional;
 @Slf4j
 @Deprecated
 public class WeixinCgiClient {
-
-
-    /**
-     * 原创推文
-     */
-    private static final String WX_MASS_SEND = "https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=%s"; //根据标签进行群发
-    private static final String WX_MASS_PREVIEW = "https://api.weixin.qq.com/cgi-bin/message/mass/preview?access_token=%s"; //预览接口
 
     /**
      * 获取小程序二维码
@@ -121,10 +109,6 @@ public class WeixinCgiClient {
         this.userSyncUrl = userSyncUrl;
     }
 
-
-
-
-
     /**
      * 获取access_token
      *
@@ -133,45 +117,6 @@ public class WeixinCgiClient {
     public String getInterfaceToken() throws BusinessException {
         return null;
     }
-
-
-    /**
-     * 根据标签进行群发
-     */
-    public MassRsp sendArticles(ReplyMsgData replyMsgParam, Boolean preview) throws BusinessException {
-        MassRsp massRsp;
-        try {
-            URI sendArticlesUri;
-            if (BooleanUtilPlus.isTrue(preview)) {
-                sendArticlesUri = new URIBuilder(String.format(WX_MASS_PREVIEW, this.getInterfaceToken())).build();
-            } else {
-                sendArticlesUri = new URIBuilder(String.format(WX_MASS_SEND, this.getInterfaceToken())).build();
-            }
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            RequestEntity<ReplyMsgData> requestEntity = new RequestEntity<>(replyMsgParam, headers, HttpMethod.POST, sendArticlesUri);
-            ResponseEntity<MassRsp> responseEntity = restTemplate.exchange(requestEntity, MassRsp.class);
-            massRsp = responseEntity.getBody();
-        } catch (Exception e) {
-            log.error("======WeixinCgiHelper sendArticles other error:", e);
-            throw new BusinessException("common_error_wx_ppt_mtl_add_error");
-        }
-
-        if (massRsp != null && "0".equals(massRsp.getErrorCode())) {
-            return massRsp;
-        } else {
-            if (massRsp == null) {
-                massRsp = new MassRsp();
-            }
-            log.error("======WeixinCgiHelper sendArticles 200 error [{}][{}]:", massRsp.getErrorCode(), massRsp.getErrorMsg());
-            throw new BusinessException("common_error_wx_ppt_mtl_add_failed");
-        }
-    }
-
-
-
 
 
     /**
