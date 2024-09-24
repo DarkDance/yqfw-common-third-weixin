@@ -14,7 +14,7 @@ import java.util.List;
  * @author wiiyaya
  * @since 2018/8/18.
  */
-public class WeixinMsgUtilPlus {
+public class WxMsgUtilPlus {
 
     /**
      * 准备文本回复消息

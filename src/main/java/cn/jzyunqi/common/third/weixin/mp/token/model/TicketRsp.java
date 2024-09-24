@@ -13,7 +13,7 @@ import java.io.Serial;
  */
 @Getter
 @Setter
-public class JsApiTicketRsp extends WeixinRsp {
+public class TicketRsp extends WeixinRsp {
     @Serial
     private static final long serialVersionUID = -3902104748545703809L;
 

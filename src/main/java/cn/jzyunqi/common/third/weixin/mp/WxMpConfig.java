@@ -1,9 +1,10 @@
 package cn.jzyunqi.common.third.weixin.mp;
 
+import cn.jzyunqi.common.utils.DigestUtilPlus;
 import lombok.Getter;
+import org.apache.commons.codec.binary.Base64;
 
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
+import java.util.Arrays;
 
 /**
  * @author wiiyaya
@@ -20,6 +21,21 @@ public class WxMpConfig {
      * 公众号唯一凭证密钥
      */
     private final String appSecret;
+
+    /**
+     * 消息tokrn
+     */
+    private final String msgToken;
+
+    /**
+     * 消息体加密密钥
+     */
+    private final byte[] msgEncodingAesKey;
+
+    /**
+     * 消息体加密向量
+     */
+    private final byte[] msgEncodingAesIv;
 
     /**
      * 客户端token key
@@ -41,9 +57,12 @@ public class WxMpConfig {
      */
     private final String wxCardTicketKey;
 
-    public WxMpConfig(String appId, String appSecret) {
+    public WxMpConfig(String appId, String appSecret, String msgToken, String msgEncodingAesKey) {
         this.appId = appId;
         this.appSecret = appSecret;
+        this.msgToken = msgToken;
+        this.msgEncodingAesKey = DigestUtilPlus.Base64.decodeBase64(msgEncodingAesKey);
+        this.msgEncodingAesIv = Arrays.copyOfRange(Base64.decodeBase64(this.msgEncodingAesKey), 0, 16);
         this.clientTokenKey = "client_token:" + appId;
         this.jsapiTicketKey = "jsapi_ticket:" + appId;
         this.sdkTicketKey = "sdk_ticket:" + appId;

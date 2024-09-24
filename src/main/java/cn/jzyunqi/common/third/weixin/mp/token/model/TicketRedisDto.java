@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
-public class JsApiTicketRedisDto implements Serializable {
+public class TicketRedisDto implements Serializable {
     private static final long serialVersionUID = -1882849843222236844L;
 
     /**

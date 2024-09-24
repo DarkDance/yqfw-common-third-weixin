@@ -1,7 +1,9 @@
 package cn.jzyunqi.common.third.weixin.mp.callback;
 
 import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.third.weixin.mp.client.WeixinCgiClient;
+import cn.jzyunqi.common.third.weixin.mp.WeixinCgiClient;
+import cn.jzyunqi.common.third.weixin.mp.WxMpClient;
+import cn.jzyunqi.common.third.weixin.mp.WxMpConfig;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.EventMsgData;
@@ -42,7 +44,7 @@ public abstract class AWxMpMsgCbController {
     private static final String NOT_SUPPORT = "Not support now!";
 
     @Resource
-    protected WeixinCgiClient weixinCgiClient;
+    protected WxMpClient wxMpClient;
 
 
     /***
@@ -65,7 +67,7 @@ public abstract class AWxMpMsgCbController {
                 msgSimpleCb,
                 msgDetailCb
         );
-        return weixinCgiClient.replyMessageNotice(msgSimpleCb, msgDetailCb, decryptNotice -> {
+        return WxMsgCryptUtilPlus.replyMessageNotice(wxMpClient.getWxMpConfig(), msgSimpleCb, msgDetailCb, decryptNotice -> {
             switch (decryptNotice.getMsgType()) {
                 case text -> {
                     return this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
@@ -120,62 +122,62 @@ public abstract class AWxMpMsgCbController {
     }
 
     protected ReplyMsgData processMiniProgramPageMsg(MiniProgramPageMsgData miniProgramPageMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(miniProgramPageMsgData.getToUserName(), miniProgramPageMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(miniProgramPageMsgData.getToUserName(), miniProgramPageMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processTransferCustomerServiceMsg(TransferCustomerServiceMsgData transferCustomerServiceMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(transferCustomerServiceMsgData.getToUserName(), transferCustomerServiceMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(transferCustomerServiceMsgData.getToUserName(), transferCustomerServiceMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processEventMsg(EventMsgData eventMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processLinkMsg(LinkMsgData linkMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(linkMsgData.getToUserName(), linkMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(linkMsgData.getToUserName(), linkMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processLocationMsg(LocationMsgData locationMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(locationMsgData.getToUserName(), locationMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(locationMsgData.getToUserName(), locationMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processWxCardMsg(WxCardMsgData wxCardMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(wxCardMsgData.getToUserName(), wxCardMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(wxCardMsgData.getToUserName(), wxCardMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processMpNewsMsg(MpNewsMsgData mpNewsMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(mpNewsMsgData.getToUserName(), mpNewsMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(mpNewsMsgData.getToUserName(), mpNewsMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processNewsMsg(NewsMsgData newsMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(newsMsgData.getToUserName(), newsMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(newsMsgData.getToUserName(), newsMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processMusicMsg(MusicMsgData musicMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(musicMsgData.getToUserName(), musicMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(musicMsgData.getToUserName(), musicMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     private ReplyMsgData processShortVideoMsg(ShortVideoMsgData shortVideoMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(shortVideoMsgData.getToUserName(), shortVideoMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(shortVideoMsgData.getToUserName(), shortVideoMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     private ReplyMsgData processThumbMsg(ThumbMsgData thumbMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(thumbMsgData.getToUserName(), thumbMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(thumbMsgData.getToUserName(), thumbMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processVideoMsg(VideoMsgData videoMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(videoMsgData.getToUserName(), videoMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(videoMsgData.getToUserName(), videoMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processVoiceMsg(VoiceMsgData voiceMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(voiceMsgData.getToUserName(), voiceMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(voiceMsgData.getToUserName(), voiceMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processImageMsg(ImageMsgData imageMsgData) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(imageMsgData.getToUserName(), imageMsgData.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(imageMsgData.getToUserName(), imageMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processTextMsg(TextMsgData textMsgCb) throws BusinessException {
-        return WeixinMsgUtilPlus.prepareTextReply(textMsgCb.getToUserName(), textMsgCb.getFromUserName(), NOT_SUPPORT);
+        return WxMsgUtilPlus.prepareTextReply(textMsgCb.getToUserName(), textMsgCb.getFromUserName(), NOT_SUPPORT);
     }
 }
