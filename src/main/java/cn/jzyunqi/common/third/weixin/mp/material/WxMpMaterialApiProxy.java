@@ -10,8 +10,10 @@ import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialSearchRsp;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMediaData;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialNewsData;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialVideoRsp;
+import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
@@ -24,7 +26,7 @@ import java.io.InputStream;
  * @since 2024/9/23
  */
 @WxHttpExchange
-@HttpExchange(url = "https://api.weixin.qq.com", accept = {"application/json"})
+@HttpExchange(url = "https://api.weixin.qq.com", accept = {"application/json", "text/plain"})
 public interface WxMpMaterialApiProxy {
 
     //素材管理 - 新增临时素材
@@ -39,9 +41,9 @@ public interface WxMpMaterialApiProxy {
     @PostExchange(url = "/cgi-bin/media/get/jssdk")
     File jssdkMediaDownload(@RequestParam String access_token, @RequestParam String media_id) throws BusinessException;
 
-    //素材管理 - 新增永久图片素材
+    //素材管理 - 上传图文消息内的图片，不占用公众号的素材库中图片数量，Form形式上传
     @PostExchange(url = "/cgi-bin/media/uploadimg", contentType = "multipart/form-data")
-    WxMpMediaData mediaImgUpload(@RequestParam String access_token, @RequestParam MultipartFile media) throws BusinessException;
+    WxMpMediaData mediaImgUpload(@RequestParam String access_token, @RequestPart Resource media) throws BusinessException;
 
     //素材管理 - 新增永久素材
     @PostExchange(url = "/cgi-bin/material/add_material", contentType = "multipart/form-data")

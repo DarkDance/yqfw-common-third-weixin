@@ -3,6 +3,7 @@ package cn.jzyunqi.common.third.weixin.mp.material.model;
 import cn.jzyunqi.common.third.weixin.mp.material.enums.MaterialType;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,7 +16,7 @@ import java.io.Serial;
  */
 @Getter
 @Setter
-@ToString
+@ToString(callSuper = true)
 public class WxMpMediaData extends WeixinRsp {
     @Serial
     private static final long serialVersionUID = 7921679008435737891L;

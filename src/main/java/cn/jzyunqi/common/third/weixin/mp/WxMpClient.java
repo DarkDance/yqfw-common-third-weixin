@@ -53,7 +53,15 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.File;
 import java.io.InputStream;
@@ -262,7 +270,7 @@ public class WxMpClient {
 
         //素材管理 - 新增图片永久素材
         public WxMpMediaData mediaImgUpload(MultipartFile media) throws BusinessException {
-            return wxMpMaterialApiProxy.mediaImgUpload(getClientToken(), media);
+            return wxMpMaterialApiProxy.mediaImgUpload(getClientToken(), media.getResource());
         }
 
         //素材管理 - 新增其它永久素材

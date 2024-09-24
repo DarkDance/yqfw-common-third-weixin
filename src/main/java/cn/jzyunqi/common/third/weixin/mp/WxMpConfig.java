@@ -9,6 +9,10 @@ import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.user.WxMpUserApiProxy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
@@ -56,8 +60,17 @@ public class WxMpConfig {
     }
 
     @Bean
-    public WxMpMaterialApiProxy wxMpMaterialApiProxy(WebClient.Builder webClientBuilder) {
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+    public WxMpMaterialApiProxy wxMpMaterialApiProxy(WebClient.Builder webClientBuilder, Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder) {
+        WebClient webClient = webClientBuilder.clone()
+                .codecs(configurer -> configurer
+                        .defaultCodecs()
+                        .jackson2JsonDecoder(new Jackson2JsonDecoder(jackson2ObjectMapperBuilder.build(),
+                                MediaType.APPLICATION_JSON,
+                                MediaType.TEXT_PLAIN
+                        )))
+                .build();
+
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpMaterialApiProxy.class);
