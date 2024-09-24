@@ -5,25 +5,16 @@ import cn.jzyunqi.common.feature.redis.Cache;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.mp.model.enums.InfoScope;
 import cn.jzyunqi.common.third.weixin.mp.model.request.item.LineColorData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
-import cn.jzyunqi.common.third.weixin.mp.token.model.TicketRedisDto;
 import cn.jzyunqi.common.third.weixin.mp.model.request.QrcodeParam;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
-import cn.jzyunqi.common.third.weixin.mp.token.model.TicketRsp;
 import cn.jzyunqi.common.third.weixin.mp.model.response.MassRsp;
-import cn.jzyunqi.common.third.weixin.mp.model.response.MpUserInfoRsp;
+import cn.jzyunqi.common.third.weixin.mp.user.model.MpUserData;
 import cn.jzyunqi.common.utils.BooleanUtilPlus;
 import cn.jzyunqi.common.utils.CollectionUtilPlus;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
-import cn.jzyunqi.common.utils.IOUtilPlus;
-import cn.jzyunqi.common.utils.RandomUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
-import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.Unmarshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.hc.core5.net.URIBuilder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -34,15 +25,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.net.URLEncoder;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * 大部分为公众号接口
@@ -53,16 +38,6 @@ import java.util.stream.Stream;
 @Slf4j
 @Deprecated
 public class WeixinCgiClient {
-
-    /**
-     * 获取用户授权
-     */
-    private static final String WX_PUBLIC_BASE_FMT_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=#wechat_redirect";
-
-    /**
-     * 以公众号的名义获取用户信息
-     */
-    private static final String WX_USER_INFO_URL = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN";
 
 
     /**
@@ -75,16 +50,6 @@ public class WeixinCgiClient {
      * 获取小程序二维码
      */
     private static final String WX_MP_QRCODE = "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token=%s";
-
-    /**
-     * 需要签名的字符串
-     */
-    private static final String WX_JS_API_TICKET_SIGN = "jsapi_ticket=%s&noncestr=%s&timestamp=%s&url=%s";
-
-
-
-
-
 
 
     /**
@@ -158,30 +123,7 @@ public class WeixinCgiClient {
 
 
 
-    /**
-     * 组装同步网址
-     *
-     * @param redirectPage   转发页面
-     * @param redirectParams 页面参数
-     * @return 网址
-     */
-    public String prepareUserSyncUrl(String redirectPage, String hash, Map<String, String> redirectParams, InfoScope infoScope) throws BusinessException {
-        StringBuilder realPage = new StringBuilder();
-        realPage.append(redirectPage);
-        realPage.append("?_=");
-        realPage.append(System.currentTimeMillis());
-        if (CollectionUtilPlus.Map.isNotEmpty(redirectParams)) {
-            realPage.append("&");
-            realPage.append(CollectionUtilPlus.Map.getUrlParam(redirectParams, false, false, true));
-        }
-        if (StringUtilPlus.isNotBlank(hash)) {
-            realPage.append("#/");
-            realPage.append(hash);
-        }
 
-        String redirectUri = userSyncUrl + DigestUtilPlus.Base64.encodeBase64String(realPage.toString().getBytes());
-        return String.format(WX_PUBLIC_BASE_FMT_URL, appId, URLEncoder.encode(redirectUri, StringUtilPlus.UTF_8), infoScope);
-    }
 
     /**
      * 获取access_token
@@ -192,35 +134,6 @@ public class WeixinCgiClient {
         return null;
     }
 
-    /**
-     * 根据openId 获取用户信息
-     *
-     * @param openId openId
-     * @return 用户信息
-     */
-    public MpUserInfoRsp getMpUserInfo(String openId) throws BusinessException {
-        MpUserInfoRsp userInfoRsp;
-        try {
-            URI weixinUserInfoUri = new URIBuilder(String.format(WX_USER_INFO_URL, this.getInterfaceToken(), openId)).build();
-
-            RequestEntity<Map<String, String>> requestEntity = new RequestEntity<>(HttpMethod.GET, weixinUserInfoUri);
-            ResponseEntity<MpUserInfoRsp> weixinUserRsp = restTemplate.exchange(requestEntity, MpUserInfoRsp.class);
-            userInfoRsp = weixinUserRsp.getBody();
-        } catch (Exception e) {
-            log.error("======WeixinCgiHelper getPublicUserInfo other error:", e);
-            throw new BusinessException("common_error_wx_get_public_user_info_error");
-        }
-        //微信不管成功还是失败，返回的都是200，需要通过额外的字段来判断是否真的成功
-        if (userInfoRsp != null && StringUtilPlus.isEmpty(userInfoRsp.getErrorCode())) {
-            return userInfoRsp;
-        } else {
-            if (userInfoRsp == null) {
-                userInfoRsp = new MpUserInfoRsp();
-            }
-            log.error("======WeixinCgiHelper getPublicUserInfo 200 error[{}][{}]", userInfoRsp.getErrorCode(), userInfoRsp.getErrorMsg());
-            throw new BusinessException("common_error_wx_get_public_user_info_failed");
-        }
-    }
 
     /**
      * 根据标签进行群发

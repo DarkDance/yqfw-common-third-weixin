@@ -28,6 +28,11 @@ public class WxMpConfig {
     private final String msgToken;
 
     /**
+     * 用户信息同步中转页面
+     */
+    private final String userSyncUrl;
+
+    /**
      * 消息体加密密钥
      */
     private final byte[] msgEncodingAesKey;
@@ -57,11 +62,13 @@ public class WxMpConfig {
      */
     private final String wxCardTicketKey;
 
-    public WxMpConfig(String appId, String appSecret, String msgToken, String msgEncodingAesKey) {
+    public WxMpConfig(String appId, String appSecret, String msgToken, String msgEncodingAesKey, String userSyncUrl) {
         this.appId = appId;
         this.appSecret = appSecret;
         this.msgToken = msgToken;
         this.msgEncodingAesKey = DigestUtilPlus.Base64.decodeBase64(msgEncodingAesKey);
+        this.userSyncUrl = userSyncUrl;
+
         this.msgEncodingAesIv = Arrays.copyOfRange(Base64.decodeBase64(this.msgEncodingAesKey), 0, 16);
         this.clientTokenKey = "client_token:" + appId;
         this.jsapiTicketKey = "jsapi_ticket:" + appId;

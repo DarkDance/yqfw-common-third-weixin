@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.mp.model.response;
+package cn.jzyunqi.common.third.weixin.mp.user.model;
 
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class MpUserInfoRsp extends WeixinRsp {
+public class MpUserData extends WeixinRsp {
     @Serial
     private static final long serialVersionUID = -1078218095463872809L;
 

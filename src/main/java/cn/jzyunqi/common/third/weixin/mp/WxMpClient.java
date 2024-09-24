@@ -30,6 +30,7 @@ import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuData;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuRsp;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuTryMatchParam;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMpSelfMenuInfoRsp;
+import cn.jzyunqi.common.third.weixin.mp.model.enums.InfoScope;
 import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.token.enums.TicketType;
 import cn.jzyunqi.common.third.weixin.mp.token.model.ClientTokenData;
@@ -37,6 +38,8 @@ import cn.jzyunqi.common.third.weixin.mp.token.model.ClientTokenRedisDto;
 import cn.jzyunqi.common.third.weixin.mp.token.model.TicketRedisDto;
 import cn.jzyunqi.common.third.weixin.mp.token.model.TicketRsp;
 import cn.jzyunqi.common.third.weixin.mp.token.model.WxJsapiSignature;
+import cn.jzyunqi.common.third.weixin.mp.user.WxMpUserApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.user.model.MpUserData;
 import cn.jzyunqi.common.utils.CollectionUtilPlus;
 import cn.jzyunqi.common.utils.DateTimeUtilPlus;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
@@ -48,14 +51,17 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
@@ -70,6 +76,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class WxMpClient {
 
+    private static final String WX_PUBLIC_BASE_FMT_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=#wechat_redirect";
     private static final String WX_JS_API_TICKET_SIGN = "jsapi_ticket=%s&noncestr=%s&timestamp=%s&url=%s";
 
     @Resource
@@ -85,6 +92,9 @@ public class WxMpClient {
     private WxMpMaterialApiProxy wxMpMaterialApiProxy;
 
     @Resource
+    private WxMpUserApiProxy wxMpUserApiProxy;
+
+    @Resource
     private WxMpConfig wxMpConfig;
 
     @Resource
@@ -94,6 +104,7 @@ public class WxMpClient {
     public final Menu menu = new Menu();
     public final Material material = new Material();
     public final Callback cb = new Callback();
+    public final User user = new User();
 
     public class Kefu {
         //客服管理 - 添加客服账号（添加后不可用，需要再邀请）
@@ -503,6 +514,14 @@ public class WxMpClient {
         }
     }
 
+    public class User {
+        //用户管理 - 获取用户基本信息
+        public MpUserData userInfo(String openid, String lang) throws BusinessException {
+            lang = StringUtilPlus.defaultString(lang, "zh_CN");
+            return wxMpUserApiProxy.userInfo(getClientToken(), openid, lang);
+        }
+    }
+
     public WxJsapiSignature createJsapiSignature(String url) throws BusinessException {
         long timestamp = System.currentTimeMillis() / 1000;//从1970年1月1日00:00:00至今的秒数
         String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
@@ -518,6 +537,24 @@ public class WxMpClient {
         jsapiSignature.setUrl(url);
         jsapiSignature.setSignature(signature);
         return jsapiSignature;
+    }
+
+    public String prepareUserSyncUrl(String redirectPage, String hash, Map<String, String> redirectParams, InfoScope infoScope) throws BusinessException {
+        StringBuilder realPage = new StringBuilder();
+        realPage.append(redirectPage);
+        realPage.append("?_=");
+        realPage.append(System.currentTimeMillis());
+        if (CollectionUtilPlus.Map.isNotEmpty(redirectParams)) {
+            realPage.append("&");
+            realPage.append(CollectionUtilPlus.Map.getUrlParam(redirectParams, false, false, true));
+        }
+        if (StringUtilPlus.isNotBlank(hash)) {
+            realPage.append("#/");
+            realPage.append(hash);
+        }
+
+        String redirectUri = wxMpConfig.getUserSyncUrl() + DigestUtilPlus.Base64.encodeBase64String(realPage.toString().getBytes());
+        return String.format(WX_PUBLIC_BASE_FMT_URL, wxMpConfig.getAppId(), URLEncoder.encode(redirectUri, StringUtilPlus.UTF_8), infoScope);
     }
 
     private String getClientToken() throws BusinessException {
