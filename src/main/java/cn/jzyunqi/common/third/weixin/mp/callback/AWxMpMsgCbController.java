@@ -67,7 +67,7 @@ public abstract class AWxMpMsgCbController {
                 msgSimpleCb,
                 msgDetailCb
         );
-        return WxMsgCryptUtilPlus.replyMessageNotice(wxMpClient.getWxMpConfig(), msgSimpleCb, msgDetailCb, decryptNotice -> {
+        return wxMpClient.cb.replyMessageNotice(msgSimpleCb, msgDetailCb, decryptNotice -> {
             switch (decryptNotice.getMsgType()) {
                 case text -> {
                     return this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));

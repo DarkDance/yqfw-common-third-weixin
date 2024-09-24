@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.mp.message.model;
+package cn.jzyunqi.common.third.weixin.mp.subscribe.model;
 
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import lombok.Getter;

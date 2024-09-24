@@ -1,16 +1,16 @@
-package cn.jzyunqi.common.third.weixin.mp.message;
+package cn.jzyunqi.common.third.weixin.mp.subscribe;
 
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchange;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV2;
-import cn.jzyunqi.common.third.weixin.mp.message.model.WxMpPubTemplateKeywordData;
-import cn.jzyunqi.common.third.weixin.mp.message.model.WxMpCategoryRsp;
-import cn.jzyunqi.common.third.weixin.mp.message.model.WxMpMsgTemplateData;
-import cn.jzyunqi.common.third.weixin.mp.message.model.WxMpMsgTemplateParam;
-import cn.jzyunqi.common.third.weixin.mp.message.model.WxMpPubTemplateTitleData;
-import cn.jzyunqi.common.third.weixin.mp.message.model.WxMpPubTemplateTitleParam;
-import cn.jzyunqi.common.third.weixin.mp.message.model.WxMpTemplateMsgParam;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateKeywordData;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpCategoryRsp;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpMsgTemplateData;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpMsgTemplateParam;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateTitleData;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateTitleParam;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpTemplateMsgParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.HttpExchange;
