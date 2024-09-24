@@ -7,6 +7,7 @@ import cn.jzyunqi.common.third.weixin.mp.material.enums.MaterialType;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialCountData;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialSearchParam;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialSearchRsp;
+import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialVideoParam;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMediaData;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialNewsData;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialVideoRsp;
@@ -46,7 +47,7 @@ public interface WxMpMaterialApiProxy {
 
     //素材管理 - 新增永久素材
     @PostExchange(url = "/cgi-bin/material/add_material", contentType = "multipart/form-data")
-    WxMpMediaData materialUpload(@RequestParam String access_token, @RequestParam MaterialType type, @RequestPart Resource media) throws BusinessException;
+    WxMpMediaData materialUpload(@RequestParam String access_token, @RequestParam MaterialType type, @RequestPart(required = false) WxMpMaterialVideoParam description, @RequestPart Resource media) throws BusinessException;
 
     //素材管理 - 图文永久素材获取
     @PostExchange(url = "/cgi-bin/material/get_material")

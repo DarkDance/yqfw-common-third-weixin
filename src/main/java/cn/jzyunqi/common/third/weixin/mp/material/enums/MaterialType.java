@@ -5,5 +5,23 @@ package cn.jzyunqi.common.third.weixin.mp.material.enums;
  * @since 2024/9/23
  */
 public enum MaterialType {
-    image, voice, video, thumb
+    /**
+     * 图片
+     */
+    image,
+
+    /**
+     * 语音
+     */
+    voice,
+
+    /**
+     * 视频
+     */
+    video,
+
+    /**
+     * 缩略图
+     */
+    thumb
 }

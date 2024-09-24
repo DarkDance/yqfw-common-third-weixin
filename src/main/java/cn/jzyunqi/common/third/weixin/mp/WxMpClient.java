@@ -26,6 +26,7 @@ import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialCountData;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialNewsData;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialSearchParam;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialSearchRsp;
+import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialVideoParam;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialVideoRsp;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMediaData;
 import cn.jzyunqi.common.third.weixin.mp.menu.WxMpMenuApiProxy;
@@ -265,8 +266,11 @@ public class WxMpClient {
         }
 
         //素材管理 - 新增其它永久素材
-        public WxMpMediaData materialUpload(MaterialType type, org.springframework.core.io.Resource media) throws BusinessException {
-            return wxMpMaterialApiProxy.materialUpload(getClientToken(), type, media);
+        public WxMpMediaData materialUpload(MaterialType type, WxMpMaterialVideoParam videoParam, org.springframework.core.io.Resource media) throws BusinessException {
+            if (type != MaterialType.video) {
+                videoParam = null;
+            }
+            return wxMpMaterialApiProxy.materialUpload(getClientToken(), type, videoParam, media);
         }
 
         //素材管理 - 图文永久素材获取
