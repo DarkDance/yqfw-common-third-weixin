@@ -7,7 +7,6 @@ import cn.jzyunqi.common.third.weixin.mp.material.WxMpMaterialApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.menu.WxMpMenuApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.user.WxMpUserApiProxy;
-import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -26,6 +25,10 @@ public class WxMpConfig {
     @Bean
     public WxHttpExchangeWrapper responseCheckWrapper() {
         return new WxHttpExchangeWrapper();
+    }
+    @Bean
+    public WxMpClient wxMpClient() {
+        return new WxMpClient();
     }
 
     @Bean
