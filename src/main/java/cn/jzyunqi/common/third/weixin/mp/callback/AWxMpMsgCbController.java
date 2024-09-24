@@ -1,19 +1,18 @@
 package cn.jzyunqi.common.third.weixin.mp.callback;
 
 import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.third.weixin.mp.WeixinCgiClient;
 import cn.jzyunqi.common.third.weixin.mp.WxMpClient;
-import cn.jzyunqi.common.third.weixin.mp.WxMpConfig;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.EventMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ImageMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.LinkMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.LocationMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MiniProgramPageMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MpNewsMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MusicMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.NewsMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ShortVideoMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.TextMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ThumbMsgData;
@@ -21,7 +20,6 @@ import cn.jzyunqi.common.third.weixin.mp.callback.model.TransferCustomerServiceM
 import cn.jzyunqi.common.third.weixin.mp.callback.model.VideoMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.VoiceMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.WxCardMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
 import cn.jzyunqi.common.utils.BeanUtilPlus;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -67,58 +65,81 @@ public abstract class AWxMpMsgCbController {
                 msgSimpleCb,
                 msgDetailCb
         );
-        return wxMpClient.cb.replyMessageNotice(msgSimpleCb, msgDetailCb, decryptNotice -> {
-            switch (decryptNotice.getMsgType()) {
-                case text -> {
-                    return this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
+        return wxMpClient.cb.replyMessageNotice(msgSimpleCb, msgDetailCb, decryptNotice ->
+                switch (decryptNotice.getMsgType()) {
+                    case text -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
+                    case image -> this.processImageMsg(BeanUtilPlus.copyAs(decryptNotice, ImageMsgData.class));
+                    case voice -> this.processVoiceMsg(BeanUtilPlus.copyAs(decryptNotice, VoiceMsgData.class));
+                    case video -> this.processVideoMsg(BeanUtilPlus.copyAs(decryptNotice, VideoMsgData.class));
+                    case thumb -> this.processThumbMsg(BeanUtilPlus.copyAs(decryptNotice, ThumbMsgData.class));
+                    case shortvideo -> this.processShortVideoMsg(BeanUtilPlus.copyAs(decryptNotice, ShortVideoMsgData.class));
+                    case music -> this.processMusicMsg(BeanUtilPlus.copyAs(decryptNotice, MusicMsgData.class));
+                    case news -> this.processNewsMsg(BeanUtilPlus.copyAs(decryptNotice, NewsMsgData.class));
+                    case mpnews -> this.processMpNewsMsg(BeanUtilPlus.copyAs(decryptNotice, MpNewsMsgData.class));
+                    case wxcard -> this.processWxCardMsg(BeanUtilPlus.copyAs(decryptNotice, WxCardMsgData.class));
+                    case location -> this.processLocationMsg(BeanUtilPlus.copyAs(decryptNotice, LocationMsgData.class));
+                    case link -> this.processLinkMsg(BeanUtilPlus.copyAs(decryptNotice, LinkMsgData.class));
+                    case event -> switch (decryptNotice.getEvent()) {
+                        case subscribe -> this.processSubscribeEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case unsubscribe -> this.processUnsubscribeEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case LOCATION -> this.processLocationEvent(BeanUtilPlus.copyAs(decryptNotice,EventMsgData.class));
+                        case CLICK -> this.processClickEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case VIEW -> this.processViewEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case scancode_push -> this.processScancodePushEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case scancode_waitmsg -> this.processScancodeWaitMsgEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case pic_sysphoto -> this.processPicSysphotoEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case pic_photo_or_album -> this.processPicPhotoOrAlbumEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case pic_weixin -> this.processPicWeixinEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case location_select -> this.processLocationSelectEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                    };
+                    case transfer_customer_service -> this.processTransferCustomerServiceMsg(BeanUtilPlus.copyAs(decryptNotice, TransferCustomerServiceMsgData.class));
+                    case miniprogrampage -> this.processMiniProgramPageMsg(BeanUtilPlus.copyAs(decryptNotice, MiniProgramPageMsgData.class));
                 }
-                case image -> {
-                    return this.processImageMsg(BeanUtilPlus.copyAs(decryptNotice, ImageMsgData.class));
-                }
-                case voice -> {
-                    return this.processVoiceMsg(BeanUtilPlus.copyAs(decryptNotice, VoiceMsgData.class));
-                }
-                case video -> {
-                    return this.processVideoMsg(BeanUtilPlus.copyAs(decryptNotice, VideoMsgData.class));
-                }
-                case thumb -> {
-                    return this.processThumbMsg(BeanUtilPlus.copyAs(decryptNotice, ThumbMsgData.class));
-                }
-                case shortvideo -> {
-                    return this.processShortVideoMsg(BeanUtilPlus.copyAs(decryptNotice, ShortVideoMsgData.class));
-                }
-                case music -> {
-                    return this.processMusicMsg(BeanUtilPlus.copyAs(decryptNotice, MusicMsgData.class));
-                }
-                case news -> {
-                    return this.processNewsMsg(BeanUtilPlus.copyAs(decryptNotice, NewsMsgData.class));
-                }
-                case mpnews -> {
-                    return this.processMpNewsMsg(BeanUtilPlus.copyAs(decryptNotice, MpNewsMsgData.class));
-                }
-                case wxcard -> {
-                    return this.processWxCardMsg(BeanUtilPlus.copyAs(decryptNotice, WxCardMsgData.class));
-                }
-                case location -> {
-                    return this.processLocationMsg(BeanUtilPlus.copyAs(decryptNotice, LocationMsgData.class));
-                }
-                case link -> {
-                    return this.processLinkMsg(BeanUtilPlus.copyAs(decryptNotice, LinkMsgData.class));
-                }
-                case event -> {
-                    return this.processEventMsg(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
-                }
-                case transfer_customer_service -> {
-                    return this.processTransferCustomerServiceMsg(BeanUtilPlus.copyAs(decryptNotice, TransferCustomerServiceMsgData.class));
-                }
-                case miniprogrampage -> {
-                    return this.processMiniProgramPageMsg(BeanUtilPlus.copyAs(decryptNotice, MiniProgramPageMsgData.class));
-                }
-                default -> {
-                    return null;
-                }
-            }
-        });
+        );
+    }
+
+    protected Object processLocationSelectEvent(EventMsgData eventMsgData) {
+        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+    }
+
+    protected Object processPicWeixinEvent(EventMsgData eventMsgData) {
+        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+    }
+
+    protected Object processPicPhotoOrAlbumEvent(EventMsgData eventMsgData) {
+        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+    }
+
+    protected Object processPicSysphotoEvent(EventMsgData eventMsgData) {
+        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+    }
+
+    protected Object processScancodeWaitMsgEvent(EventMsgData eventMsgData) {
+        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+    }
+
+    protected Object processScancodePushEvent(EventMsgData eventMsgData) {
+        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+    }
+
+    protected Object processViewEvent(EventMsgData eventMsgData) {
+        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+    }
+
+    protected Object processClickEvent(EventMsgData eventMsgData) {
+        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+    }
+
+    protected Object processLocationEvent(EventMsgData eventMsgData) {
+        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+    }
+
+    protected Object processUnsubscribeEvent(EventMsgData eventMsgData) {
+        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+    }
+
+    protected ReplyMsgData processSubscribeEvent(EventMsgData eventMsgData) throws BusinessException {
+        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processMiniProgramPageMsg(MiniProgramPageMsgData miniProgramPageMsgData) throws BusinessException {
@@ -127,10 +148,6 @@ public abstract class AWxMpMsgCbController {
 
     protected ReplyMsgData processTransferCustomerServiceMsg(TransferCustomerServiceMsgData transferCustomerServiceMsgData) throws BusinessException {
         return WxMsgUtilPlus.prepareTextReply(transferCustomerServiceMsgData.getToUserName(), transferCustomerServiceMsgData.getFromUserName(), NOT_SUPPORT);
-    }
-
-    protected ReplyMsgData processEventMsg(EventMsgData eventMsgData) throws BusinessException {
-        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected ReplyMsgData processLinkMsg(LinkMsgData linkMsgData) throws BusinessException {
