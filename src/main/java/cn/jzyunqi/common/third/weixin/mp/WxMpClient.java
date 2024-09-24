@@ -84,7 +84,7 @@ public class WxMpClient {
     private WxMpTokenApiProxy wxMpTokenApiProxy;
 
     @Resource
-    private WxMpKfApiProxy wxMpKefuApiProxy;
+    private WxMpKfApiProxy wxMpKfApiProxy;
 
     @Resource
     private WxMpMenuApiProxy wxMpMenuApiProxy;
@@ -99,7 +99,7 @@ public class WxMpClient {
     private WxMpMassApiProxy wxMpMassApiProxy;
 
     @Resource
-    private WxMpConfig wxMpConfig;
+    private WxMpClientConfig wxMpClientConfig;
 
     @Resource
     private RedisHelper redisHelper;
@@ -114,44 +114,44 @@ public class WxMpClient {
     public class Kefu {
         //客服管理 - 添加客服账号（添加后不可用，需要再邀请）
         public WeixinRsp kfAccountAdd(WxMpKfAccountParam request) throws BusinessException {
-            return wxMpKefuApiProxy.kfAccountAdd(getClientToken(), request);
+            return wxMpKfApiProxy.kfAccountAdd(getClientToken(), request);
         }
 
         //客服管理 - 邀请绑定客服账号
         public WeixinRsp kfAccountInviteWorker(WxMpKfAccountParam request) throws BusinessException {
-            return wxMpKefuApiProxy.kfAccountInviteWorker(getClientToken(), request);
+            return wxMpKfApiProxy.kfAccountInviteWorker(getClientToken(), request);
         }
 
         //客服管理 - 修改客服账号
         public WeixinRsp kfAccountUpdate(WxMpKfAccountParam request) throws BusinessException {
-            return wxMpKefuApiProxy.kfAccountUpdate(getClientToken(), request);
+            return wxMpKfApiProxy.kfAccountUpdate(getClientToken(), request);
         }
 
         //客服管理 - 删除客服账号
         public WeixinRsp kfAccountDel(String kfAccount) throws BusinessException {
             WxMpKfAccountParam request = new WxMpKfAccountParam();
             request.setKfAccount(kfAccount);
-            return wxMpKefuApiProxy.kfAccountDel(getClientToken(), request);
+            return wxMpKfApiProxy.kfAccountDel(getClientToken(), request);
         }
 
         //客服管理 - 设置客服账号的头像，文件大小为5M以内
         public WeixinRsp kfAccountUploadHeadImg(String kfAccount, MultipartFile media) throws BusinessException {
-            return wxMpKefuApiProxy.kfAccountUploadHeadImg(getClientToken(), kfAccount, media);
+            return wxMpKfApiProxy.kfAccountUploadHeadImg(getClientToken(), kfAccount, media);
         }
 
         //客服管理 - 获取所有客服账号
         public WxMpKfListRsp kfList() throws BusinessException {
-            return wxMpKefuApiProxy.kfList(getClientToken());
+            return wxMpKfApiProxy.kfList(getClientToken());
         }
 
         //客服管理 - 获取所有客服在线账号
         public WxMpKfListRsp kfOnlineList() throws BusinessException {
-            return wxMpKefuApiProxy.kfOnlineList(getClientToken());
+            return wxMpKfApiProxy.kfOnlineList(getClientToken());
         }
 
         //客服消息 - 发消息
         public String sendKefuMessageWithResponse(ReplyMsgData request) throws BusinessException {
-            return wxMpKefuApiProxy.sendKefuMessageWithResponse(getClientToken(), request);
+            return wxMpKfApiProxy.sendKefuMessageWithResponse(getClientToken(), request);
         }
 
         //客服消息 - 发送客服输入状态
@@ -159,7 +159,7 @@ public class WxMpClient {
             WxMpKfTypingParam request = new WxMpKfTypingParam();
             request.setToUser(openid);
             request.setCommand(command);
-            return wxMpKefuApiProxy.sendKfTypingState(getClientToken(), request);
+            return wxMpKfApiProxy.sendKfTypingState(getClientToken(), request);
         }
 
         //会话控制 - 创建会话
@@ -167,7 +167,7 @@ public class WxMpClient {
             WxMpKfSessionData request = new WxMpKfSessionData();
             request.setOpenid(openid);
             request.setKfAccount(kfAccount);
-            return wxMpKefuApiProxy.kfSessionCreate(getClientToken(), request);
+            return wxMpKfApiProxy.kfSessionCreate(getClientToken(), request);
         }
 
         //会话控制 - 关闭会话
@@ -175,22 +175,22 @@ public class WxMpClient {
             WxMpKfSessionData request = new WxMpKfSessionData();
             request.setOpenid(openid);
             request.setKfAccount(kfAccount);
-            return wxMpKefuApiProxy.kfSessionClose(getClientToken(), request);
+            return wxMpKfApiProxy.kfSessionClose(getClientToken(), request);
         }
 
         //会话控制 - 获取客户会话状态
         public WxMpKfSessionData kfSessionInfo(String openid) throws BusinessException {
-            return wxMpKefuApiProxy.kfSessionInfo(getClientToken(), openid);
+            return wxMpKfApiProxy.kfSessionInfo(getClientToken(), openid);
         }
 
         //会话控制 - 获取客服会话列表
         public WxMpKfSessionListRsp kfSessionList(String kfAccount) throws BusinessException {
-            return wxMpKefuApiProxy.kfSessionList(getClientToken(), kfAccount);
+            return wxMpKfApiProxy.kfSessionList(getClientToken(), kfAccount);
         }
 
         //会话控制 - 获取未接入会话列表
         public WxMpKfSessionListRsp kfSessionWaitCase() throws BusinessException {
-            return wxMpKefuApiProxy.kfSessionWaitCase(getClientToken());
+            return wxMpKfApiProxy.kfSessionWaitCase(getClientToken());
         }
 
         //获取聊天记录
@@ -200,7 +200,7 @@ public class WxMpClient {
             request.setEndTime(DateTimeUtilPlus.toEpochSecond(endTime));
             request.setMsgId(msgId);
             request.setNumber(number);
-            return wxMpKefuApiProxy.kfMsgList(getClientToken(), request);
+            return wxMpKfApiProxy.kfMsgList(getClientToken(), request);
         }
     }
 
@@ -353,12 +353,12 @@ public class WxMpClient {
         public Object replyMessageNotice(MsgSimpleCb msgSimpleCb, MsgDetailCb msgDetailCb, MessageReplyCallback callback) {
             //验证安全签名，如果有消息体，校验后解码消息体
             if (msgDetailCb == null) {//没有消息体，属于连接测试
-                String needSign = signString(wxMpConfig.getMsgToken(), msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce()).equals(msgSimpleCb.getSignature()) ? msgSimpleCb.getEchostr() : REPLAY_MESSAGE_FAILED;
+                String needSign = signString(wxMpClientConfig.getMsgToken(), msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce()).equals(msgSimpleCb.getSignature()) ? msgSimpleCb.getEchostr() : REPLAY_MESSAGE_FAILED;
                 log.debug("======WeixinCgiHelper replyMessageNotice needSign:{}, echostr:{}", needSign, msgSimpleCb.getEchostr());
                 return needSign;
             } else {
                 if (StringUtilPlus.isNotEmpty(msgDetailCb.getEncrypt())) {//消息是密文传输，需要解密
-                    String selfMsgSignature = signString(wxMpConfig.getMsgToken(), msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce(), msgDetailCb.getEncrypt());//组装消息验证码
+                    String selfMsgSignature = signString(wxMpClientConfig.getMsgToken(), msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce(), msgDetailCb.getEncrypt());//组装消息验证码
                     if (!selfMsgSignature.equals(msgSimpleCb.getMsg_signature())) {
                         return REPLAY_MESSAGE_FAILED;
                     }
@@ -390,7 +390,7 @@ public class WxMpClient {
             Byte[] randomStrBytes = ArrayUtils.toObject(RandomUtilPlus.String.randomAlphanumeric(16).getBytes(StringUtilPlus.UTF_8));
             Byte[] textBytes = ArrayUtils.toObject(msg.getBytes(StringUtilPlus.UTF_8));
             Byte[] networkBytesOrder = ArrayUtils.toObject(getNetworkBytesOrder(textBytes.length));
-            Byte[] appidBytes = ArrayUtils.toObject(wxMpConfig.getAppId().getBytes(StringUtilPlus.UTF_8));
+            Byte[] appidBytes = ArrayUtils.toObject(wxMpClientConfig.getAppId().getBytes(StringUtilPlus.UTF_8));
 
             // randomStr + networkBytesOrder + text + appid
             List<Byte> byteList = new ArrayList<>();
@@ -408,11 +408,11 @@ public class WxMpClient {
 
             try {
                 // 加密
-                String encryptMsg = DigestUtilPlus.AES.encryptCBCNoPadding(unencrypted, wxMpConfig.getMsgEncodingAesKey(), wxMpConfig.getMsgEncodingAesIv(), true);
+                String encryptMsg = DigestUtilPlus.AES.encryptCBCNoPadding(unencrypted, wxMpClientConfig.getMsgEncodingAesKey(), wxMpClientConfig.getMsgEncodingAesIv(), true);
                 //消息签名
                 Long timestamp = System.currentTimeMillis() / 1000;
                 String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
-                String signature = signString(wxMpConfig.getMsgToken(), timestamp.toString(), nonceStr, encryptMsg);
+                String signature = signString(wxMpClientConfig.getMsgToken(), timestamp.toString(), nonceStr, encryptMsg);
 
                 return String.format(RESPONSE_MSG, encryptMsg, signature, timestamp, nonceStr);
             } catch (Exception e) {
@@ -429,14 +429,14 @@ public class WxMpClient {
          */
         private MsgDetailCb decryptMsg(String encryptMsg) {
             try {
-                String rst = DigestUtilPlus.AES.decryptCBCNoPadding(DigestUtilPlus.Base64.decodeBase64(encryptMsg), wxMpConfig.getMsgEncodingAesKey(), wxMpConfig.getMsgEncodingAesIv());
+                String rst = DigestUtilPlus.AES.decryptCBCNoPadding(DigestUtilPlus.Base64.decodeBase64(encryptMsg), wxMpClientConfig.getMsgEncodingAesKey(), wxMpClientConfig.getMsgEncodingAesIv());
                 // 去除补位字符
                 byte[] bytes = pkcs7Decode(rst.getBytes(StringUtilPlus.UTF_8));
                 // 分离16位随机字符串,网络字节序和AppId
                 int xmlLength = recoverNetworkBytesOrder(Arrays.copyOfRange(bytes, 16, 20));
                 //检查id是否正确
                 String fromAppId = new String(Arrays.copyOfRange(bytes, 20 + xmlLength, bytes.length), StringUtilPlus.UTF_8);
-                if (fromAppId.equals(wxMpConfig.getAppId())) {
+                if (fromAppId.equals(wxMpClientConfig.getAppId())) {
                     //装换消息对象
                     String decryptMsg = new String(Arrays.copyOfRange(bytes, 20, 20 + xmlLength), StringUtilPlus.UTF_8);
                     JAXBContext context = JAXBContext.newInstance(MsgDetailCb.class);
@@ -551,7 +551,7 @@ public class WxMpClient {
         String signature = DigestUtilPlus.SHA.sign(needSign, DigestUtilPlus.SHAAlgo._1, Boolean.FALSE);
 
         WxJsapiSignature jsapiSignature = new WxJsapiSignature();
-        jsapiSignature.setAppId(wxMpConfig.getAppId());
+        jsapiSignature.setAppId(wxMpClientConfig.getAppId());
         jsapiSignature.setTimestamp(timestamp);
         jsapiSignature.setNonceStr(nonceStr);
         jsapiSignature.setUrl(url);
@@ -573,22 +573,22 @@ public class WxMpClient {
             realPage.append(hash);
         }
 
-        String redirectUri = wxMpConfig.getUserSyncUrl() + DigestUtilPlus.Base64.encodeBase64String(realPage.toString().getBytes());
-        return String.format(WX_PUBLIC_BASE_FMT_URL, wxMpConfig.getAppId(), URLEncoder.encode(redirectUri, StringUtilPlus.UTF_8), infoScope);
+        String redirectUri = wxMpClientConfig.getUserSyncUrl() + DigestUtilPlus.Base64.encodeBase64String(realPage.toString().getBytes());
+        return String.format(WX_PUBLIC_BASE_FMT_URL, wxMpClientConfig.getAppId(), URLEncoder.encode(redirectUri, StringUtilPlus.UTF_8), infoScope);
     }
 
     private String getClientToken() throws BusinessException {
-        ClientTokenRedisDto clientToken = (ClientTokenRedisDto) redisHelper.vGet(WxCache.WX_MP, wxMpConfig.getClientTokenKey());
+        ClientTokenRedisDto clientToken = (ClientTokenRedisDto) redisHelper.vGet(WxCache.WX_MP, wxMpClientConfig.getClientTokenKey());
         if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
             return clientToken.getToken();
         }
-        Lock lock = redisHelper.getLock(WxCache.WX_MP, wxMpConfig.getClientTokenKey().concat(":lock"), LockType.NORMAL);
+        Lock lock = redisHelper.getLock(WxCache.WX_MP, wxMpClientConfig.getClientTokenKey().concat(":lock"), LockType.NORMAL);
         long timeOutMillis = System.currentTimeMillis() + 3000;
         boolean locked = false;
         try {
             do {
                 // 防止多线程同时获取accessToken
-                clientToken = (ClientTokenRedisDto) redisHelper.vGet(WxCache.WX_MP, wxMpConfig.getClientTokenKey());
+                clientToken = (ClientTokenRedisDto) redisHelper.vGet(WxCache.WX_MP, wxMpClientConfig.getClientTokenKey());
                 if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
                     return clientToken.getToken();
                 }
@@ -600,12 +600,12 @@ public class WxMpClient {
             } while (!locked);
 
             //获取到锁的服务可以去获取accessToken
-            ClientTokenData clientTokenData = wxMpTokenApiProxy.getClientToken(wxMpConfig.getAppId(), wxMpConfig.getAppSecret());
+            ClientTokenData clientTokenData = wxMpTokenApiProxy.getClientToken(wxMpClientConfig.getAppId(), wxMpClientConfig.getAppSecret());
             clientToken = new ClientTokenRedisDto();
             clientToken.setToken(clientTokenData.getAccessToken()); //获取到的凭证
             clientToken.setExpireTime(LocalDateTime.now().plusSeconds(clientTokenData.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
 
-            redisHelper.vPut(WxCache.WX_MP, wxMpConfig.getClientTokenKey(), clientToken);
+            redisHelper.vPut(WxCache.WX_MP, wxMpClientConfig.getClientTokenKey(), clientToken);
             return clientTokenData.getAccessToken();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -658,9 +658,9 @@ public class WxMpClient {
 
     private String chooseTicketKey(TicketType type) {
         return switch (type) {
-            case JSAPI -> wxMpConfig.getJsapiTicketKey();
-            case WX_CARD -> wxMpConfig.getWxCardTicketKey();
-            case SDK -> wxMpConfig.getSdkTicketKey();
+            case JSAPI -> wxMpClientConfig.getJsapiTicketKey();
+            case WX_CARD -> wxMpClientConfig.getWxCardTicketKey();
+            case SDK -> wxMpClientConfig.getSdkTicketKey();
         };
     }
 }

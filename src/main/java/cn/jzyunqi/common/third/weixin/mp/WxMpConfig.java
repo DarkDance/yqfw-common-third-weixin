@@ -1,78 +1,78 @@
 package cn.jzyunqi.common.third.weixin.mp;
 
-import cn.jzyunqi.common.utils.DigestUtilPlus;
-import lombok.Getter;
-import org.apache.commons.codec.binary.Base64;
+import cn.jzyunqi.common.third.weixin.common.WxHttpExchangeWrapper;
+import cn.jzyunqi.common.third.weixin.mp.kefu.WxMpKfApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.mass.WxMpMassApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.material.WxMpMaterialApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.menu.WxMpMenuApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.user.WxMpUserApiProxy;
+import jakarta.annotation.Resource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.support.WebClientAdapter;
+import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import java.util.Arrays;
+import java.time.Duration;
 
 /**
  * @author wiiyaya
- * @since 2024/9/23
+ * @since 2024/9/24
  */
-@Getter
+@Configuration
 public class WxMpConfig {
 
-    /**
-     * 公众号唯一凭证
-     */
-    private final String appId;
-    /**
-     * 公众号唯一凭证密钥
-     */
-    private final String appSecret;
+    @Bean
+    public WxHttpExchangeWrapper responseCheckWrapper() {
+        return new WxHttpExchangeWrapper();
+    }
 
-    /**
-     * 消息tokrn
-     */
-    private final String msgToken;
+    @Bean
+    public WxMpTokenApiProxy wxMpTokenApiProxy(WebClient.Builder webClientBuilder) {
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+        return factory.createClient(WxMpTokenApiProxy.class);
+    }
 
-    /**
-     * 用户信息同步中转页面
-     */
-    private final String userSyncUrl;
+    @Bean
+    public WxMpKfApiProxy wxMpKfApiProxy(WebClient.Builder webClientBuilder) {
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+        return factory.createClient(WxMpKfApiProxy.class);
+    }
 
-    /**
-     * 消息体加密密钥
-     */
-    private final byte[] msgEncodingAesKey;
+    @Bean
+    public WxMpMenuApiProxy wxMpMenuApiProxy(WebClient.Builder webClientBuilder) {
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+        return factory.createClient(WxMpMenuApiProxy.class);
+    }
 
-    /**
-     * 消息体加密向量
-     */
-    private final byte[] msgEncodingAesIv;
+    @Bean
+    public WxMpMaterialApiProxy wxMpMaterialApiProxy(WebClient.Builder webClientBuilder) {
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+        return factory.createClient(WxMpMaterialApiProxy.class);
+    }
 
-    /**
-     * 客户端token key
-     */
-    private final String clientTokenKey;
+    @Bean
+    public WxMpUserApiProxy wxMpUserApiProxy(WebClient.Builder webClientBuilder) {
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+        return factory.createClient(WxMpUserApiProxy.class);
+    }
 
-    /**
-     * js ticket key
-     */
-    private final String jsapiTicketKey;
-
-    /**
-     * js ticket key
-     */
-    private final String sdkTicketKey;
-
-    /**
-     * js ticket key
-     */
-    private final String wxCardTicketKey;
-
-    public WxMpConfig(String appId, String appSecret, String msgToken, String msgEncodingAesKey, String userSyncUrl) {
-        this.appId = appId;
-        this.appSecret = appSecret;
-        this.msgToken = msgToken;
-        this.msgEncodingAesKey = DigestUtilPlus.Base64.decodeBase64(msgEncodingAesKey);
-        this.userSyncUrl = userSyncUrl;
-
-        this.msgEncodingAesIv = Arrays.copyOfRange(Base64.decodeBase64(this.msgEncodingAesKey), 0, 16);
-        this.clientTokenKey = "client_token:" + appId;
-        this.jsapiTicketKey = "jsapi_ticket:" + appId;
-        this.sdkTicketKey = "sdk_ticket:" + appId;
-        this.wxCardTicketKey = "wx_card_ticket:" + appId;
+    @Bean
+    public WxMpMassApiProxy wxMpMassApiProxy(WebClient.Builder webClientBuilder) {
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+        return factory.createClient(WxMpMassApiProxy.class);
     }
 }
