@@ -14,7 +14,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
@@ -29,9 +28,9 @@ import java.io.InputStream;
 @HttpExchange(url = "https://api.weixin.qq.com", accept = {"application/json", "text/plain"})
 public interface WxMpMaterialApiProxy {
 
-    //素材管理 - 新增临时素材
+    //素材管理 - 新增临时素材,保存时间为3天
     @PostExchange(url = "/cgi-bin/media/upload", contentType = "multipart/form-data")
-    WxMpMediaData mediaUpload(@RequestParam String access_token, @RequestParam MaterialType type, @RequestParam MultipartFile media) throws BusinessException;
+    WxMpMediaData mediaUpload(@RequestParam String access_token, @RequestParam MaterialType type, @RequestPart Resource media) throws BusinessException;
 
     //素材管理 - 获取临时素材
     @PostExchange(url = "/cgi-bin/media/get")
@@ -47,7 +46,7 @@ public interface WxMpMaterialApiProxy {
 
     //素材管理 - 新增永久素材
     @PostExchange(url = "/cgi-bin/material/add_material", contentType = "multipart/form-data")
-    WxMpMediaData materialOtherUpload(@RequestParam String access_token, @RequestParam MaterialType type, @RequestParam MultipartFile media) throws BusinessException;
+    WxMpMediaData materialUpload(@RequestParam String access_token, @RequestParam MaterialType type, @RequestPart Resource media) throws BusinessException;
 
     //素材管理 - 图文永久素材获取
     @PostExchange(url = "/cgi-bin/material/get_material")

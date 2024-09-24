@@ -4,6 +4,7 @@ import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.redis.LockType;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.common.constant.WxCache;
+import cn.jzyunqi.common.third.weixin.common.enums.InfoScope;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
@@ -32,7 +33,6 @@ import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuData;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuRsp;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuTryMatchParam;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMpSelfMenuInfoRsp;
-import cn.jzyunqi.common.third.weixin.common.enums.InfoScope;
 import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.token.enums.TicketType;
 import cn.jzyunqi.common.third.weixin.mp.token.model.ClientTokenData;
@@ -53,15 +53,6 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.MultipartBodyBuilder;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.io.File;
 import java.io.InputStream;
@@ -143,7 +134,7 @@ public class WxMpClient {
         }
 
         //客服管理 - 设置客服账号的头像，文件大小为5M以内
-        public WeixinRsp kfAccountUploadHeadImg(String kfAccount, MultipartFile media) throws BusinessException {
+        public WeixinRsp kfAccountUploadHeadImg(String kfAccount, org.springframework.core.io.Resource media) throws BusinessException {
             return wxMpKfApiProxy.kfAccountUploadHeadImg(getClientToken(), kfAccount, media);
         }
 
@@ -254,7 +245,7 @@ public class WxMpClient {
 
     public class Material {
         //素材管理 - 新增临时素材
-        public WxMpMediaData mediaUpload(MaterialType type, MultipartFile media) throws BusinessException {
+        public WxMpMediaData mediaUpload(MaterialType type, org.springframework.core.io.Resource media) throws BusinessException {
             return wxMpMaterialApiProxy.mediaUpload(getClientToken(), type, media);
         }
 
@@ -269,13 +260,13 @@ public class WxMpClient {
         }
 
         //素材管理 - 新增图片永久素材
-        public WxMpMediaData mediaImgUpload(MultipartFile media) throws BusinessException {
-            return wxMpMaterialApiProxy.mediaImgUpload(getClientToken(), media.getResource());
+        public WxMpMediaData mediaImgUpload(org.springframework.core.io.Resource media) throws BusinessException {
+            return wxMpMaterialApiProxy.mediaImgUpload(getClientToken(), media);
         }
 
         //素材管理 - 新增其它永久素材
-        public WxMpMediaData materialOtherUpload(MaterialType type, MultipartFile media) throws BusinessException {
-            return wxMpMaterialApiProxy.materialOtherUpload(getClientToken(), type, media);
+        public WxMpMediaData materialUpload(MaterialType type, org.springframework.core.io.Resource media) throws BusinessException {
+            return wxMpMaterialApiProxy.materialUpload(getClientToken(), type, media);
         }
 
         //素材管理 - 图文永久素材获取

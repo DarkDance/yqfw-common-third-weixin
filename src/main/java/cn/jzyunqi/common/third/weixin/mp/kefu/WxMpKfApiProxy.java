@@ -11,9 +11,9 @@ import cn.jzyunqi.common.third.weixin.mp.kefu.model.WxMpKfSessionData;
 import cn.jzyunqi.common.third.weixin.mp.kefu.model.WxMpKfSessionListRsp;
 import cn.jzyunqi.common.third.weixin.mp.kefu.model.WxMpKfTypingParam;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
+import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
@@ -46,7 +46,7 @@ public interface WxMpKfApiProxy {
 
     //客服管理 - 设置客服账号的头像，文件大小为5M以内
     @PostExchange(url = "/customservice/kfaccount/uploadheadimg", contentType = "multipart/form-data")
-    WeixinRsp kfAccountUploadHeadImg(@RequestParam String access_token, @RequestParam String kf_account, @RequestParam MultipartFile media) throws BusinessException;
+    WeixinRsp kfAccountUploadHeadImg(@RequestParam String access_token, @RequestParam String kf_account, @RequestParam Resource media) throws BusinessException;
 
     //客服管理 - 获取所有客服账号
     @PostExchange(url = "/cgi-bin/customservice/getkflist")
