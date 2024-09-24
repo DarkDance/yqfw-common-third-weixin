@@ -288,7 +288,7 @@ public class WxMpClient {
         }
 
         //素材管理 - 其它永久素材获取
-        public InputStream materialOtherDownload(String mediaId) throws BusinessException {
+        public org.springframework.core.io.Resource materialOtherDownload(String mediaId) throws BusinessException {
             WxMpMediaData request = new WxMpMediaData();
             request.setMediaId(mediaId);
             return wxMpMaterialApiProxy.materialOtherDownload(getClientToken(), request);

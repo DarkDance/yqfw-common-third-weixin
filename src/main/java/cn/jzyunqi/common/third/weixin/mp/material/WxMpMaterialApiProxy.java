@@ -59,7 +59,7 @@ public interface WxMpMaterialApiProxy {
 
     //素材管理 - 其它永久素材获取
     @PostExchange(url = "/cgi-bin/material/get_material")
-    InputStream materialOtherDownload(@RequestParam String access_token, @RequestBody WxMpMediaData request) throws BusinessException;
+    org.springframework.core.io.Resource materialOtherDownload(@RequestParam String access_token, @RequestBody WxMpMediaData request) throws BusinessException;
 
     //素材管理 - 删除永久素材
     @PostExchange(url = "/cgi-bin/material/del_material")
