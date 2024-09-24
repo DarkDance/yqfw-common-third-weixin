@@ -2,8 +2,7 @@ package cn.jzyunqi.common.third.weixin.miniapp.qrcode;
 
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchange;
-import cn.jzyunqi.common.third.weixin.mp.model.request.QrcodeParam;
-import cn.jzyunqi.common.third.weixin.mp.token.model.ClientTokenData;
+import cn.jzyunqi.common.third.weixin.miniapp.qrcode.model.QrcodeParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;

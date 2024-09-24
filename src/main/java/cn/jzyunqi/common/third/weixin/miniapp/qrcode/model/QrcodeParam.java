@@ -1,6 +1,5 @@
-package cn.jzyunqi.common.third.weixin.mp.model.request;
+package cn.jzyunqi.common.third.weixin.miniapp.qrcode.model;
 
-import cn.jzyunqi.common.third.weixin.mp.model.request.item.LineColorData;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
