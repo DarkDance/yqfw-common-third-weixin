@@ -521,6 +521,10 @@ public class WxMpClient {
 
     public class User {
         //用户管理 - 获取用户基本信息
+        public MpUserData userInfo(String openid) throws BusinessException {
+            return userInfo(openid, null);
+        }
+
         public MpUserData userInfo(String openid, String lang) throws BusinessException {
             lang = StringUtilPlus.defaultString(lang, "zh_CN");
             return wxMpUserApiProxy.userInfo(getClientToken(), openid, lang);
