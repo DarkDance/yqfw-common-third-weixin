@@ -19,7 +19,7 @@ import java.util.Optional;
 @Slf4j
 @Aspect
 @Order
-public class WxResponseCheckWrapper {
+public class WxHttpExchangeWrapper {
 
     /**
      * 所有标记了@WxHttpExchange的类下所有的方法
@@ -31,19 +31,20 @@ public class WxResponseCheckWrapper {
     @Around(value = "wxHttpExchange() ", argNames = "proceedingJoinPoint")
     public Object Around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         log.debug("======wxHttpExchange start=======");
-        WeixinRsp result;
+        Object resultObj;
         try {
-            result = (WeixinRsp) Optional.ofNullable(proceedingJoinPoint.proceed()).orElse(new WeixinRsp());
+            resultObj = proceedingJoinPoint.proceed();
         } catch (Throwable e) {
             log.debug("======wxHttpExchange proceed throw exception=======");
             throw new BusinessException("common_error_wx_http_exchange_error", e);
         }
-
         log.debug("======wxHttpExchange proceed success=======");
-        if (StringUtilPlus.isNotBlank(result.getErrorCode()) && !"0".equals(result.getErrorCode())) {
-            throw new BusinessException("common_error_wx_http_exchange_failed", result.getErrorCode(), result.getErrorMsg());
+        if (resultObj instanceof WeixinRsp weixinRsp) {
+            if (StringUtilPlus.isNotBlank(weixinRsp.getErrorCode()) && !"0".equals(weixinRsp.getErrorCode())) {
+                throw new BusinessException("common_error_wx_http_exchange_failed", weixinRsp.getErrorCode(), weixinRsp.getErrorMsg());
+            }
         }
         log.debug("======wxHttpExchange end=======");
-        return result;
+        return resultObj;
     }
 }
