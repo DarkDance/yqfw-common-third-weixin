@@ -19,7 +19,6 @@ import java.time.Duration;
  * @since 2024/9/25
  */
 @Configuration
-@ConditionalOnBean(WxOpenClientConfig.class)
 public class WxOpenConfig {
 
     @Bean
