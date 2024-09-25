@@ -17,6 +17,6 @@ import org.springframework.web.service.annotation.HttpExchange;
 public interface WxMaQrcodeApiProxy {
     //小程序码与小程序链接 - 获取不限制的小程序码
     @GetExchange(url = "/wxa/getwxacodeunlimit")
-    Byte[] getClientToken(@RequestParam String access_token, @RequestBody QrcodeParam request) throws BusinessException;
+    org.springframework.core.io.Resource getClientToken(@RequestParam String access_token, @RequestBody QrcodeParam request) throws BusinessException;
 
 }
