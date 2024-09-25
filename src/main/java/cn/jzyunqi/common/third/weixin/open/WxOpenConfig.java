@@ -1,10 +1,7 @@
 package cn.jzyunqi.common.third.weixin.open;
 
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchangeWrapper;
-import cn.jzyunqi.common.third.weixin.mp.WxMpClient;
-import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
 import cn.jzyunqi.common.third.weixin.open.user.WxOpenUserApiProxy;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
