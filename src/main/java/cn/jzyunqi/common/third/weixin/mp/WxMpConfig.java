@@ -7,6 +7,8 @@ import cn.jzyunqi.common.third.weixin.mp.material.WxMpMaterialApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.menu.WxMpMenuApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.user.WxMpUserApiProxy;
+import cn.jzyunqi.common.third.weixin.open.WxOpenClientConfig;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,6 +27,7 @@ import java.time.Duration;
  * @since 2024/9/24
  */
 @Configuration
+@ConditionalOnBean(WxMpClientConfig.class)
 public class WxMpConfig {
 
     @Bean
