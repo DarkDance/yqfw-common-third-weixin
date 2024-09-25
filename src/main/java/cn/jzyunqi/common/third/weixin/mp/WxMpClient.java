@@ -150,32 +150,32 @@ public class WxMpClient {
         }
 
         //客服消息 - 发消息
-        public String sendKefuMessageWithResponse(ReplyMsgData request) throws BusinessException {
-            return wxMpKfApiProxy.sendKefuMessageWithResponse(getClientToken(), request);
+        public void sendKefuMessageWithResponse(ReplyMsgData request) throws BusinessException {
+            wxMpKfApiProxy.sendKefuMessageWithResponse(getClientToken(), request);
         }
 
         //客服消息 - 发送客服输入状态
-        public String sendKfTypingState(String openid, TypingType command) throws BusinessException {
+        public void sendKfTypingState(String openid, TypingType command) throws BusinessException {
             WxMpKfTypingParam request = new WxMpKfTypingParam();
             request.setToUser(openid);
             request.setCommand(command);
-            return wxMpKfApiProxy.sendKfTypingState(getClientToken(), request);
+            wxMpKfApiProxy.sendKfTypingState(getClientToken(), request);
         }
 
         //会话控制 - 创建会话
-        public String kfSessionCreate(String openid, String kfAccount) throws BusinessException {
+        public void kfSessionCreate(String openid, String kfAccount) throws BusinessException {
             WxMpKfSessionData request = new WxMpKfSessionData();
             request.setOpenid(openid);
             request.setKfAccount(kfAccount);
-            return wxMpKfApiProxy.kfSessionCreate(getClientToken(), request);
+            wxMpKfApiProxy.kfSessionCreate(getClientToken(), request);
         }
 
         //会话控制 - 关闭会话
-        public String kfSessionClose(String openid, String kfAccount) throws BusinessException {
+        public void kfSessionClose(String openid, String kfAccount) throws BusinessException {
             WxMpKfSessionData request = new WxMpKfSessionData();
             request.setOpenid(openid);
             request.setKfAccount(kfAccount);
-            return wxMpKfApiProxy.kfSessionClose(getClientToken(), request);
+            wxMpKfApiProxy.kfSessionClose(getClientToken(), request);
         }
 
         //会话控制 - 获取客户会话状态

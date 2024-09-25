@@ -58,19 +58,19 @@ public interface WxMpKfApiProxy {
 
     //客服消息 - 发消息
     @PostExchange(url = "/cgi-bin/message/custom/send")
-    String sendKefuMessageWithResponse(@RequestParam String access_token, @RequestBody ReplyMsgData request) throws BusinessException;
+    WeixinRsp sendKefuMessageWithResponse(@RequestParam String access_token, @RequestBody ReplyMsgData request) throws BusinessException;
 
     //客服消息 - 发送客服输入状态
     @PostExchange(url = "/cgi-bin/message/custom/typing")
-    String sendKfTypingState(@RequestParam String access_token, @RequestBody WxMpKfTypingParam request) throws BusinessException;
+    WeixinRsp sendKfTypingState(@RequestParam String access_token, @RequestBody WxMpKfTypingParam request) throws BusinessException;
 
     //会话控制 - 创建会话
     @PostExchange(url = "/customservice/kfsession/create")
-    String kfSessionCreate(@RequestParam String access_token, @RequestBody WxMpKfSessionData request) throws BusinessException;
+    WeixinRsp kfSessionCreate(@RequestParam String access_token, @RequestBody WxMpKfSessionData request) throws BusinessException;
 
     //会话控制 - 关闭会话
     @PostExchange(url = "/customservice/kfsession/close")
-    String kfSessionClose(@RequestParam String access_token, @RequestBody WxMpKfSessionData request) throws BusinessException;
+    WeixinRsp kfSessionClose(@RequestParam String access_token, @RequestBody WxMpKfSessionData request) throws BusinessException;
 
     //会话控制 - 获取客户会话状态
     @GetExchange(url = "/customservice/kfsession/getsession")
