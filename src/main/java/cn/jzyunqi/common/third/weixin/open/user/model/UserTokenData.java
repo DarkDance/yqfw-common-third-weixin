@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.open.model.response;
+package cn.jzyunqi.common.third.weixin.open.user.model;
 
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,7 +13,7 @@ import java.io.Serial;
  */
 @Getter
 @Setter
-public class Oauth2UserTokenRsp extends WeixinRsp {
+public class UserTokenData extends WeixinRsp {
     @Serial
     private static final long serialVersionUID = -7705834619669304828L;
 

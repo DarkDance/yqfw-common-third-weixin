@@ -1,7 +1,9 @@
-package cn.jzyunqi.common.third.weixin.open.model.response;
+package cn.jzyunqi.common.third.weixin.open.user.model;
 
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -9,7 +11,9 @@ import java.util.List;
  * @author wiiyaya
  * @since 2024/9/18
  */
-public class OpenUserInfoRsp extends WeixinRsp {
+@Getter
+@Setter
+public class OpenUserData extends WeixinRsp {
     /**
      * 微信unionId
      */

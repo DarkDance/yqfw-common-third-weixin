@@ -7,6 +7,7 @@ import cn.jzyunqi.common.third.weixin.mp.material.WxMpMaterialApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.menu.WxMpMenuApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.user.WxMpUserApiProxy;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -27,6 +28,7 @@ import java.time.Duration;
 public class WxMpConfig {
 
     @Bean
+    @ConditionalOnMissingBean
     public WxHttpExchangeWrapper responseCheckWrapper() {
         return new WxHttpExchangeWrapper();
     }
