@@ -357,7 +357,7 @@ public class WxMpClient {
             //验证安全签名，如果有消息体，校验后解码消息体
             if (msgDetailCb == null) {//没有消息体，属于连接测试
                 String needSign = signString(wxMpClientConfig.getMsgToken(), msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce()).equals(msgSimpleCb.getSignature()) ? msgSimpleCb.getEchostr() : REPLAY_MESSAGE_FAILED;
-                log.debug("======WeixinCgiHelper replyMessageNotice needSign:{}, echostr:{}", needSign, msgSimpleCb.getEchostr());
+                log.debug("======WxMpClient replyMessageNotice needSign:{}, echostr:{}", needSign, msgSimpleCb.getEchostr());
                 return needSign;
             } else {
                 if (StringUtilPlus.isNotEmpty(msgDetailCb.getEncrypt())) {//消息是密文传输，需要解密
@@ -374,10 +374,10 @@ public class WxMpClient {
 
                 try {
                     Object reply = callback.prepareReplyMessage(msgDetailCb);
-                    log.debug("======WeixinCgiHelper replyMessageNotice reply:{}", reply);
+                    log.debug("======WxMpClient replyMessageNotice reply:{}", reply);
                     return reply == null ? REPLAY_MESSAGE_SUCCESS : reply;
                 } catch (BusinessException e) {
-                    log.error("======WeixinCgiHelper replyMessageNotice error:", e);
+                    log.error("======WxMpClient replyMessageNotice error:", e);
                     return REPLAY_MESSAGE_FAILED;
                 }
             }
