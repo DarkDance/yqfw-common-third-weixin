@@ -10,7 +10,8 @@ import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpMsgTemplateData;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpMsgTemplateParam;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateTitleData;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateTitleParam;
-import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpTemplateMsgParam;
+import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateMsgParam;
+import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateMsgRsp;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.HttpExchange;
@@ -50,5 +51,5 @@ public interface WxMpSubscribeMsgApiProxy {
 
     //订阅通知 - 发送订阅通知
     @PostExchange(url = "/cgi-bin/message/subscribe/bizsend")
-    WeixinRspV1 send(@RequestParam String access_token, WxMpTemplateMsgParam request) throws BusinessException;
+    WxMpTemplateMsgRsp send(@RequestParam String access_token, WxMpTemplateMsgParam request) throws BusinessException;
 }

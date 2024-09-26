@@ -5,6 +5,8 @@ import cn.jzyunqi.common.third.weixin.mp.kefu.WxMpKfApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.mass.WxMpMassApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.material.WxMpMaterialApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.menu.WxMpMenuApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.WxMpSubscribeMsgApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.template.WxMpTemplateMsgApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.user.WxMpUserApiProxy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -91,5 +93,21 @@ public class WxMpConfig {
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpMassApiProxy.class);
+    }
+
+    @Bean
+    public WxMpSubscribeMsgApiProxy wxMpSubscribeMsgApiProxy(WebClient.Builder webClientBuilder) {
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+        return factory.createClient(WxMpSubscribeMsgApiProxy.class);
+    }
+
+    @Bean
+    public WxMpTemplateMsgApiProxy wxMpTemplateMsgApiProxy(WebClient.Builder webClientBuilder) {
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+        return factory.createClient(WxMpTemplateMsgApiProxy.class);
     }
 }

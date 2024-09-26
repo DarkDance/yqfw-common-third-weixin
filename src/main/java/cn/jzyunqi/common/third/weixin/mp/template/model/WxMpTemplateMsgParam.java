@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.mp.subscribe.model;
+package cn.jzyunqi.common.third.weixin.mp.template.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

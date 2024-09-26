@@ -42,7 +42,13 @@ import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpMsgTemplateParam;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateKeywordData;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateTitleData;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateTitleParam;
-import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpTemplateMsgParam;
+import cn.jzyunqi.common.third.weixin.mp.template.WxMpTemplateMsgApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.template.enums.WxMpIndustryEnum;
+import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpAddTemplateParam;
+import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData;
+import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpIndustryParam;
+import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpIndustryData;
+import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateMsgParam;
 import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.token.enums.TicketType;
 import cn.jzyunqi.common.third.weixin.mp.token.model.ClientTokenData;
@@ -63,9 +69,6 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.service.annotation.PostExchange;
 
 import java.io.File;
 import java.net.URLEncoder;
@@ -113,6 +116,9 @@ public class WxMpClient {
     private WxMpSubscribeMsgApiProxy wxMpSubscribeMsgApiProxy;
 
     @Resource
+    private WxMpTemplateMsgApiProxy wxMpTemplateMsgApiProxy;
+
+    @Resource
     private WxMpClientConfig wxMpClientConfig;
 
     @Resource
@@ -125,6 +131,7 @@ public class WxMpClient {
     public final User user = new User();
     public final Mass mass = new Mass();
     public final Subscribe subscribe = new Subscribe();
+    public final Template template = new Template();
 
     public class Kefu {
         //客服管理 - 添加客服账号（添加后不可用，需要再邀请）
@@ -608,6 +615,47 @@ public class WxMpClient {
         public WeixinRspV1 send(WxMpTemplateMsgParam request) throws BusinessException {
             return wxMpSubscribeMsgApiProxy.send(getClientToken(), request);
         }
+    }
+
+    public class Template {
+        //基础消息 - 模板消息 - 设置所属行业
+        public void setIndustry(WxMpIndustryEnum primaryIndustry, WxMpIndustryEnum secondaryIndustry) throws BusinessException {
+            WxMpIndustryParam request = new WxMpIndustryParam();
+            request.setIndustryId1(primaryIndustry.getCode());
+            request.setIndustryId2(secondaryIndustry.getCode());
+            wxMpTemplateMsgApiProxy.industrySet(getClientToken(), request);
+        }
+
+        //基础消息 - 模板消息 - 获取设置的行业信息
+        public WxMpIndustryData getIndustry() throws BusinessException {
+            return wxMpTemplateMsgApiProxy.industryInfo(getClientToken());
+        }
+
+        //基础消息 - 模板消息 - 获得模板ID
+        public String addTemplate(String shortTemplateId, List<String> keywordNameList) throws BusinessException {
+            WxMpAddTemplateParam request = new WxMpAddTemplateParam();
+            request.setTemplateIdShort(shortTemplateId);
+            request.setKeywordNameList(keywordNameList);
+            return wxMpTemplateMsgApiProxy.privateTemplateAdd(getClientToken(), request).getTemplateId();
+        }
+
+        //基础消息 - 模板消息 - 获取模板列表
+        public List<WxMpTemplateData> getAllPrivateTemplate() throws BusinessException {
+            return wxMpTemplateMsgApiProxy.privateTemplateList(getClientToken()).getTemplateList();
+        }
+
+        //基础消息 - 模板消息 - 获取模板列表
+        public void delPrivateTemplate(String templateId) throws BusinessException {
+            WxMpTemplateData request = new WxMpTemplateData();
+            request.setTemplateId(templateId);
+            wxMpTemplateMsgApiProxy.privateTemplateDel(getClientToken(), request);
+        }
+
+        //基础消息 - 模板消息 - 发送模板消息
+        public Integer sendTemplateMsg(WxMpTemplateMsgParam request) throws BusinessException {
+            return wxMpTemplateMsgApiProxy.sendTemplateMsg(getClientToken(), request).getMsgId();
+        }
+
     }
 
     public WxJsapiSignature createJsapiSignature(String url) throws BusinessException {
