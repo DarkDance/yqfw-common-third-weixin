@@ -36,7 +36,7 @@ import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuRsp;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuTryMatchParam;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMpSelfMenuInfoRsp;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.WxMpSubscribeMsgApiProxy;
-import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpCategoryRsp;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpCategoryData;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpMsgTemplateData;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpMsgTemplateParam;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateKeywordData;
@@ -45,9 +45,9 @@ import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateTitlePar
 import cn.jzyunqi.common.third.weixin.mp.template.WxMpTemplateMsgApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.template.enums.WxMpIndustryEnum;
 import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpAddTemplateParam;
-import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData;
-import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpIndustryParam;
 import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpIndustryData;
+import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpIndustryParam;
+import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData;
 import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateMsgParam;
 import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.token.enums.TicketType;
@@ -570,56 +570,56 @@ public class WxMpClient {
     public class Subscribe {
 
         //订阅通知 - 从公共模板库中选用模板，到私有模板库中
-        public WxMpMsgTemplateData addTemplate(String publicTemplateId, List<Integer> keywordIdList, String sceneDesc) throws BusinessException {
+        public String privateTemplateAdd(String publicTemplateId, List<Integer> keywordIdList, String sceneDesc) throws BusinessException {
             WxMpMsgTemplateParam request = new WxMpMsgTemplateParam();
             request.setTid(publicTemplateId);
             request.setKidList(keywordIdList);
             request.setSceneDesc(sceneDesc);
-            return wxMpSubscribeMsgApiProxy.addTemplate(getClientToken(), request);
+            return wxMpSubscribeMsgApiProxy.privateTemplateAdd(getClientToken(), request).getPriTmplId();
         }
 
         //订阅通知 - 删除私有模板库中的模板
-        public WeixinRspV1 delTemplate(String privateTemplateId) throws BusinessException {
+        public void privateTemplateDelete(String privateTemplateId) throws BusinessException {
             WxMpMsgTemplateData request = new WxMpMsgTemplateData();
             request.setPriTmplId(privateTemplateId);
-            return wxMpSubscribeMsgApiProxy.delTemplate(getClientToken(), request);
+            wxMpSubscribeMsgApiProxy.privateTemplateDelete(getClientToken(), request);
         }
 
         //订阅通知 - 获取公众号类目
-        public WxMpCategoryRsp getCategory() throws BusinessException {
-            return wxMpSubscribeMsgApiProxy.getCategory(getClientToken());
+        public List<WxMpCategoryData> categoryList() throws BusinessException {
+            return wxMpSubscribeMsgApiProxy.categoryList(getClientToken()).getData();
         }
 
         //订阅通知 - 获取公共模板下的关键词列表
-        public WeixinRspV2<WxMpPubTemplateKeywordData> getPubTemplateKeyWordsById(String publicTemplateId) throws BusinessException {
+        public List<WxMpPubTemplateKeywordData> publicTemplateKeywordsList(String publicTemplateId) throws BusinessException {
             WxMpMsgTemplateParam request = new WxMpMsgTemplateParam();
             request.setTid(publicTemplateId);
-            return wxMpSubscribeMsgApiProxy.getPubTemplateKeyWordsById(getClientToken(), request);
+            return wxMpSubscribeMsgApiProxy.publicTemplateKeywordsList(getClientToken(), request).getData();
         }
 
         //订阅通知 - 获取类目下的公共模板
-        public WeixinRspV2<WxMpPubTemplateTitleData> getPubTemplateTitleList(String categoryIds, int start, int limit) throws BusinessException {
+        public WeixinRspV2<List<WxMpPubTemplateTitleData>> publicTemplatePage(String categoryIds, int start, int limit) throws BusinessException {
             WxMpPubTemplateTitleParam request = new WxMpPubTemplateTitleParam();
             request.setIds(categoryIds);
             request.setStart(start);
             request.setLimit(limit);
-            return wxMpSubscribeMsgApiProxy.getPubTemplateTitleList(getClientToken(), request);
+            return wxMpSubscribeMsgApiProxy.publicTemplatePage(getClientToken(), request);
         }
 
         //订阅通知 - 获取私有的模板列表
-        public WeixinRspV2<WxMpMsgTemplateData> getTemplateList() throws BusinessException {
-            return wxMpSubscribeMsgApiProxy.getTemplateList(getClientToken());
+        public List<WxMpMsgTemplateData> privateTemplateList() throws BusinessException {
+            return wxMpSubscribeMsgApiProxy.privateTemplateList(getClientToken()).getData();
         }
 
         //订阅通知 - 发送订阅通知
-        public WeixinRspV1 send(WxMpTemplateMsgParam request) throws BusinessException {
-            return wxMpSubscribeMsgApiProxy.send(getClientToken(), request);
+        public void sendSubscribeMsg(WxMpTemplateMsgParam request) throws BusinessException {
+            wxMpSubscribeMsgApiProxy.sendSubscribeMsg(getClientToken(), request);
         }
     }
 
     public class Template {
         //基础消息 - 模板消息 - 设置所属行业
-        public void setIndustry(WxMpIndustryEnum primaryIndustry, WxMpIndustryEnum secondaryIndustry) throws BusinessException {
+        public void industrySet(WxMpIndustryEnum primaryIndustry, WxMpIndustryEnum secondaryIndustry) throws BusinessException {
             WxMpIndustryParam request = new WxMpIndustryParam();
             request.setIndustryId1(primaryIndustry.getCode());
             request.setIndustryId2(secondaryIndustry.getCode());
@@ -627,12 +627,12 @@ public class WxMpClient {
         }
 
         //基础消息 - 模板消息 - 获取设置的行业信息
-        public WxMpIndustryData getIndustry() throws BusinessException {
+        public WxMpIndustryData industryInfo() throws BusinessException {
             return wxMpTemplateMsgApiProxy.industryInfo(getClientToken());
         }
 
         //基础消息 - 模板消息 - 获得模板ID
-        public String addTemplate(String shortTemplateId, List<String> keywordNameList) throws BusinessException {
+        public String privateTemplateAdd(String shortTemplateId, List<String> keywordNameList) throws BusinessException {
             WxMpAddTemplateParam request = new WxMpAddTemplateParam();
             request.setTemplateIdShort(shortTemplateId);
             request.setKeywordNameList(keywordNameList);
@@ -640,15 +640,15 @@ public class WxMpClient {
         }
 
         //基础消息 - 模板消息 - 获取模板列表
-        public List<WxMpTemplateData> getAllPrivateTemplate() throws BusinessException {
+        public List<WxMpTemplateData> privateTemplateList() throws BusinessException {
             return wxMpTemplateMsgApiProxy.privateTemplateList(getClientToken()).getTemplateList();
         }
 
         //基础消息 - 模板消息 - 获取模板列表
-        public void delPrivateTemplate(String templateId) throws BusinessException {
+        public void privateTemplateDelete(String templateId) throws BusinessException {
             WxMpTemplateData request = new WxMpTemplateData();
             request.setTemplateId(templateId);
-            wxMpTemplateMsgApiProxy.privateTemplateDel(getClientToken(), request);
+            wxMpTemplateMsgApiProxy.privateTemplateDelete(getClientToken(), request);
         }
 
         //基础消息 - 模板消息 - 发送模板消息
