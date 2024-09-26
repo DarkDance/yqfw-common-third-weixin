@@ -7,15 +7,15 @@ import cn.jzyunqi.common.third.weixin.pay.callback.model.PayResultCb;
 import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApiProxy;
 import cn.jzyunqi.common.third.weixin.pay.cert.model.PlantCertData;
 import cn.jzyunqi.common.third.weixin.pay.cert.model.PlantCertRedisDto;
+import cn.jzyunqi.common.third.weixin.pay.order.WxPayOrderApiProxy;
 import cn.jzyunqi.common.third.weixin.pay.order.enums.RefundStatus;
 import cn.jzyunqi.common.third.weixin.pay.order.enums.TradeState;
-import cn.jzyunqi.common.third.weixin.pay.order.model.RefundOrderParam;
-import cn.jzyunqi.common.third.weixin.pay.order.model.OrderRefundData;
-import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderV3Rsp;
-import cn.jzyunqi.common.third.weixin.pay.order.WxPayOrderApiProxy;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderData;
+import cn.jzyunqi.common.third.weixin.pay.order.model.OrderRefundData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.PrepayIdData;
+import cn.jzyunqi.common.third.weixin.pay.order.model.RefundOrderParam;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderParam;
+import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderV3Rsp;
 import cn.jzyunqi.common.utils.CollectionUtilPlus;
 import cn.jzyunqi.common.utils.DateTimeUtilPlus;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
@@ -26,7 +26,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpMethod;
 
 import javax.net.ssl.SSLException;
 import java.io.ByteArrayInputStream;
@@ -214,7 +213,7 @@ public class WxPayClient {
      * @param returnHeaderMap 头信息
      * @param returnParam     体信息
      */
-    public void verifyHeader(Map<String, String> returnHeaderMap, String returnParam) throws SSLException {
+    private void verifyHeader(Map<String, String> returnHeaderMap, String returnParam) throws SSLException {
         String weixinSign = returnHeaderMap.get("Wechatpay-Signature");
         String weixinPemSerial = returnHeaderMap.get("Wechatpay-Serial");
         String timestamp = returnHeaderMap.get("Wechatpay-Timestamp");
@@ -238,40 +237,7 @@ public class WxPayClient {
         }
     }
 
-    /**
-     * 签名请求
-     *
-     * @param method      请求方法
-     * @param requestPath 请求路径（不含域名）
-     * @param requestBody 请求体
-     */
-    public String headerSign(HttpMethod method, String requestPath, String requestBody) {
-        Long timestamp = System.currentTimeMillis() / 1000;
-        String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
-        String needSignContent = StringUtilPlus.join(
-                method, StringUtilPlus.ENTER,
-                requestPath, StringUtilPlus.ENTER,
-                timestamp, StringUtilPlus.ENTER,
-                nonceStr, StringUtilPlus.ENTER,
-                StringUtilPlus.defaultIfBlank(requestBody, StringUtilPlus.EMPTY), StringUtilPlus.ENTER
-        );
-        String sign = StringUtilPlus.EMPTY;
-        try {
-            sign = DigestUtilPlus.RSA256.signPrivateKey(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(wxPayClientConfig.getMerchantPrivateKey()), Boolean.TRUE);
-        } catch (Exception e) {
-            log.error("=====headerSign error: ", e);
-        }
-        return String.format(
-                "WECHATPAY2-SHA256-RSA2048 mchid=\"%s\",serial_no=\"%s\",nonce_str=\"%s\",timestamp=\"%s\",signature=\"%s\"",
-                wxPayClientConfig.getMerchantId(),
-                wxPayClientConfig.getMerchantSerialNumber(),
-                nonceStr,
-                timestamp,
-                sign
-        );
-    }
-
-    public PlantCertRedisDto plantCert(String weixinPemSerial) throws BusinessException {
+    private PlantCertRedisDto plantCert(String weixinPemSerial) throws BusinessException {
         Map<String, Object> weixinPem = redisHelper.hGetAll(WxCache.WX_PAY_V, wxPayClientConfig.getMerchantId());
         if (CollectionUtilPlus.Map.isNotEmpty(weixinPem) && StringUtilPlus.isBlank(weixinPemSerial)) {
             return null;
