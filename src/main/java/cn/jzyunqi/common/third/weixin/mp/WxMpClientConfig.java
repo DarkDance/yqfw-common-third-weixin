@@ -18,8 +18,6 @@ public interface WxMpClientConfig {
 
     String getMsgToken();
 
-    String getUserSyncUrl();
-
     byte[] getMsgEncodingAesKey();
 
     byte[] getMsgEncodingAesIv();
