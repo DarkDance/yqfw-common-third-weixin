@@ -1,6 +1,8 @@
 package cn.jzyunqi.common.third.weixin.pay;
 
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchangeWrapper;
+import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
+import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApiProxy;
 import cn.jzyunqi.common.third.weixin.pay.order.WxPayOrderApiProxy;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
 import cn.jzyunqi.common.utils.RandomUtilPlus;
@@ -69,5 +71,13 @@ public class WxPayConfig {
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxPayOrderApiProxy.class);
+    }
+
+    @Bean
+    public WxPayCertApiProxy wxPayCertApiProxy(WebClient.Builder webClientBuilder) {
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+        return factory.createClient(WxPayCertApiProxy.class);
     }
 }
