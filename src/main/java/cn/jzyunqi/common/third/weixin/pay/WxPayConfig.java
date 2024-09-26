@@ -2,7 +2,7 @@ package cn.jzyunqi.common.third.weixin.pay;
 
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchangeWrapper;
 import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApiProxy;
-import cn.jzyunqi.common.third.weixin.pay.order.AuthUtils;
+import cn.jzyunqi.common.third.weixin.common.utils.AuthUtils;
 import cn.jzyunqi.common.third.weixin.pay.order.WxPayOrderApiProxy;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,7 +41,16 @@ public class WxPayConfig {
         WebClient webClient = webClientBuilder.clone()
                 .filter(ExchangeFilterFunction.ofRequestProcessor(request -> {
                     ClientRequest filtered = ClientRequest.from(request)
-                            .header("Authorization", AuthUtils.genAuthToken(wxPayClientConfig, request))
+                            .header("Authorization",
+                                    AuthUtils.genAuthToken(
+                                            wxPayClientConfig.getMerchantId(),
+                                            wxPayClientConfig.getMerchantSerialNumber(),
+                                            wxPayClientConfig.getMerchantPrivateKey(),
+                                            request.method(),
+                                            request.url().getPath(),
+                                            request.body().toString()
+                                    )
+                            )
                             .build();
                     return Mono.just(filtered);
                 }))

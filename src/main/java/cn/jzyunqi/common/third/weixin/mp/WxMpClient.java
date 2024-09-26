@@ -90,7 +90,6 @@ import java.util.stream.Stream;
 @Slf4j
 public class WxMpClient {
 
-    private static final String WX_PUBLIC_BASE_FMT_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=#wechat_redirect";
     private static final String WX_JS_API_TICKET_SIGN = "jsapi_ticket=%s&noncestr=%s&timestamp=%s&url=%s";
 
     @Resource
@@ -672,24 +671,6 @@ public class WxMpClient {
         jsapiSignature.setUrl(url);
         jsapiSignature.setSignature(signature);
         return jsapiSignature;
-    }
-
-    public String prepareUserSyncUrl(String redirectPage, String hash, Map<String, String> redirectParams, InfoScope infoScope) throws BusinessException {
-        StringBuilder realPage = new StringBuilder();
-        realPage.append(redirectPage);
-        realPage.append("?_=");
-        realPage.append(System.currentTimeMillis());
-        if (CollectionUtilPlus.Map.isNotEmpty(redirectParams)) {
-            realPage.append("&");
-            realPage.append(CollectionUtilPlus.Map.getUrlParam(redirectParams, false, false, true));
-        }
-        if (StringUtilPlus.isNotBlank(hash)) {
-            realPage.append("#/");
-            realPage.append(hash);
-        }
-
-        String redirectUri = wxMpClientConfig.getUserSyncUrl() + DigestUtilPlus.Base64.encodeBase64String(realPage.toString().getBytes());
-        return String.format(WX_PUBLIC_BASE_FMT_URL, wxMpClientConfig.getAppId(), URLEncoder.encode(redirectUri, StringUtilPlus.UTF_8), infoScope);
     }
 
     private String getClientToken() throws BusinessException {
