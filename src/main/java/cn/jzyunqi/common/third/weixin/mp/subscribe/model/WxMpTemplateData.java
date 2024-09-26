@@ -1,7 +1,6 @@
 package cn.jzyunqi.common.third.weixin.mp.subscribe.model;
 
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,7 +10,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class WxMpMsgTemplateData extends WeixinRspV1 {
+public class WxMpTemplateData extends WeixinRspV1 {
 
     /**
      * 添加至账号下的模板id，发送订阅通知时所需

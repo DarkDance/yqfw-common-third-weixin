@@ -1,6 +1,5 @@
 package cn.jzyunqi.common.third.weixin.mp.subscribe.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +11,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class WxMpMsgTemplateParam {
+public class WxMpTemplateParam {
     /**
      * 模板标题 id，可通过getPubTemplateTitleList接口获取，也可登录公众号后台查看获取
      */

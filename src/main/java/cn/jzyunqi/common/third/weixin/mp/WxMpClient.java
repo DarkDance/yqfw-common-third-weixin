@@ -37,8 +37,8 @@ import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuTryMatchParam;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMpSelfMenuInfoRsp;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.WxMpSubscribeMsgApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpCategoryData;
-import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpMsgTemplateData;
-import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpMsgTemplateParam;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpTemplateData;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpTemplateParam;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateKeywordData;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateTitleData;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateTitleParam;
@@ -47,7 +47,6 @@ import cn.jzyunqi.common.third.weixin.mp.template.enums.WxMpIndustryEnum;
 import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpAddTemplateParam;
 import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpIndustryData;
 import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpIndustryParam;
-import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData;
 import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateMsgParam;
 import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.token.enums.TicketType;
@@ -571,7 +570,7 @@ public class WxMpClient {
 
         //订阅通知 - 从公共模板库中选用模板，到私有模板库中
         public String privateTemplateAdd(String publicTemplateId, List<Integer> keywordIdList, String sceneDesc) throws BusinessException {
-            WxMpMsgTemplateParam request = new WxMpMsgTemplateParam();
+            WxMpTemplateParam request = new WxMpTemplateParam();
             request.setTid(publicTemplateId);
             request.setKidList(keywordIdList);
             request.setSceneDesc(sceneDesc);
@@ -580,7 +579,7 @@ public class WxMpClient {
 
         //订阅通知 - 删除私有模板库中的模板
         public void privateTemplateDelete(String privateTemplateId) throws BusinessException {
-            WxMpMsgTemplateData request = new WxMpMsgTemplateData();
+            WxMpTemplateData request = new WxMpTemplateData();
             request.setPriTmplId(privateTemplateId);
             wxMpSubscribeMsgApiProxy.privateTemplateDelete(getClientToken(), request);
         }
@@ -592,7 +591,7 @@ public class WxMpClient {
 
         //订阅通知 - 获取公共模板下的关键词列表
         public List<WxMpPubTemplateKeywordData> publicTemplateKeywordsList(String publicTemplateId) throws BusinessException {
-            WxMpMsgTemplateParam request = new WxMpMsgTemplateParam();
+            WxMpTemplateParam request = new WxMpTemplateParam();
             request.setTid(publicTemplateId);
             return wxMpSubscribeMsgApiProxy.publicTemplateKeywordsList(getClientToken(), request).getData();
         }
@@ -607,7 +606,7 @@ public class WxMpClient {
         }
 
         //订阅通知 - 获取私有的模板列表
-        public List<WxMpMsgTemplateData> privateTemplateList() throws BusinessException {
+        public List<WxMpTemplateData> privateTemplateList() throws BusinessException {
             return wxMpSubscribeMsgApiProxy.privateTemplateList(getClientToken()).getData();
         }
 
@@ -640,13 +639,13 @@ public class WxMpClient {
         }
 
         //基础消息 - 模板消息 - 获取模板列表
-        public List<WxMpTemplateData> privateTemplateList() throws BusinessException {
+        public List<cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData> privateTemplateList() throws BusinessException {
             return wxMpTemplateMsgApiProxy.privateTemplateList(getClientToken()).getTemplateList();
         }
 
         //基础消息 - 模板消息 - 获取模板列表
         public void privateTemplateDelete(String templateId) throws BusinessException {
-            WxMpTemplateData request = new WxMpTemplateData();
+            cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData request = new cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData();
             request.setTemplateId(templateId);
             wxMpTemplateMsgApiProxy.privateTemplateDelete(getClientToken(), request);
         }
