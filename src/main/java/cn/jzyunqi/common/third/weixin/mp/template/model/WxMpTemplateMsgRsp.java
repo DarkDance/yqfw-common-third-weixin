@@ -15,5 +15,5 @@ import lombok.Setter;
 public class WxMpTemplateMsgRsp extends WeixinRspV1 {
 
     @JsonProperty("msgid")
-    private Integer msgId;
+    private String msgId;
 }

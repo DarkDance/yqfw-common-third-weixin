@@ -651,7 +651,7 @@ public class WxMpClient {
         }
 
         //基础消息 - 模板消息 - 发送模板消息
-        public Integer sendTemplateMsg(WxMpTemplateMsgParam request) throws BusinessException {
+        public String sendTemplateMsg(WxMpTemplateMsgParam request) throws BusinessException {
             return wxMpTemplateMsgApiProxy.sendTemplateMsg(getClientToken(), request).getMsgId();
         }
 
