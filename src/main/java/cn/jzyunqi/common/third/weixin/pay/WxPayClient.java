@@ -238,7 +238,7 @@ public class WxPayClient {
     }
 
     private PlantCertRedisDto plantCert(String weixinPemSerial) throws BusinessException {
-        Map<String, Object> weixinPem = redisHelper.hGetAll(WxCache.WX_PAY_V, wxPayClientConfig.getMerchantId());
+        Map<String, Object> weixinPem = redisHelper.hGetAll(WxCache.WX_PAY_H, wxPayClientConfig.getMerchantId());
         if (CollectionUtilPlus.Map.isNotEmpty(weixinPem) && StringUtilPlus.isBlank(weixinPemSerial)) {
             return null;
         }
@@ -278,7 +278,7 @@ public class WxPayClient {
         } catch (Exception e) {
             throw new BusinessException(e, "common_error_wx_plant_cert_error", "-1", "readValue error");
         }
-        redisHelper.hPutAll(WxCache.WX_PAY_V, wxPayClientConfig.getMerchantId(), weixinPem);
+        redisHelper.hPutAll(WxCache.WX_PAY_H, wxPayClientConfig.getMerchantId(), weixinPem);
         return switchNewestPem(weixinPem, weixinPemSerial);
     }
 

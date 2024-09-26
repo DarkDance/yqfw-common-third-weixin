@@ -13,7 +13,7 @@ import lombok.Getter;
 public enum WxCache implements Cache {
     WX_MP_V(0L, Boolean.FALSE),
 
-    WX_PAY_V(0L, Boolean.FALSE);
+    WX_PAY_H(0L, Boolean.FALSE);
 
     private final Long expiration;
 
