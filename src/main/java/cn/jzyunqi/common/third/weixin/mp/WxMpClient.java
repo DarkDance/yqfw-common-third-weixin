@@ -67,6 +67,7 @@ import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.File;
@@ -431,7 +432,9 @@ public class WxMpClient {
 
             try {
                 // 加密
-                String encryptMsg = DigestUtilPlus.AES.encryptCBCNoPadding(unencrypted, wxMpClientConfig.getMsgEncodingAesKey(), wxMpClientConfig.getMsgEncodingAesIv(), true);
+                byte[] aesKey = DigestUtilPlus.Base64.decodeBase64(wxMpClientConfig.getMsgEncodingAesKey());
+                byte[] aesIv = Arrays.copyOfRange(Base64.decodeBase64(aesKey), 0, 16);
+                String encryptMsg = DigestUtilPlus.AES.encryptCBCNoPadding(unencrypted, aesKey, aesIv, true);
                 //消息签名
                 Long timestamp = System.currentTimeMillis() / 1000;
                 String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
@@ -452,7 +455,9 @@ public class WxMpClient {
          */
         private MsgDetailCb decryptMsg(String encryptMsg) {
             try {
-                String rst = DigestUtilPlus.AES.decryptCBCNoPadding(DigestUtilPlus.Base64.decodeBase64(encryptMsg), wxMpClientConfig.getMsgEncodingAesKey(), wxMpClientConfig.getMsgEncodingAesIv());
+                byte[] aesKey = DigestUtilPlus.Base64.decodeBase64(wxMpClientConfig.getMsgEncodingAesKey());
+                byte[] aesIv = Arrays.copyOfRange(Base64.decodeBase64(aesKey), 0, 16);
+                String rst = DigestUtilPlus.AES.decryptCBCNoPadding(DigestUtilPlus.Base64.decodeBase64(encryptMsg), aesKey, aesIv);
                 // 去除补位字符
                 byte[] bytes = pkcs7Decode(rst.getBytes(StringUtilPlus.UTF_8));
                 // 分离16位随机字符串,网络字节序和AppId
@@ -674,17 +679,17 @@ public class WxMpClient {
     }
 
     private String getClientToken() throws BusinessException {
-        ClientTokenRedisDto clientToken = (ClientTokenRedisDto) redisHelper.vGet(WxCache.WX_MP_V, wxMpClientConfig.getClientTokenKey());
+        ClientTokenRedisDto clientToken = (ClientTokenRedisDto) redisHelper.vGet(WxCache.WX_MP_V, getClientTokenKey());
         if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
             return clientToken.getToken();
         }
-        Lock lock = redisHelper.getLock(WxCache.WX_MP_V, wxMpClientConfig.getClientTokenKey().concat(":lock"), LockType.NORMAL);
+        Lock lock = redisHelper.getLock(WxCache.WX_MP_V, getClientTokenKey().concat(":lock"), LockType.NORMAL);
         long timeOutMillis = System.currentTimeMillis() + 3000;
         boolean locked = false;
         try {
             do {
                 // 防止多线程同时获取accessToken
-                clientToken = (ClientTokenRedisDto) redisHelper.vGet(WxCache.WX_MP_V, wxMpClientConfig.getClientTokenKey());
+                clientToken = (ClientTokenRedisDto) redisHelper.vGet(WxCache.WX_MP_V, getClientTokenKey());
                 if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
                     return clientToken.getToken();
                 }
@@ -701,7 +706,7 @@ public class WxMpClient {
             clientToken.setToken(clientTokenData.getAccessToken()); //获取到的凭证
             clientToken.setExpireTime(LocalDateTime.now().plusSeconds(clientTokenData.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
 
-            redisHelper.vPut(WxCache.WX_MP_V, wxMpClientConfig.getClientTokenKey(), clientToken);
+            redisHelper.vPut(WxCache.WX_MP_V, getClientTokenKey(), clientToken);
             return clientTokenData.getAccessToken();
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
@@ -711,6 +716,7 @@ public class WxMpClient {
             }
         }
     }
+
 
     private String getTicket(TicketType type) throws BusinessException {
         String ticketKey = chooseTicketKey(type);
@@ -752,11 +758,15 @@ public class WxMpClient {
         }
     }
 
+    private String getClientTokenKey() {
+        return "client_token:" + wxMpClientConfig.getAppId();
+    }
+
     private String chooseTicketKey(TicketType type) {
         return switch (type) {
-            case JSAPI -> wxMpClientConfig.getJsapiTicketKey();
-            case WX_CARD -> wxMpClientConfig.getWxCardTicketKey();
-            case SDK -> wxMpClientConfig.getSdkTicketKey();
+            case JSAPI -> "jsapi_ticket:" + wxMpClientConfig.getAppId();
+            case WX_CARD -> "wx_card_ticket:" + wxMpClientConfig.getAppId();
+            case SDK -> "sdk_ticket:" + wxMpClientConfig.getAppId();
         };
     }
 }

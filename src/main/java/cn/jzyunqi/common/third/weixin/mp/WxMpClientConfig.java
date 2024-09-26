@@ -18,15 +18,5 @@ public interface WxMpClientConfig {
 
     String getMsgToken();
 
-    byte[] getMsgEncodingAesKey();
-
-    byte[] getMsgEncodingAesIv();
-
-    String getJsapiTicketKey();
-
-    String getWxCardTicketKey();
-
-    String getSdkTicketKey();
-
-    String getClientTokenKey();
+    String getMsgEncodingAesKey();
 }
