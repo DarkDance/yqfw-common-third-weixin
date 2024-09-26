@@ -1,9 +1,10 @@
-package cn.jzyunqi.common.third.weixin.pay;
+package cn.jzyunqi.common.third.weixin.pay.callback;
 
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.pay.PayCallbackDto;
 import cn.jzyunqi.common.feature.pay.PayCallbackProcessor;
-import cn.jzyunqi.common.third.weixin.pay.model.callback.PayResultCb;
+import cn.jzyunqi.common.third.weixin.pay.WeixinPayStrange;
+import cn.jzyunqi.common.third.weixin.pay.callback.model.PayResultCb;
 import jakarta.annotation.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author wiiyaya
  * @since 2021/5/9.
  */
-public abstract class AWeixinPayCbController implements PayCallbackProcessor {
+public abstract class AWxPayCbController implements PayCallbackProcessor {
 
     @Resource
     private WeixinPayStrange weixinPayStrange;

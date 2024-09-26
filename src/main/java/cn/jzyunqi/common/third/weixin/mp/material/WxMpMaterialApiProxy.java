@@ -2,7 +2,7 @@ package cn.jzyunqi.common.third.weixin.mp.material;
 
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchange;
-import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import cn.jzyunqi.common.third.weixin.mp.material.enums.MaterialType;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialCountData;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialSearchParam;
@@ -19,7 +19,6 @@ import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
 import java.io.File;
-import java.io.InputStream;
 
 /**
  * @author wiiyaya
@@ -63,7 +62,7 @@ public interface WxMpMaterialApiProxy {
 
     //素材管理 - 删除永久素材
     @PostExchange(url = "/cgi-bin/material/del_material")
-    WeixinRsp materialDelete(@RequestParam String access_token, @RequestBody WxMpMediaData request) throws BusinessException;
+    WeixinRspV1 materialDelete(@RequestParam String access_token, @RequestBody WxMpMediaData request) throws BusinessException;
 
     //素材管理 - 获取永久素材总数
     @PostExchange(url = "/cgi-bin/material/get_materialcount")

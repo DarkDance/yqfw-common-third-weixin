@@ -1,6 +1,6 @@
 package cn.jzyunqi.common.third.weixin.mp.material.model;
 
-import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class WxMpMaterialCountData extends WeixinRsp {
+public class WxMpMaterialCountData extends WeixinRspV1 {
     @JsonProperty("voice_count")
     private Integer voiceCount;
 

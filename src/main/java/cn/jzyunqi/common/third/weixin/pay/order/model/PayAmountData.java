@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.pay.model;
+package cn.jzyunqi.common.third.weixin.pay.order.model;
 
 import lombok.Getter;
 import lombok.Setter;

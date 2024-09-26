@@ -2,7 +2,7 @@ package cn.jzyunqi.common.third.weixin.open.user;
 
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchange;
-import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import cn.jzyunqi.common.third.weixin.open.user.model.OpenUserData;
 import cn.jzyunqi.common.third.weixin.open.user.model.UserTokenData;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +27,7 @@ public interface WxOpenUserApiProxy {
 
     //移动应用 - 检验 access_token 是否有效
     @GetExchange(url = "/sns/auth")
-    WeixinRsp checkUserToken(@RequestParam String access_token, @RequestParam String openid) throws BusinessException;
+    WeixinRspV1 checkUserToken(@RequestParam String access_token, @RequestParam String openid) throws BusinessException;
 
     //移动应用 - 获取用户个人信息
     @GetExchange(url = "/sns/userinfo")

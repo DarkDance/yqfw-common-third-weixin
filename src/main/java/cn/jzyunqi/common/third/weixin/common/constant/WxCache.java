@@ -11,7 +11,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum WxCache implements Cache {
-    WX_MP_V(0L, Boolean.FALSE);
+    WX_MP_V(0L, Boolean.FALSE),
+
+    WX_PAY_V(0L, Boolean.FALSE);
 
     private final Long expiration;
 

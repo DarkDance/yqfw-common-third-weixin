@@ -1,6 +1,6 @@
 package cn.jzyunqi.common.third.weixin.mp.token.model;
 
-import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,7 @@ import java.io.Serial;
  */
 @Getter
 @Setter
-public class TicketRsp extends WeixinRsp {
+public class TicketRsp extends WeixinRspV1 {
     @Serial
     private static final long serialVersionUID = -3902104748545703809L;
 

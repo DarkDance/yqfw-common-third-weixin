@@ -9,9 +9,11 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class WeixinRspV2<T> extends WeixinRspV1 {
+public class WeixinRspV3<T>  {
 
-    private Integer count;
+    private String code;
+
+    private String message;
 
     private T data;
 

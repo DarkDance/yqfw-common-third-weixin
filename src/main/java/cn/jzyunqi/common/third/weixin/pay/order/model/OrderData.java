@@ -1,16 +1,13 @@
-package cn.jzyunqi.common.third.weixin.pay.model.response;
+package cn.jzyunqi.common.third.weixin.pay.order.model;
 
-import cn.jzyunqi.common.third.weixin.pay.model.enums.TradeState;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
+import cn.jzyunqi.common.third.weixin.pay.order.enums.TradeState;
 import cn.jzyunqi.common.third.weixin.common.enums.TradeType;
-import cn.jzyunqi.common.third.weixin.pay.model.PayAmountData;
-import cn.jzyunqi.common.third.weixin.pay.model.PayPayerData;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
@@ -20,9 +17,7 @@ import java.time.OffsetDateTime;
  */
 @Getter
 @Setter
-public class OrderQueryV3Rsp implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 4010260078103420851L;
+public class OrderData extends WeixinRspV1 {
 
     /**
      * 应用ID

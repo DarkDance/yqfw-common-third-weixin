@@ -1,7 +1,7 @@
 package cn.jzyunqi.common.third.weixin.open;
 
 import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import cn.jzyunqi.common.third.weixin.open.user.WxOpenUserApiProxy;
 import cn.jzyunqi.common.third.weixin.open.user.model.OpenUserData;
 import cn.jzyunqi.common.third.weixin.open.user.model.UserTokenData;
@@ -37,7 +37,7 @@ public class WxOpenClient {
         }
 
         //移动应用 - 检验 access_token 是否有效
-        public WeixinRsp checkUserToken(String userAccessToken, String openid) throws BusinessException {
+        public WeixinRspV1 checkUserToken(String userAccessToken, String openid) throws BusinessException {
             return wxOpenUserApiProxy.checkUserToken(userAccessToken, openid);
         }
 

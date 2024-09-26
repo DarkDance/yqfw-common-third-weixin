@@ -1,15 +1,13 @@
-package cn.jzyunqi.common.third.weixin.pay.model.response;
+package cn.jzyunqi.common.third.weixin.pay.order.model;
 
-import cn.jzyunqi.common.third.weixin.pay.model.enums.FundsAccount;
-import cn.jzyunqi.common.third.weixin.pay.model.enums.RefundChannel;
-import cn.jzyunqi.common.third.weixin.pay.model.enums.RefundStatus;
-import cn.jzyunqi.common.third.weixin.pay.model.PayAmountData;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
+import cn.jzyunqi.common.third.weixin.pay.order.enums.FundsAccount;
+import cn.jzyunqi.common.third.weixin.pay.order.enums.RefundChannel;
+import cn.jzyunqi.common.third.weixin.pay.order.enums.RefundStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
@@ -19,9 +17,7 @@ import java.time.OffsetDateTime;
  */
 @Getter
 @Setter
-public class OrderRefundV3Rsp implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 9001001048933315054L;
+public class OrderRefundData extends WeixinRspV1 {
     /**
      * 微信退款单号
      */

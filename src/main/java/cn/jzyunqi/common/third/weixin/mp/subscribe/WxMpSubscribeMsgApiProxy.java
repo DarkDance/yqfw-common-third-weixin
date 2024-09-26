@@ -2,7 +2,7 @@ package cn.jzyunqi.common.third.weixin.mp.subscribe;
 
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchange;
-import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV2;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateKeywordData;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpCategoryRsp;
@@ -30,7 +30,7 @@ public interface WxMpSubscribeMsgApiProxy {
 
     //订阅通知 - 删除私有模板库中的模板
     @PostExchange(url = "/wxaapi/newtmpl/deltemplate")
-    WeixinRsp delTemplate(@RequestParam String access_token, @RequestBody WxMpMsgTemplateData request) throws BusinessException;
+    WeixinRspV1 delTemplate(@RequestParam String access_token, @RequestBody WxMpMsgTemplateData request) throws BusinessException;
 
     //订阅通知 - 获取公众号类目
     @PostExchange(url = "/wxaapi/newtmpl/getcategory")
@@ -50,5 +50,5 @@ public interface WxMpSubscribeMsgApiProxy {
 
     //订阅通知 - 发送订阅通知
     @PostExchange(url = "/cgi-bin/message/subscribe/bizsend")
-    WeixinRsp send(@RequestParam String access_token, WxMpTemplateMsgParam request) throws BusinessException;
+    WeixinRspV1 send(@RequestParam String access_token, WxMpTemplateMsgParam request) throws BusinessException;
 }

@@ -1,6 +1,6 @@
 package cn.jzyunqi.common.third.weixin.mp.kefu.model;
 
-import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +13,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class WxMpKfListRsp extends WeixinRsp {
+public class WxMpKfListRsp extends WeixinRspV1 {
 
     @JsonProperty("kf_list")
     private List<WxMpKfData> kfList;

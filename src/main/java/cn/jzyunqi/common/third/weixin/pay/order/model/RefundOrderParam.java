@@ -1,11 +1,8 @@
-package cn.jzyunqi.common.third.weixin.pay.model.request;
+package cn.jzyunqi.common.third.weixin.pay.order.model;
 
-import cn.jzyunqi.common.third.weixin.pay.model.enums.FundsAccount;
-import cn.jzyunqi.common.third.weixin.pay.model.PayAmountData;
+import cn.jzyunqi.common.third.weixin.pay.order.enums.FundsAccount;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.io.Serializable;
 
 /**
  * @author wiiyaya
@@ -13,8 +10,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class RefundOrderParam implements Serializable {
-    private static final long serialVersionUID = -5936281128286155210L;
+public class RefundOrderParam {
 
     /**
      * 微信支付订单号

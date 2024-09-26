@@ -1,7 +1,5 @@
-package cn.jzyunqi.common.third.weixin.pay.model.request;
+package cn.jzyunqi.common.third.weixin.pay.order.model;
 
-import cn.jzyunqi.common.third.weixin.pay.model.PayAmountData;
-import cn.jzyunqi.common.third.weixin.pay.model.PayPayerData;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;

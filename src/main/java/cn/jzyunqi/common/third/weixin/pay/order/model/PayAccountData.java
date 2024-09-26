@@ -1,6 +1,6 @@
-package cn.jzyunqi.common.third.weixin.pay.model;
+package cn.jzyunqi.common.third.weixin.pay.order.model;
 
-import cn.jzyunqi.common.third.weixin.pay.model.enums.FundsAccount;
+import cn.jzyunqi.common.third.weixin.pay.order.enums.FundsAccount;
 import lombok.Getter;
 import lombok.Setter;
 

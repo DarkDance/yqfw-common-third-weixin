@@ -5,7 +5,7 @@ import cn.jzyunqi.common.feature.redis.LockType;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.common.constant.WxCache;
 import cn.jzyunqi.common.third.weixin.common.enums.InfoScope;
-import cn.jzyunqi.common.third.weixin.common.model.WeixinRsp;
+import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
@@ -56,7 +56,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -113,29 +112,29 @@ public class WxMpClient {
 
     public class Kefu {
         //客服管理 - 添加客服账号（添加后不可用，需要再邀请）
-        public WeixinRsp kfAccountAdd(WxMpKfAccountParam request) throws BusinessException {
+        public WeixinRspV1 kfAccountAdd(WxMpKfAccountParam request) throws BusinessException {
             return wxMpKfApiProxy.kfAccountAdd(getClientToken(), request);
         }
 
         //客服管理 - 邀请绑定客服账号
-        public WeixinRsp kfAccountInviteWorker(WxMpKfAccountParam request) throws BusinessException {
+        public WeixinRspV1 kfAccountInviteWorker(WxMpKfAccountParam request) throws BusinessException {
             return wxMpKfApiProxy.kfAccountInviteWorker(getClientToken(), request);
         }
 
         //客服管理 - 修改客服账号
-        public WeixinRsp kfAccountUpdate(WxMpKfAccountParam request) throws BusinessException {
+        public WeixinRspV1 kfAccountUpdate(WxMpKfAccountParam request) throws BusinessException {
             return wxMpKfApiProxy.kfAccountUpdate(getClientToken(), request);
         }
 
         //客服管理 - 删除客服账号
-        public WeixinRsp kfAccountDel(String kfAccount) throws BusinessException {
+        public WeixinRspV1 kfAccountDel(String kfAccount) throws BusinessException {
             WxMpKfAccountParam request = new WxMpKfAccountParam();
             request.setKfAccount(kfAccount);
             return wxMpKfApiProxy.kfAccountDel(getClientToken(), request);
         }
 
         //客服管理 - 设置客服账号的头像，文件大小为5M以内
-        public WeixinRsp kfAccountUploadHeadImg(String kfAccount, org.springframework.core.io.Resource media) throws BusinessException {
+        public WeixinRspV1 kfAccountUploadHeadImg(String kfAccount, org.springframework.core.io.Resource media) throws BusinessException {
             return wxMpKfApiProxy.kfAccountUploadHeadImg(getClientToken(), kfAccount, media);
         }
 
@@ -206,7 +205,7 @@ public class WxMpClient {
 
     public class Menu {
         //自定义菜单 - 创建接口
-        public WeixinRsp menuCreate(WxMenuData request) throws BusinessException {
+        public WeixinRspV1 menuCreate(WxMenuData request) throws BusinessException {
             if (request.getMatchRule() != null) {
                 return wxMpMenuApiProxy.selfMenuCreate(getClientToken(), request);
             } else {
@@ -220,12 +219,12 @@ public class WxMpClient {
         }
 
         //自定义菜单 - 删除接口
-        public WeixinRsp menuDelete() throws BusinessException {
+        public WeixinRspV1 menuDelete() throws BusinessException {
             return wxMpMenuApiProxy.menuDelete(getClientToken());
         }
 
         //自定义菜单 - 删除个性化菜单
-        public WeixinRsp selfMenuDelete(String menuId) throws BusinessException {
+        public WeixinRspV1 selfMenuDelete(String menuId) throws BusinessException {
             WxMenuData request = new WxMenuData();
             request.setMenuId(menuId);
             return wxMpMenuApiProxy.selfMenuDelete(getClientToken(), request);
@@ -295,7 +294,7 @@ public class WxMpClient {
         }
 
         //素材管理 - 删除永久素材
-        public WeixinRsp materialDelete(String mediaId) throws BusinessException {
+        public WeixinRspV1 materialDelete(String mediaId) throws BusinessException {
             WxMpMediaData request = new WxMpMediaData();
             request.setMediaId(mediaId);
             return wxMpMaterialApiProxy.materialDelete(getClientToken(), request);

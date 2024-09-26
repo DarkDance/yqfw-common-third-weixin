@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.pay.model.redis;
+package cn.jzyunqi.common.third.weixin.pay.cert.model;
 
 import lombok.Getter;
 import lombok.Setter;

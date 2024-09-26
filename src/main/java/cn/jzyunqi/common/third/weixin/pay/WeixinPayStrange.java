@@ -8,11 +8,11 @@ import cn.jzyunqi.common.feature.pay.PayQueryReqDto;
 import cn.jzyunqi.common.feature.pay.RefundApplyReqDto;
 import cn.jzyunqi.common.feature.pay.RefundCallbackDto;
 import cn.jzyunqi.common.feature.pay.VerifyPayResult;
-import cn.jzyunqi.common.third.weixin.pay.client.WeixinPayV3Client;
-import cn.jzyunqi.common.third.weixin.pay.model.callback.PayResultCb;
-import cn.jzyunqi.common.third.weixin.pay.model.response.OrderQueryV3Rsp;
-import cn.jzyunqi.common.third.weixin.pay.model.response.OrderRefundV3Rsp;
+import cn.jzyunqi.common.third.weixin.pay.callback.model.PayResultCb;
+import cn.jzyunqi.common.third.weixin.pay.order.model.OrderData;
+import cn.jzyunqi.common.third.weixin.pay.order.model.OrderRefundData;
 import cn.jzyunqi.common.utils.StringUtilPlus;
+import jakarta.annotation.Resource;
 
 /**
  * @author wiiyaya
@@ -20,15 +20,12 @@ import cn.jzyunqi.common.utils.StringUtilPlus;
  */
 public class WeixinPayStrange implements PayHelper {
 
-    private final WeixinPayV3Client weixinPayV3Client;
-
-    public WeixinPayStrange(WeixinPayV3Client weixinPayV3Client) {
-        this.weixinPayV3Client = weixinPayV3Client;
-    }
+    @Resource
+    private WxPayClient wxPayClient;
 
     @Override
     public Object signForPay(PayApplyReqDto payApplyReqDto) throws BusinessException {
-        return weixinPayV3Client.signForPay(
+        return wxPayClient.order.signForPay(
                 payApplyReqDto.getApplyPayNo(),
                 payApplyReqDto.getSkuName(),
                 payApplyReqDto.getApplyPayAmount(),
@@ -41,14 +38,14 @@ public class WeixinPayStrange implements PayHelper {
     public VerifyPayResult verifyPayCallback(PayCallbackDto payCallbackDto) throws BusinessException {
         PayResultCb payResultCb = (PayResultCb) payCallbackDto.getReturnParamObject();
         if (StringUtilPlus.equalsIgnoreCase(payResultCb.getEventType(), "TRANSACTION.SUCCESS")) {
-            OrderQueryV3Rsp orderQueryV3Rsp = weixinPayV3Client.decryptPayCallback(payCallbackDto.getReturnHeaderMap(), payCallbackDto.getReturnParam(), payResultCb);
-            if(orderQueryV3Rsp != null){
+            OrderData orderQueryV3Rsp = wxPayClient.cb.decryptPayCallback(payCallbackDto.getReturnHeaderMap(), payCallbackDto.getReturnParam(), payResultCb);
+            if (orderQueryV3Rsp != null) {
                 payCallbackDto.setApplyPayNo(orderQueryV3Rsp.getOutTradeNo()); //申请支付单号
                 payCallbackDto.setActualPayNo(orderQueryV3Rsp.getTransactionId()); //微信支付单号
                 payCallbackDto.setActualPayAmount(orderQueryV3Rsp.getActualPayAmount()); //支付金额
                 payCallbackDto.setReturnParam(orderQueryV3Rsp.getResponseStr());
                 return VerifyPayResult.SUCCESS;
-            }else{
+            } else {
                 return VerifyPayResult.FAILED;
             }
         } else {
@@ -63,14 +60,14 @@ public class WeixinPayStrange implements PayHelper {
         //REFUND.ABNORMAL：退款异常通知
         //REFUND.CLOSED：退款关闭通知
         if (StringUtilPlus.equalsIgnoreCase(payResultCb.getEventType(), "REFUND.SUCCESS")) {
-            OrderRefundV3Rsp orderRefundV3Rsp = weixinPayV3Client.decryptRefundCallback(payResultCb);
-            if(orderRefundV3Rsp != null){
+            OrderRefundData orderRefundV3Rsp = wxPayClient.cb.decryptRefundCallback(payResultCb);
+            if (orderRefundV3Rsp != null) {
                 payCallbackDto.setApplyPayNo(orderRefundV3Rsp.getOutTradeNo()); //申请支付单号
                 payCallbackDto.setActualPayNo(orderRefundV3Rsp.getTransactionId()); //微信支付单号
                 payCallbackDto.setActualPayAmount(orderRefundV3Rsp.getActualRefundAmount()); //支付金额
                 payCallbackDto.setReturnParam(orderRefundV3Rsp.getResponseStr());
                 return VerifyPayResult.SUCCESS;
-            }else{
+            } else {
                 return VerifyPayResult.FAILED;
             }
         } else {
@@ -80,14 +77,14 @@ public class WeixinPayStrange implements PayHelper {
 
     @Override
     public PayCallbackDto queryPay(PayQueryReqDto payQueryReqDto) throws BusinessException {
-        OrderQueryV3Rsp orderQueryV3Rsp = weixinPayV3Client.queryPay(payQueryReqDto.getActualPayNo(), payQueryReqDto.getApplyPayNo());
-        if (orderQueryV3Rsp != null) {
+        OrderData orderData = wxPayClient.order.queryOrder(payQueryReqDto.getActualPayNo(), payQueryReqDto.getApplyPayNo());
+        if (orderData != null) {
             PayCallbackDto payCallbackDto = new PayCallbackDto();
             payCallbackDto.setActualPayType("weixin");
-            payCallbackDto.setApplyPayNo(orderQueryV3Rsp.getOutTradeNo()); //申请支付单号
-            payCallbackDto.setActualPayNo(orderQueryV3Rsp.getTransactionId()); //微信支付单号
-            payCallbackDto.setActualPayAmount(orderQueryV3Rsp.getActualPayAmount()); //支付金额
-            payCallbackDto.setReturnParam(orderQueryV3Rsp.getResponseStr());
+            payCallbackDto.setApplyPayNo(orderData.getOutTradeNo()); //申请支付单号
+            payCallbackDto.setActualPayNo(orderData.getTransactionId()); //微信支付单号
+            payCallbackDto.setActualPayAmount(orderData.getActualPayAmount()); //支付金额
+            payCallbackDto.setReturnParam(orderData.getResponseStr());
             return payCallbackDto;
         } else {
             return null;
@@ -96,7 +93,7 @@ public class WeixinPayStrange implements PayHelper {
 
     @Override
     public RefundCallbackDto executeRefund(RefundApplyReqDto refundApplyReqDto) throws BusinessException {
-        OrderRefundV3Rsp orderRefundV3Rsp = weixinPayV3Client.payRefund(
+        OrderRefundData orderRefundV3Rsp = wxPayClient.order.refundApply(
                 refundApplyReqDto.getActualPayNo(),
                 refundApplyReqDto.getApplyRefundNo(),
                 refundApplyReqDto.getActualPayAmount(),
