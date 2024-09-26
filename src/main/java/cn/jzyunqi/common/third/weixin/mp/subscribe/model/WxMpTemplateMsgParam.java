@@ -46,7 +46,8 @@ public class WxMpTemplateMsgParam {
     @Setter
     public static class MiniProgram {
 
-        private String appid;
+        @JsonProperty("appid")
+        private String appId;
 
         @JsonProperty("pagepath")
         private String pagePath;
