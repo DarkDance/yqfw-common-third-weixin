@@ -100,51 +100,51 @@ public abstract class AWxMpMsgCbController {
     }
 
     private Object processTemplateSendJobFinishEvent(EventMsgData eventMsgData) {
-        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+        return null;
     }
 
     protected Object processLocationSelectEvent(EventMsgData eventMsgData) {
-        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+        return null;
     }
 
     protected Object processPicWeixinEvent(EventMsgData eventMsgData) {
-        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+        return null;
     }
 
     protected Object processPicPhotoOrAlbumEvent(EventMsgData eventMsgData) {
-        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+        return null;
     }
 
     protected Object processPicSysphotoEvent(EventMsgData eventMsgData) {
-        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+        return null;
     }
 
     protected Object processScancodeWaitMsgEvent(EventMsgData eventMsgData) {
-        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+        return null;
     }
 
     protected Object processScancodePushEvent(EventMsgData eventMsgData) {
-        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+        return null;
     }
 
     protected Object processViewEvent(EventMsgData eventMsgData) {
-        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+        return null;
     }
 
     protected Object processClickEvent(EventMsgData eventMsgData) {
-        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+        return null;
     }
 
     protected Object processLocationEvent(EventMsgData eventMsgData) {
-        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+        return null;
     }
 
     protected Object processUnsubscribeEvent(EventMsgData eventMsgData) {
-        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+        return null;
     }
 
     protected ReplyMsgData processSubscribeEvent(EventMsgData eventMsgData) throws BusinessException {
-        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
+        return null;
     }
 
     protected ReplyMsgData processMiniProgramPageMsg(MiniProgramPageMsgData miniProgramPageMsgData) throws BusinessException {
