@@ -18,7 +18,7 @@ import jakarta.annotation.Resource;
  * @author wiiyaya
  * @since 2024/7/16
  */
-public class WeixinPayStrange implements PayHelper {
+public class WxPayStrange implements PayHelper {
 
     @Resource
     private WxPayClient wxPayClient;

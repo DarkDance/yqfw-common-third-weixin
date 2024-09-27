@@ -3,7 +3,7 @@ package cn.jzyunqi.common.third.weixin.pay.callback;
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.pay.PayCallbackDto;
 import cn.jzyunqi.common.feature.pay.PayCallbackProcessor;
-import cn.jzyunqi.common.third.weixin.pay.WeixinPayStrange;
+import cn.jzyunqi.common.third.weixin.pay.WxPayStrange;
 import cn.jzyunqi.common.third.weixin.pay.callback.model.PayResultCb;
 import jakarta.annotation.Resource;
 import org.springframework.http.HttpHeaders;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public abstract class AWxPayCbController implements PayCallbackProcessor {
 
     @Resource
-    private WeixinPayStrange weixinPayStrange;
+    private WxPayStrange wxPayStrange;
 
     /**
      * 微信支付回调
@@ -42,6 +42,6 @@ public abstract class AWxPayCbController implements PayCallbackProcessor {
         payCallbackDto.setReturnParam(body); //支付接口返回的参数JSON字符串
         payCallbackDto.setReturnParamObject(payResultCb); //支付接口返回的参数对象
 
-        verifyPayCallback(weixinPayStrange, payCallbackDto);
+        verifyPayCallback(wxPayStrange, payCallbackDto);
     }
 }
