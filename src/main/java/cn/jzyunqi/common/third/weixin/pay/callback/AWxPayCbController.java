@@ -3,9 +3,10 @@ package cn.jzyunqi.common.third.weixin.pay.callback;
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.pay.PayCallbackDto;
 import cn.jzyunqi.common.feature.pay.PayCallbackProcessor;
-import cn.jzyunqi.common.third.weixin.pay.WxPayStrange;
+import cn.jzyunqi.common.feature.pay.PayHelper;
 import cn.jzyunqi.common.third.weixin.pay.callback.model.PayResultCb;
 import jakarta.annotation.Resource;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -21,7 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public abstract class AWxPayCbController implements PayCallbackProcessor {
 
     @Resource
-    private WxPayStrange wxPayStrange;
+    @Qualifier("wxPayStrange")
+    private PayHelper wxPayStrange;
 
     /**
      * 微信支付回调
