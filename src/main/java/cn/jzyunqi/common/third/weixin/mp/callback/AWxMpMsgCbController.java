@@ -91,11 +91,16 @@ public abstract class AWxMpMsgCbController {
                         case pic_photo_or_album -> this.processPicPhotoOrAlbumEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case pic_weixin -> this.processPicWeixinEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case location_select -> this.processLocationSelectEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case TEMPLATESENDJOBFINISH -> this.processTemplateSendJobFinishEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                     };
                     case transfer_customer_service -> this.processTransferCustomerServiceMsg(BeanUtilPlus.copyAs(decryptNotice, TransferCustomerServiceMsgData.class));
                     case miniprogrampage -> this.processMiniProgramPageMsg(BeanUtilPlus.copyAs(decryptNotice, MiniProgramPageMsgData.class));
                 }
         );
+    }
+
+    private Object processTemplateSendJobFinishEvent(EventMsgData eventMsgData) {
+        return WxMsgUtilPlus.prepareTextReply(eventMsgData.getToUserName(), eventMsgData.getFromUserName(), NOT_SUPPORT);
     }
 
     protected Object processLocationSelectEvent(EventMsgData eventMsgData) {
