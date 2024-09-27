@@ -62,5 +62,10 @@ public enum EventType {
      * 弹出地理位置选择器
      */
     location_select,
+
+    /**
+     * 模板消息事件
+     */
+    TEMPLATESENDJOBFINISH,
     ;
 }
