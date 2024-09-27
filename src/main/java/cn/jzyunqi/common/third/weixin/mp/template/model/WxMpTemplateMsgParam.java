@@ -44,6 +44,7 @@ public class WxMpTemplateMsgParam {
      * 防重入id。对于同一个openid + client_msg_id, 只发送一条消息,10分钟有效,超过10分钟不保证效果。若无防重入需求，可不填
      */
     @Setter
+    @JsonProperty("client_msg_id")
     private String clientMsgId;
 
     /**
