@@ -79,7 +79,7 @@ public class MsgDetailCb implements Serializable {
      * 图片消息/语音消息/视频消息：消息媒体id，可以调用多媒体文件下载接口拉取数据
      */
     @XmlElement(name = "MediaId")
-    private Long mediaId;
+    private String mediaId;
 
     /**
      * 语音消息：语音格式，如amr，speex等
@@ -97,7 +97,7 @@ public class MsgDetailCb implements Serializable {
      * 视频消息：视频消息缩略图的媒体id，可以调用多媒体文件下载接口拉取数据。
      */
     @XmlElement(name = "ThumbMediaId")
-    private Long thumbMediaId;
+    private String thumbMediaId;
 
     /**
      * 地理位置消息：地理位置维度

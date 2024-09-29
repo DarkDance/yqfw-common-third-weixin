@@ -13,7 +13,7 @@ public class VoiceMsgData extends BaseMsgData{
     /**
      * 图片消息/语音消息/视频消息：消息媒体id，可以调用多媒体文件下载接口拉取数据
      */
-    private Long mediaId;
+    private String mediaId;
 
     /**
      * 语音消息：语音格式，如amr，speex等
