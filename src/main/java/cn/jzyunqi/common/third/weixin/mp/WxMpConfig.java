@@ -30,7 +30,7 @@ public class WxMpConfig {
 
     @Bean
     @ConditionalOnMissingBean
-    public WxHttpExchangeWrapper responseCheckWrapper() {
+    public WxHttpExchangeWrapper wxHttpExchangeWrapper() {
         return new WxHttpExchangeWrapper();
     }
     @Bean
