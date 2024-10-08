@@ -5,20 +5,19 @@ import cn.jzyunqi.common.third.weixin.common.WxHttpExchange;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import cn.jzyunqi.common.third.weixin.mp.material.enums.MaterialType;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialCountData;
+import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialNewsData;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialSearchParam;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialSearchRsp;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialVideoParam;
-import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMediaData;
-import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialNewsData;
 import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMaterialVideoRsp;
+import cn.jzyunqi.common.third.weixin.mp.material.model.WxMpMediaData;
 import org.springframework.core.io.Resource;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
-
-import java.io.File;
 
 /**
  * @author wiiyaya
@@ -33,12 +32,12 @@ public interface WxMpMaterialApiProxy {
     WxMpMediaData mediaUpload(@RequestParam String access_token, @RequestParam MaterialType type, @RequestPart Resource media) throws BusinessException;
 
     //素材管理 - 获取临时素材
-    @PostExchange(url = "/cgi-bin/media/get")
-    File mediaDownload(@RequestParam String access_token, @RequestParam String media_id) throws BusinessException;
+    @GetExchange(url = "/cgi-bin/media/get")
+    Resource mediaDownload(@RequestParam String access_token, @RequestParam String media_id) throws BusinessException;
 
     //素材管理 - 获取高清语音素材
-    @PostExchange(url = "/cgi-bin/media/get/jssdk")
-    File jssdkMediaDownload(@RequestParam String access_token, @RequestParam String media_id) throws BusinessException;
+    @GetExchange(url = "/cgi-bin/media/get/jssdk")
+    Resource jssdkMediaDownload(@RequestParam String access_token, @RequestParam String media_id) throws BusinessException;
 
     //素材管理 - 上传图文消息内的图片，不占用公众号的素材库中图片数量，Form形式上传
     @PostExchange(url = "/cgi-bin/media/uploadimg", contentType = "multipart/form-data")

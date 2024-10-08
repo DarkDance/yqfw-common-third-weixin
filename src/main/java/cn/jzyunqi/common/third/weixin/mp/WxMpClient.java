@@ -272,12 +272,12 @@ public class WxMpClient {
         }
 
         //素材管理 - 获取临时素材
-        public File mediaDownload(String mediaId) throws BusinessException {
+        public org.springframework.core.io.Resource mediaDownload(String mediaId) throws BusinessException {
             return wxMpMaterialApiProxy.mediaDownload(getClientToken(), mediaId);
         }
 
         //素材管理 - 获取高清语音素材
-        public File jssdkMediaDownload(String mediaId) throws BusinessException {
+        public org.springframework.core.io.Resource jssdkMediaDownload(String mediaId) throws BusinessException {
             return wxMpMaterialApiProxy.jssdkMediaDownload(getClientToken(), mediaId);
         }
 
