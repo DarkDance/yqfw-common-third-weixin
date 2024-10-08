@@ -4,7 +4,6 @@ import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.redis.LockType;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.common.constant.WxCache;
-import cn.jzyunqi.common.third.weixin.common.enums.InfoScope;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV2;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
@@ -70,13 +69,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ArrayUtils;
 
-import java.io.File;
-import java.net.URLEncoder;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
@@ -267,22 +263,22 @@ public class WxMpClient {
 
     public class Material {
         //素材管理 - 新增临时素材
-        public WxMpMediaData mediaUpload(MaterialType type, org.springframework.core.io.Resource media) throws BusinessException {
+        public WxMpMediaData tempMaterialUpload(MaterialType type, org.springframework.core.io.Resource media) throws BusinessException {
             return wxMpMaterialApiProxy.mediaUpload(getClientToken(), type, media);
         }
 
         //素材管理 - 获取临时素材
-        public org.springframework.core.io.Resource mediaDownload(String mediaId) throws BusinessException {
+        public org.springframework.core.io.Resource tempMaterialDownload(String mediaId) throws BusinessException {
             return wxMpMaterialApiProxy.mediaDownload(getClientToken(), mediaId);
         }
 
-        //素材管理 - 获取高清语音素材
-        public org.springframework.core.io.Resource jssdkMediaDownload(String mediaId) throws BusinessException {
+        //素材管理 - 获取临时高清语音素材
+        public org.springframework.core.io.Resource tempVoiceDownload(String mediaId) throws BusinessException {
             return wxMpMaterialApiProxy.jssdkMediaDownload(getClientToken(), mediaId);
         }
 
         //素材管理 - 新增图片永久素材
-        public WxMpMediaData mediaImgUpload(org.springframework.core.io.Resource media) throws BusinessException {
+        public WxMpMediaData imageUpload(org.springframework.core.io.Resource media) throws BusinessException {
             return wxMpMaterialApiProxy.mediaImgUpload(getClientToken(), media);
         }
 
@@ -295,21 +291,21 @@ public class WxMpClient {
         }
 
         //素材管理 - 图文永久素材获取
-        public WxMpMaterialNewsData materialNewsInfo(String mediaId) throws BusinessException {
+        public WxMpMaterialNewsData newsInfo(String mediaId) throws BusinessException {
             WxMpMediaData request = new WxMpMediaData();
             request.setMediaId(mediaId);
             return wxMpMaterialApiProxy.materialNewsInfo(getClientToken(), request);
         }
 
         //素材管理 - 视频永久素材获取
-        public WxMpMaterialVideoRsp materialVideoInfo(String mediaId) throws BusinessException {
+        public WxMpMaterialVideoRsp videoInfo(String mediaId) throws BusinessException {
             WxMpMediaData request = new WxMpMediaData();
             request.setMediaId(mediaId);
             return wxMpMaterialApiProxy.materialVideoInfo(getClientToken(), request);
         }
 
         //素材管理 - 其它永久素材获取
-        public org.springframework.core.io.Resource materialOtherDownload(String mediaId) throws BusinessException {
+        public org.springframework.core.io.Resource materialDownload(String mediaId) throws BusinessException {
             WxMpMediaData request = new WxMpMediaData();
             request.setMediaId(mediaId);
             return wxMpMaterialApiProxy.materialOtherDownload(getClientToken(), request);
@@ -328,7 +324,7 @@ public class WxMpClient {
         }
 
         //素材管理 - 获取永久素材列表
-        public WxMpMaterialSearchRsp materialBatchGet(MaterialType type, Integer offset, Integer count) throws BusinessException {
+        public WxMpMaterialSearchRsp materialPage(MaterialType type, Integer offset, Integer count) throws BusinessException {
             WxMpMaterialSearchParam request = new WxMpMaterialSearchParam();
             request.setType(type);
             request.setOffset(offset);
