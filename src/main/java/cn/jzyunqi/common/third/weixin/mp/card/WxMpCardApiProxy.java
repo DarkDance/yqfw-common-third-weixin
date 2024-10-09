@@ -23,4 +23,8 @@ public interface WxMpCardApiProxy {
     @PostExchange(url = "/card/create")
     CardData createCard(@RequestParam String access_token, @RequestBody WxMpCardReq request) throws BusinessException;
 
+    //微信卡券 - 查询卡券详情（含审核状态）
+    @PostExchange(url = "/card/get")
+    CardData getCardDetail(@RequestParam String access_token, @RequestBody CardData request) throws BusinessException;
+
 }

@@ -9,6 +9,9 @@ import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV2;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
+import cn.jzyunqi.common.third.weixin.mp.card.WxMpCardApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.card.model.CardData;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpCardReq;
 import cn.jzyunqi.common.third.weixin.mp.kefu.WxMpKfApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.kefu.enums.TypingType;
 import cn.jzyunqi.common.third.weixin.mp.kefu.model.WxMpKfAccountParam;
@@ -68,6 +71,9 @@ import jakarta.xml.bind.Unmarshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ArrayUtils;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.service.annotation.PostExchange;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -112,6 +118,9 @@ public class WxMpClient {
 
     @Resource
     private WxMpTemplateMsgApiProxy wxMpTemplateMsgApiProxy;
+
+    @Resource
+    private WxMpCardApiProxy wxMpCardApiProxy;
 
     @Resource
     private WxMpClientConfig wxMpClientConfig;
@@ -659,7 +668,10 @@ public class WxMpClient {
     }
 
     public class Card {
-
+        //微信卡券 - 创建卡券
+        public String createCard(@RequestParam String access_token, @RequestBody WxMpCardReq request) throws BusinessException{
+            return wxMpCardApiProxy.createCard(access_token, request).getCardId();
+        }
     }
 
     public WxJsapiSignature createJsapiSignature(String url) throws BusinessException {
@@ -717,7 +729,6 @@ public class WxMpClient {
             }
         }
     }
-
 
     private String getTicket(TicketType type) throws BusinessException {
         String ticketKey = chooseTicketKey(type);

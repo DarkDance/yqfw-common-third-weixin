@@ -9,7 +9,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public enum BusinessServiceType {
+public enum ServiceType {
     BIZ_SERVICE_DELIVER("外卖服务"),
     BIZ_SERVICE_FREE_PARK("停车位"),
     BIZ_SERVICE_WITH_PET("可带宠物"),

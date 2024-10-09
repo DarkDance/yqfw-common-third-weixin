@@ -1,5 +1,6 @@
 package cn.jzyunqi.common.third.weixin.mp.card.model;
 
+import cn.jzyunqi.common.third.weixin.mp.card.enums.ReviewStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -243,14 +244,9 @@ public class BaseInfoData {
     private String activateAppBrandPass;
 
     /**
-     * https://developers.weixin.qq.com/doc/offiaccount/Cards_and_Offer/Managing_Coupons_Vouchers_and_Cards.html#2
-     * “CARD_STATUS_NOT_VERIFY”,待审核 ；
-     * “CARD_STATUS_VERIFY_FAIL”,审核失败；
-     * “CARD_STATUS_VERIFY_OK”，通过审核；
-     * “CARD_STATUS_DELETE”，卡券被商户删除；
-     * “CARD_STATUS_DISPATCH”，在公众平台投放过的卡券 ；
+     * 卡券的审核状态。
      */
-    private String status;
+    private ReviewStatus status;
 
     @Getter
     @Setter

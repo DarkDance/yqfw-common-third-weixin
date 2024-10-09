@@ -1,6 +1,6 @@
 package cn.jzyunqi.common.third.weixin.mp.card.model;
 
-import cn.jzyunqi.common.third.weixin.mp.card.enums.BusinessServiceType;
+import cn.jzyunqi.common.third.weixin.mp.card.enums.ServiceType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,7 +41,7 @@ public class AdvancedInfoData {
      * 数组类型:BIZ_SERVICE_DELIVER 外卖服务； BIZ_SERVICE_FREE_PARK 停车位； BIZ_SERVICE_WITH_PET 可带宠物； BIZ_SERVICE_FREE_WIFI 免费wifi， 可多选
      */
     @JsonProperty("business_service")
-    private List<BusinessServiceType> businessServiceList;
+    private List<ServiceType> businessServiceList;
 
     /**
      * 使用时段限制.

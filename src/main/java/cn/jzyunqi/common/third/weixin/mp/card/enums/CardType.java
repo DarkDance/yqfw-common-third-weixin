@@ -32,5 +32,29 @@ public enum CardType {
     /**
      * 会员卡
      */
-    MEMBER_CARD
+    MEMBER_CARD,
+
+    /**
+     * 景点门票
+     */
+    SCENIC_TICKET,
+
+    /**
+     * 电影票
+     */
+    MOVIE_TICKET,
+
+    /**
+     * 飞机票
+     */
+    BOARDING_PASS,
+    /**
+     * 会议门票
+     */
+    MEETING_TICKET,
+
+    /**
+     * 汽车票
+     */
+    BUS_TICKET
 }
