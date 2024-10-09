@@ -180,6 +180,18 @@ public class MsgDetailCb implements Serializable {
     @XmlElement(name = "Precision")
     private Double precision;
 
+    /**
+     * 事件消息-会员信息事件：会员卡id
+     */
+    @XmlElement(name = "CardId")
+    private String cardId;
+
+    /**
+     * 事件消息-会员信息事件：会员卡code
+     */
+    @XmlElement(name = "UserCardCode")
+    private String userCardCode;
+
     //private Long menuId;  //点击菜单跳转链接时的事件推送
 
     //private ScanCodeInfo ScanCodeInfo; //扫码推事件

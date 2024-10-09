@@ -67,5 +67,10 @@ public enum EventType {
      * 模板消息事件
      */
     TEMPLATESENDJOBFINISH,
+
+    /**
+     * 一键激活会员卡
+     */
+    submit_membercard_user_info,
     ;
 }

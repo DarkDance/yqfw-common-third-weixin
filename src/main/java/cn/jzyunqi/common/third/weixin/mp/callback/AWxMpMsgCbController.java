@@ -7,6 +7,7 @@ import cn.jzyunqi.common.third.weixin.mp.callback.model.ImageMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.LinkMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.LocationEventData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.LocationMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.MemberCardEventData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MiniProgramPageMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MpNewsMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
@@ -93,11 +94,16 @@ public abstract class AWxMpMsgCbController {
                         case pic_weixin -> this.processPicWeixinEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case location_select -> this.processLocationSelectEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case TEMPLATESENDJOBFINISH -> this.processTemplateSendJobFinishEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case submit_membercard_user_info -> this.processSubmitMemberCardEvent(BeanUtilPlus.copyAs(decryptNotice, MemberCardEventData.class));
                     };
                     case transfer_customer_service -> this.processTransferCustomerServiceMsg(BeanUtilPlus.copyAs(decryptNotice, TransferCustomerServiceMsgData.class));
                     case miniprogrampage -> this.processMiniProgramPageMsg(BeanUtilPlus.copyAs(decryptNotice, MiniProgramPageMsgData.class));
                 }
         );
+    }
+
+    private Object processSubmitMemberCardEvent(MemberCardEventData eventMsgData) {
+        return null;
     }
 
     private Object processTemplateSendJobFinishEvent(EventMsgData eventMsgData) {
