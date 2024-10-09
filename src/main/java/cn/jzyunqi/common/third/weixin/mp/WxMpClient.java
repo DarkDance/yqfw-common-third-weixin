@@ -12,6 +12,10 @@ import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
 import cn.jzyunqi.common.third.weixin.mp.card.WxMpCardApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.card.model.CardData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpCardReq;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpLandingPageData;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpLandingPageParam;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpQrcodeData;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpQrcodeParam;
 import cn.jzyunqi.common.third.weixin.mp.kefu.WxMpKfApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.kefu.enums.TypingType;
 import cn.jzyunqi.common.third.weixin.mp.kefu.model.WxMpKfAccountParam;
@@ -669,8 +673,23 @@ public class WxMpClient {
 
     public class Card {
         //微信卡券 - 创建卡券
-        public String createCard(@RequestParam String access_token, @RequestBody WxMpCardReq request) throws BusinessException{
-            return wxMpCardApiProxy.createCard(access_token, request).getCardId();
+        public String createCard(WxMpCardReq request) throws BusinessException {
+            return wxMpCardApiProxy.createCard(getClientToken(), request).getCardId();
+        }
+
+        //微信卡券 - 查询卡券详情（含审核状态）
+        public CardData getCardDetail(CardData request) throws BusinessException {
+            return wxMpCardApiProxy.getCardDetail(getClientToken(), request);
+        }
+
+        //微信卡券 - 投放卡券 - 二维码投放
+        public WxMpQrcodeData createQrcodeCard(WxMpQrcodeParam request) throws BusinessException {
+            return wxMpCardApiProxy.createQrcodeCard(getClientToken(), request);
+        }
+
+        //微信卡券 - 投放卡券 - 卡券货架投放
+        public WxMpLandingPageData createLandingPageCard(WxMpLandingPageParam request) throws BusinessException {
+            return wxMpCardApiProxy.createLandingPageCard(getClientToken(), request);
         }
     }
 
