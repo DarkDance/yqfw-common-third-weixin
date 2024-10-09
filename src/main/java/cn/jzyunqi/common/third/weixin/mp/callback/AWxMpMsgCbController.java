@@ -74,7 +74,8 @@ public abstract class AWxMpMsgCbController {
                     case voice -> this.processVoiceMsg(BeanUtilPlus.copyAs(decryptNotice, VoiceMsgData.class));
                     case video -> this.processVideoMsg(BeanUtilPlus.copyAs(decryptNotice, VideoMsgData.class));
                     case thumb -> this.processThumbMsg(BeanUtilPlus.copyAs(decryptNotice, ThumbMsgData.class));
-                    case shortvideo -> this.processShortVideoMsg(BeanUtilPlus.copyAs(decryptNotice, ShortVideoMsgData.class));
+                    case shortvideo ->
+                            this.processShortVideoMsg(BeanUtilPlus.copyAs(decryptNotice, ShortVideoMsgData.class));
                     case music -> this.processMusicMsg(BeanUtilPlus.copyAs(decryptNotice, MusicMsgData.class));
                     case news -> this.processNewsMsg(BeanUtilPlus.copyAs(decryptNotice, NewsMsgData.class));
                     case mpnews -> this.processMpNewsMsg(BeanUtilPlus.copyAs(decryptNotice, MpNewsMsgData.class));
@@ -82,71 +83,84 @@ public abstract class AWxMpMsgCbController {
                     case location -> this.processLocationMsg(BeanUtilPlus.copyAs(decryptNotice, LocationMsgData.class));
                     case link -> this.processLinkMsg(BeanUtilPlus.copyAs(decryptNotice, LinkMsgData.class));
                     case event -> switch (decryptNotice.getEvent()) {
-                        case subscribe -> this.processSubscribeEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
-                        case unsubscribe -> this.processUnsubscribeEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
-                        case LOCATION -> this.processLocationEvent(BeanUtilPlus.copyAs(decryptNotice,LocationEventData.class));
+                        case subscribe ->
+                                this.processSubscribeEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case unsubscribe ->
+                                this.processUnsubscribeEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case LOCATION ->
+                                this.processLocationEvent(BeanUtilPlus.copyAs(decryptNotice, LocationEventData.class));
                         case CLICK -> this.processClickEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case VIEW -> this.processViewEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
-                        case scancode_push -> this.processScancodePushEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
-                        case scancode_waitmsg -> this.processScancodeWaitMsgEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
-                        case pic_sysphoto -> this.processPicSysphotoEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
-                        case pic_photo_or_album -> this.processPicPhotoOrAlbumEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
-                        case pic_weixin -> this.processPicWeixinEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
-                        case location_select -> this.processLocationSelectEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
-                        case TEMPLATESENDJOBFINISH -> this.processTemplateSendJobFinishEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
-                        case submit_membercard_user_info -> this.processSubmitMemberCardEvent(BeanUtilPlus.copyAs(decryptNotice, MemberCardEventData.class));
+                        case scancode_push ->
+                                this.processScancodePushEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case scancode_waitmsg ->
+                                this.processScancodeWaitMsgEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case pic_sysphoto ->
+                                this.processPicSysphotoEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case pic_photo_or_album ->
+                                this.processPicPhotoOrAlbumEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case pic_weixin ->
+                                this.processPicWeixinEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case location_select ->
+                                this.processLocationSelectEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case TEMPLATESENDJOBFINISH ->
+                                this.processTemplateSendJobFinishEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case submit_membercard_user_info ->
+                                this.processSubmitMemberCardEvent(BeanUtilPlus.copyAs(decryptNotice, MemberCardEventData.class));
                     };
-                    case transfer_customer_service -> this.processTransferCustomerServiceMsg(BeanUtilPlus.copyAs(decryptNotice, TransferCustomerServiceMsgData.class));
-                    case miniprogrampage -> this.processMiniProgramPageMsg(BeanUtilPlus.copyAs(decryptNotice, MiniProgramPageMsgData.class));
+                    case transfer_customer_service ->
+                            this.processTransferCustomerServiceMsg(BeanUtilPlus.copyAs(decryptNotice, TransferCustomerServiceMsgData.class));
+                    case miniprogrampage ->
+                            this.processMiniProgramPageMsg(BeanUtilPlus.copyAs(decryptNotice, MiniProgramPageMsgData.class));
                 }
         );
     }
 
-    protected Object processSubmitMemberCardEvent(MemberCardEventData eventMsgData) {
+    protected Object processSubmitMemberCardEvent(MemberCardEventData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processTemplateSendJobFinishEvent(EventMsgData eventMsgData) {
+    protected Object processTemplateSendJobFinishEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processLocationSelectEvent(EventMsgData eventMsgData) {
+    protected Object processLocationSelectEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processPicWeixinEvent(EventMsgData eventMsgData) {
+    protected Object processPicWeixinEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processPicPhotoOrAlbumEvent(EventMsgData eventMsgData) {
+    protected Object processPicPhotoOrAlbumEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processPicSysphotoEvent(EventMsgData eventMsgData) {
+    protected Object processPicSysphotoEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processScancodeWaitMsgEvent(EventMsgData eventMsgData) {
+    protected Object processScancodeWaitMsgEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processScancodePushEvent(EventMsgData eventMsgData) {
+    protected Object processScancodePushEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processViewEvent(EventMsgData eventMsgData) {
+    protected Object processViewEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processClickEvent(EventMsgData eventMsgData) {
+    protected Object processClickEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processLocationEvent(LocationEventData eventMsgData) {
+    protected Object processLocationEvent(LocationEventData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processUnsubscribeEvent(EventMsgData eventMsgData) {
+    protected Object processUnsubscribeEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
