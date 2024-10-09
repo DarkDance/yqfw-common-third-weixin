@@ -102,11 +102,11 @@ public abstract class AWxMpMsgCbController {
         );
     }
 
-    private Object processSubmitMemberCardEvent(MemberCardEventData eventMsgData) {
+    protected Object processSubmitMemberCardEvent(MemberCardEventData eventMsgData) {
         return null;
     }
 
-    private Object processTemplateSendJobFinishEvent(EventMsgData eventMsgData) {
+    protected Object processTemplateSendJobFinishEvent(EventMsgData eventMsgData) {
         return null;
     }
 
