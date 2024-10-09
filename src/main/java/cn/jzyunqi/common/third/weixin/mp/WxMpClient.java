@@ -36,11 +36,11 @@ import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMenuTryMatchParam;
 import cn.jzyunqi.common.third.weixin.mp.menu.model.WxMpSelfMenuInfoRsp;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.WxMpSubscribeMsgApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpCategoryData;
-import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpTemplateData;
-import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpTemplateParam;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateKeywordData;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateTitleData;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpPubTemplateTitleParam;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpTemplateData;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.model.WxMpTemplateParam;
 import cn.jzyunqi.common.third.weixin.mp.template.WxMpTemplateMsgApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.template.enums.WxMpIndustryEnum;
 import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpAddTemplateParam;
@@ -127,6 +127,7 @@ public class WxMpClient {
     public final Mass mass = new Mass();
     public final Subscribe subscribe = new Subscribe();
     public final Template template = new Template();
+    public final Card card = new Card();
 
     public class Kefu {
         //客服管理 - 添加客服账号（添加后不可用，需要再邀请）
@@ -654,6 +655,10 @@ public class WxMpClient {
         public String sendTemplateMsg(WxMpTemplateMsgParam request) throws BusinessException {
             return wxMpTemplateMsgApiProxy.sendTemplateMsg(getClientToken(), request).getMsgId();
         }
+
+    }
+
+    public class Card {
 
     }
 

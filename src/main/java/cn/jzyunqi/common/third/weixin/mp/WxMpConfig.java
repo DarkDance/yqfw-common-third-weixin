@@ -1,6 +1,7 @@
 package cn.jzyunqi.common.third.weixin.mp;
 
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchangeWrapper;
+import cn.jzyunqi.common.third.weixin.mp.card.WxMpCardApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.kefu.WxMpKfApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.mass.WxMpMassApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.material.WxMpMaterialApiProxy;
@@ -33,6 +34,7 @@ public class WxMpConfig {
     public WxHttpExchangeWrapper wxHttpExchangeWrapper() {
         return new WxHttpExchangeWrapper();
     }
+
     @Bean
     public WxMpClient wxMpClient() {
         return new WxMpClient();
@@ -109,5 +111,13 @@ public class WxMpConfig {
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpTemplateMsgApiProxy.class);
+    }
+
+    @Bean
+    public WxMpCardApiProxy wxMpCardApiProxy(WebClient.Builder webClientBuilder) {
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+        return factory.createClient(WxMpCardApiProxy.class);
     }
 }
