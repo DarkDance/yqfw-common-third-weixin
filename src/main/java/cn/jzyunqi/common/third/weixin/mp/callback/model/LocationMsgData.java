@@ -9,5 +9,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class LocationMsgData extends BaseMsgData{
+public class LocationMsgData extends BaseMsgData {
+    private Double locationX;
+    private Double locationY;
+    private Integer scale;
 }

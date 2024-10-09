@@ -11,6 +11,4 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EventMsgData extends BaseMsgData{
-
-    private EventType event;
 }

@@ -5,6 +5,7 @@ import cn.jzyunqi.common.third.weixin.mp.WxMpClient;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.EventMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ImageMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.LinkMsgData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.LocationEventData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.LocationMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MiniProgramPageMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MpNewsMsgData;
@@ -82,7 +83,7 @@ public abstract class AWxMpMsgCbController {
                     case event -> switch (decryptNotice.getEvent()) {
                         case subscribe -> this.processSubscribeEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case unsubscribe -> this.processUnsubscribeEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
-                        case LOCATION -> this.processLocationEvent(BeanUtilPlus.copyAs(decryptNotice,EventMsgData.class));
+                        case LOCATION -> this.processLocationEvent(BeanUtilPlus.copyAs(decryptNotice,LocationEventData.class));
                         case CLICK -> this.processClickEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case VIEW -> this.processViewEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case scancode_push -> this.processScancodePushEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
@@ -135,7 +136,7 @@ public abstract class AWxMpMsgCbController {
         return null;
     }
 
-    protected Object processLocationEvent(EventMsgData eventMsgData) {
+    protected Object processLocationEvent(LocationEventData eventMsgData) {
         return null;
     }
 
