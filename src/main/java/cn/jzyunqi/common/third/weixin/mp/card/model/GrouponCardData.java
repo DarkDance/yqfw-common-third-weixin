@@ -12,7 +12,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class GrouponCardData extends CardData {
+public class GrouponCardData extends WxMpCardData {
     /**
      * 团购券专用，团购详情
      */

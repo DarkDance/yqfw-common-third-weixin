@@ -14,10 +14,12 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class CardData extends WeixinRspV1 {
+public class WxMpCardData extends WeixinRspV1 {
 
     @JsonProperty("card_id")
     private String cardId;
+
+    private String code;
 
     /**
      * 卡券类型

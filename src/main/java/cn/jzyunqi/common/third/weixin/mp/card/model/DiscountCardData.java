@@ -11,7 +11,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class DiscountCardData extends CardData {
+public class DiscountCardData extends WxMpCardData {
     /**
      * 折扣券专用，表示打折额度（百分比）。填30就是七折。
      */

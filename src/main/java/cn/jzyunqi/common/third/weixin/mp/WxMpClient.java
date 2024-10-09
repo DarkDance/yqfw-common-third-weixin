@@ -11,7 +11,8 @@ import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
 import cn.jzyunqi.common.third.weixin.mp.card.WxMpCardApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.card.enums.CardType;
-import cn.jzyunqi.common.third.weixin.mp.card.model.CardData;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpActivateUserFormParam;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpCardData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.CashCardData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.DiscountCardData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.GeneralCouponData;
@@ -22,6 +23,10 @@ import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpCardParam;
 import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpCardReq;
 import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpLandingPageData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpLandingPageParam;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpMemberCardActiveParam;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpMemberCardUpdateData;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpMemberCardUpdateParam;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpMemberCardUserInfoData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpQrcodeData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpQrcodeParam;
 import cn.jzyunqi.common.third.weixin.mp.kefu.WxMpKfApiProxy;
@@ -571,6 +576,7 @@ public class WxMpClient {
             return userInfo(openid, null);
         }
 
+        //用户管理 - 获取用户基本信息
         public MpUserData userInfo(String openid, String lang) throws BusinessException {
             lang = StringUtilPlus.defaultString(lang, "zh_CN");
             return wxMpUserApiProxy.userInfo(getClientToken(), openid, lang);
@@ -681,7 +687,7 @@ public class WxMpClient {
 
     public class Card {
         //微信卡券 - 创建卡券
-        public String createCard(CardData cardData) throws BusinessException {
+        public String createCard(WxMpCardData cardData) throws BusinessException {
             WxMpCardParam card = new WxMpCardParam();
             if (cardData instanceof MemberCardData memberCardData) {
                 card.setCardType(CardType.MEMBER_CARD);
@@ -710,7 +716,7 @@ public class WxMpClient {
         }
 
         //微信卡券 - 查询卡券详情（含审核状态）
-        public CardData getCardDetail(CardData request) throws BusinessException {
+        public WxMpCardData getCardDetail(WxMpCardData request) throws BusinessException {
             return wxMpCardApiProxy.getCardDetail(getClientToken(), request);
         }
 
@@ -723,6 +729,30 @@ public class WxMpClient {
         public WxMpLandingPageData createLandingPageCard(WxMpLandingPageParam request) throws BusinessException {
             return wxMpCardApiProxy.createLandingPageCard(getClientToken(), request);
         }
+
+        //微信卡券 - 激活会员卡(一键激活前置条件设置)
+        public void setActivateUserForm(WxMpActivateUserFormParam request) throws BusinessException {
+            wxMpCardApiProxy.setActivateUserForm(getClientToken(), request);
+        }
+
+        //微信卡券 - 激活会员卡
+        public void activateMemberCard(WxMpMemberCardActiveParam request) throws BusinessException {
+            wxMpCardApiProxy.activateMemberCard(getClientToken(), request);
+        }
+
+        //微信卡券 - 拉取会员信息(一键激活的信息获取)
+        public WxMpMemberCardUserInfoData getUserInfo(String cardId, String code) throws BusinessException {
+            WxMpCardData request = new WxMpCardData();
+            request.setCardId(cardId);
+            request.setCode(code);
+            return wxMpCardApiProxy.getMemberCardUserInfo(getClientToken(), request);
+        }
+
+        //微信卡券 - 更新会员信息
+        public WxMpMemberCardUpdateData updateUserMemberCard(WxMpMemberCardUpdateParam request) throws BusinessException {
+            return wxMpCardApiProxy.updateUserMemberCard(getClientToken(), request);
+        }
+
     }
 
     public WxJsapiSignature createJsapiSignature(String url) throws BusinessException {

@@ -12,7 +12,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class CashCardData extends CardData {
+public class CashCardData extends WxMpCardData {
 
     /**
      * 代金券专用，表示起用金额（单位为分）,如果无起用门槛则填0

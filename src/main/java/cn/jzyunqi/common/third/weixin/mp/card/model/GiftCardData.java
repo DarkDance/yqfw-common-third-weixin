@@ -11,7 +11,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class GiftCardData extends CardData {
+public class GiftCardData extends WxMpCardData {
     /**
      * 兑换券专用，填写兑换内容的名称。
      */

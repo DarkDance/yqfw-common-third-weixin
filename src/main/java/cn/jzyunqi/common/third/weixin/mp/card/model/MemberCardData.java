@@ -12,7 +12,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class MemberCardData extends CardData{
+public class MemberCardData extends WxMpCardData {
 
     /**
      * 会员卡背景图.
