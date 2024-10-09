@@ -10,7 +10,15 @@ import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
 import cn.jzyunqi.common.third.weixin.mp.card.WxMpCardApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.card.enums.CardType;
 import cn.jzyunqi.common.third.weixin.mp.card.model.CardData;
+import cn.jzyunqi.common.third.weixin.mp.card.model.CashCardData;
+import cn.jzyunqi.common.third.weixin.mp.card.model.DiscountCardData;
+import cn.jzyunqi.common.third.weixin.mp.card.model.GeneralCouponData;
+import cn.jzyunqi.common.third.weixin.mp.card.model.GiftCardData;
+import cn.jzyunqi.common.third.weixin.mp.card.model.GrouponCardData;
+import cn.jzyunqi.common.third.weixin.mp.card.model.MemberCardData;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpCardParam;
 import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpCardReq;
 import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpLandingPageData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpLandingPageParam;
@@ -673,7 +681,31 @@ public class WxMpClient {
 
     public class Card {
         //微信卡券 - 创建卡券
-        public String createCard(WxMpCardReq request) throws BusinessException {
+        public String createCard(CardData cardData) throws BusinessException {
+            WxMpCardParam card = new WxMpCardParam();
+            if (cardData instanceof MemberCardData memberCardData) {
+                card.setCardType(CardType.MEMBER_CARD);
+                card.setMemberCard(memberCardData);
+            } else if (cardData instanceof GrouponCardData grouponCardData) {
+                card.setCardType(CardType.GROUPON);
+                card.setGroupon(grouponCardData);
+            } else if (cardData instanceof CashCardData cashCardData) {
+                card.setCardType(CardType.CASH);
+                card.setCash(cashCardData);
+            } else if (cardData instanceof DiscountCardData discountCardData) {
+                card.setCardType(CardType.DISCOUNT);
+                card.setDiscount(discountCardData);
+            } else if (cardData instanceof GiftCardData giftCardData) {
+                card.setCardType(CardType.GIFT);
+                card.setGift(giftCardData);
+            } else if (cardData instanceof GeneralCouponData generalCouponData) {
+                card.setCardType(CardType.GENERAL_COUPON);
+                card.setGeneralCoupon(generalCouponData);
+            } else {
+                throw new BusinessException("不支持的卡券类型：" + cardData.getClass().getName());
+            }
+            WxMpCardReq request = new WxMpCardReq();
+            request.setCard(card);
             return wxMpCardApiProxy.createCard(getClientToken(), request).getCardId();
         }
 
