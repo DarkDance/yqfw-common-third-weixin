@@ -71,6 +71,7 @@ public class AuthUtils {
                 nonceStr, StringUtilPlus.ENTER,
                 StringUtilPlus.defaultIfBlank(body, StringUtilPlus.EMPTY), StringUtilPlus.ENTER
         );
+        log.debug("=====needSignContent: [{}]", needSignContent);
         String sign = StringUtilPlus.EMPTY;
         try {
             sign = DigestUtilPlus.RSA256.signPrivateKey(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(merchantPrivateKey), Boolean.TRUE);

@@ -79,7 +79,7 @@ public class WxPayConfig {
                                             wxPayClientConfig.getMerchantPrivateKey(),
                                             request.method(),
                                             request.url().getPath(),
-                                            request.body().toString()
+                                            null
                                     )
                             )
                             .build();
