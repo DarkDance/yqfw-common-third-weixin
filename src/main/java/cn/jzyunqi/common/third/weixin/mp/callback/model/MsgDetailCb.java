@@ -94,6 +94,12 @@ public class MsgDetailCb implements Serializable {
     private String recognition;
 
     /**
+     * 语音消息：16K采样率语音消息媒体id
+     */
+    @XmlElement(name = "MediaId16K")
+    private String mediaId16K;
+
+    /**
      * 视频消息：视频消息缩略图的媒体id，可以调用多媒体文件下载接口拉取数据。
      */
     @XmlElement(name = "ThumbMediaId")
