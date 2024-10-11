@@ -14,7 +14,6 @@ public class WxMpKfAccountParam {
     /**
      * 完整客服账号，格式为：账号前缀@公众号微信号
      */
-    @JsonProperty("kf_account")
     private String kfAccount;
 
     /**
@@ -30,6 +29,5 @@ public class WxMpKfAccountParam {
     /**
      * 接收绑定邀请的客服微信号
      */
-    @JsonProperty("invite_wx")
     private String inviteWx;
 }

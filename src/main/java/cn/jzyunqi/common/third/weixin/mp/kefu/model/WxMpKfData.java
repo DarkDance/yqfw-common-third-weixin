@@ -45,30 +45,25 @@ public class WxMpKfData {
     /**
      * 如果客服帐号尚未绑定微信号，但是已经发起了一个绑定邀请，则此处显示绑定邀请的微信号
      */
-    @JsonProperty("invite_wx")
     private String inviteWx;
 
     /**
      * 如果客服帐号尚未绑定微信号，但是已经发起过一个绑定邀请，则此处显示为邀请的过期时间，为unix 时间戳
      */
-    @JsonProperty("invite_expire_time")
     private Long inviteExpireTime;
 
     /**
      * 邀请的状态
      */
-    @JsonProperty("invite_status")
     private InviteStatus inviteStatus;
 
     /**
      * 客服在线状态，目前为：1、web 在线
      */
-    @JsonProperty("status")
     private Integer status;
 
     /**
      * 客服当前正在接待的会话数
      */
-    @JsonProperty("accepted_case")
     private Integer acceptedCase;
 }

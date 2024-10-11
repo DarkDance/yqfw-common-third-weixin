@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -17,9 +18,8 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class WxMenuButtonData implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -4706066149001165271L;
+@ToString
+public class WxMenuButtonData  {
 
     /**
      * 菜单类型
@@ -50,12 +50,10 @@ public class WxMenuButtonData implements Serializable {
     /**
      * media_id
      */
-    @JsonProperty("media_id")
     private String mediaId;
 
     /**
      * 子菜单列表
      */
-    @JsonProperty("sub_button")
     private List<WxMenuButtonData> subButton;
 }

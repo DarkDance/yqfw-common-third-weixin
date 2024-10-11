@@ -15,12 +15,10 @@ public class WxMpIndustryParam {
     /**
      * 主行业编码
      */
-    @JsonProperty("industry_id1")
     private Integer industryId1;
 
     /**
      * 副行业编码
      */
-    @JsonProperty("industry_id2")
     private Integer industryId2;
 }

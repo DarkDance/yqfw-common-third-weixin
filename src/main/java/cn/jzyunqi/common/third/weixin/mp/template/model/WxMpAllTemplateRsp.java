@@ -15,6 +15,5 @@ import java.util.List;
 @Setter
 public class WxMpAllTemplateRsp extends WeixinRspV1 {
 
-    @JsonProperty("template_list")
     private List<WxMpTemplateData> templateList;
 }

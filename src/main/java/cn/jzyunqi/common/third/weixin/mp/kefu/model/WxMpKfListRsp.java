@@ -15,9 +15,7 @@ import java.util.List;
 @Setter
 public class WxMpKfListRsp extends WeixinRspV1 {
 
-    @JsonProperty("kf_list")
     private List<WxMpKfData> kfList;
 
-    @JsonProperty("kf_online_list")
     private List<WxMpKfData> kfOnlineList;
 }

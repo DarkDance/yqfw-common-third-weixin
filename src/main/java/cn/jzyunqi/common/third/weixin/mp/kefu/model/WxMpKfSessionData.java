@@ -16,7 +16,6 @@ public class WxMpKfSessionData extends WeixinRspV1 {
     /**
      * 正在接待的客服，为空表示没有人在接待
      */
-    @JsonProperty("kf_account")
     private String kfAccount;
 
     /**
@@ -28,13 +27,12 @@ public class WxMpKfSessionData extends WeixinRspV1 {
     /**
      * 粉丝的最后一条消息的时间，UNIX时间戳
      */
-    @JsonProperty("latest_time")
     private long latestTime;
 
     /**
      * 客户openid
      */
     @JsonProperty("openid")
-    private String openid;
+    private String openId;
 
 }

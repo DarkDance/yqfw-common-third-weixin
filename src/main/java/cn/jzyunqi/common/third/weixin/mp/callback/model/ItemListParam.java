@@ -19,8 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ItemListParam implements Serializable {
-    private static final long serialVersionUID = -6253523499813424333L;
+public class ItemListParam {
 
     @JsonProperty("articles")
     @XmlElement(name = "item")

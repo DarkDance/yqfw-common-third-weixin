@@ -13,14 +13,10 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class WxMenuRuleData implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 8284573062912140027L;
-
+public class WxMenuRuleData {
     /**
      * 组id
      */
-    @JsonProperty("tag_id")
     private Integer tagId;
 
     /**
@@ -46,8 +42,5 @@ public class WxMenuRuleData implements Serializable {
     /**
      * 平台，IOS(1), Android(2),Others(3)
      */
-    @JsonProperty("client_platform_type")
     private String clientPlatformType;
-
-
 }

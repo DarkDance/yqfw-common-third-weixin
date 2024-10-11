@@ -16,11 +16,9 @@ import lombok.Setter;
 @Setter
 public class WxMpIndustryData extends WeixinRspV1 {
 
-    @JsonProperty("primary_industry")
     @JsonDeserialize(using = WxMpIndustryDeserializer.class)
     private WxMpIndustryEnum primaryIndustry;
 
-    @JsonProperty("secondary_industry")
     @JsonDeserialize(using = WxMpIndustryDeserializer.class)
     private WxMpIndustryEnum secondaryIndustry;
 

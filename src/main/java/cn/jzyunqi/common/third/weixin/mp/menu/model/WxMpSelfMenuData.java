@@ -3,6 +3,7 @@ package cn.jzyunqi.common.third.weixin.mp.menu.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -12,11 +13,11 @@ import java.util.List;
  */
 @Getter
 @Setter
+@ToString
 public class WxMpSelfMenuData {
 
     /**
      * 菜单按钮
      */
-    @JsonProperty("button")
-    private List<WxMenuButtonData> buttons;
+    private List<WxMenuButtonData> button;
 }

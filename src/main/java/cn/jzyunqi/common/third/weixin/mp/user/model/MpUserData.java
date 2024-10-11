@@ -4,6 +4,7 @@ import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.util.List;
@@ -14,9 +15,8 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class MpUserData extends WeixinRspV1 {
-    @Serial
-    private static final long serialVersionUID = -1078218095463872809L;
+@ToString
+public class MpUserData {
 
     /**
      * 是否关注
@@ -43,7 +43,6 @@ public class MpUserData extends WeixinRspV1 {
     /**
      * 用户关注时间，为时间戳
      */
-    @JsonProperty("subscribe_time")
     private Integer subscribeTime;
 
     /**
@@ -65,18 +64,15 @@ public class MpUserData extends WeixinRspV1 {
     /**
      * 用户关注的渠道
      */
-    @JsonProperty("subscribe_scene")
     private String subscribeScene;
 
     /**
      * 二维码扫码场景
      */
-    @JsonProperty("qr_scene")
     private Integer qrScene;
 
     /**
      * 二维码扫码场景描述
      */
-    @JsonProperty("qr_scene_str")
     private String qrSceneStr;
 }

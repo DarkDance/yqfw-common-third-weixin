@@ -4,6 +4,7 @@ import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,9 +16,8 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class WxMenuData extends WeixinRspV1 implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -7895223754676094123L;
+@ToString
+public class WxMenuData extends WeixinRspV1{
 
     /**
      * 目录id

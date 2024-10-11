@@ -16,6 +16,5 @@ public class WxMpSelfMenuInfoRsp extends WeixinRspV1 {
     @JsonProperty("selfmenu_info")
     private WxMpSelfMenuData selfMenuInfo;
 
-    @JsonProperty("is_menu_open")
     private Boolean isMenuOpen;
 }

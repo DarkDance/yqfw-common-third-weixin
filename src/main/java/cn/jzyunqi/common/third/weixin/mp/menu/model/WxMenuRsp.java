@@ -3,6 +3,7 @@ package cn.jzyunqi.common.third.weixin.mp.menu.model;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 import java.util.List;
@@ -13,9 +14,8 @@ import java.util.List;
  */
 @Getter
 @Setter
+@ToString
 public class WxMenuRsp extends WeixinRspV1 {
-    @Serial
-    private static final long serialVersionUID = 1047190426231490578L;
 
     /**
      * 默认目录

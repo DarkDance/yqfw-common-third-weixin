@@ -97,7 +97,7 @@ public class WxMpConfig {
 
     @Bean
     public WxMpSubscribeMsgApiProxy wxMpSubscribeMsgApiProxy(WebClient.Builder webClientBuilder) {
-        WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2Config).build();
+        WebClient webClient = webClientBuilder.clone().build();
         WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();

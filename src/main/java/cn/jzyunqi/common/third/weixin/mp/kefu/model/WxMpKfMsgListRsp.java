@@ -18,7 +18,6 @@ public class WxMpKfMsgListRsp extends WeixinRspV1 {
     @JsonProperty("recordlist")
     private List<WxMpKfMsgData> records;
 
-    @JsonProperty("number")
     private Integer number;
 
     @JsonProperty("msgid")

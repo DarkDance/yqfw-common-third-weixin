@@ -14,9 +14,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-public class MsgSimpleCb implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 6125983649333864559L;
+public class MsgSimpleCb{
 
     private String signature;
 

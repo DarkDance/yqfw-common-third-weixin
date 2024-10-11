@@ -3,6 +3,7 @@ package cn.jzyunqi.common.third.weixin.mp.menu.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author wiiyaya
@@ -10,7 +11,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class WxMenuTryMatchParam {
-    @JsonProperty("user_id")
     private String userId;
 }

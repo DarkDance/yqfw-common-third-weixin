@@ -4,6 +4,7 @@ import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author wiiyaya
@@ -11,18 +12,17 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@ToString
 public class ClientTokenData extends WeixinRspV1 {
 
     /**
      * 授权token
      */
-    @JsonProperty("access_token")
     private String accessToken;
 
     /**
      * 授权token过期时间(秒)
      */
-    @JsonProperty("expires_in")
     private long expiresIn;
 
 }
