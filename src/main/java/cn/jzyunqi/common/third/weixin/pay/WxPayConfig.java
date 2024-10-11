@@ -6,7 +6,6 @@ import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApiProxy;
 import cn.jzyunqi.common.third.weixin.common.utils.AuthUtils;
 import cn.jzyunqi.common.third.weixin.pay.order.WxPayOrderApiProxy;
 import cn.jzyunqi.common.utils.StringUtilPlus;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.reactivestreams.Publisher;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -14,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
-import org.springframework.http.client.reactive.ClientHttpRequest;
 import org.springframework.http.client.reactive.ClientHttpRequestDecorator;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
@@ -55,10 +53,7 @@ public class WxPayConfig {
     @Bean
     public WxPayOrderApiProxy wxPayOrderApiProxy(WebClient.Builder webClientBuilder, WxPayClientConfig wxPayClientConfig) {
         WebClient webClient = webClientBuilder.clone()
-                .codecs(codecConfig -> {
-                    codecConfig.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(WxFormatUtils.OBJECT_MAPPER));
-                    codecConfig.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(WxFormatUtils.OBJECT_MAPPER));
-                })
+                .codecs(WxFormatUtils::jackson2Config)
                 .filter(ExchangeFilterFunction.ofRequestProcessor(request -> {
                     ClientRequest filtered = ClientRequest.from(request)
                             .body((outputMessage, context) -> request.body().insert(new ClientHttpRequestDecorator(outputMessage) {
@@ -93,10 +88,7 @@ public class WxPayConfig {
     @Bean
     public WxPayCertApiProxy wxPayCertApiProxy(WebClient.Builder webClientBuilder, WxPayClientConfig wxPayClientConfig) {
         WebClient webClient = webClientBuilder.clone()
-                .codecs(codecConfig -> {
-                    codecConfig.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(WxFormatUtils.OBJECT_MAPPER));
-                    codecConfig.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(WxFormatUtils.OBJECT_MAPPER));
-                })
+                .codecs(WxFormatUtils::jackson2Config)
                 .filter(ExchangeFilterFunction.ofRequestProcessor(request -> {
                     ClientRequest filtered = ClientRequest.from(request)
                             .header("Authorization",

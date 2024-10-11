@@ -1,6 +1,7 @@
 package cn.jzyunqi.common.third.weixin.mp;
 
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchangeWrapper;
+import cn.jzyunqi.common.third.weixin.common.utils.WxFormatUtils;
 import cn.jzyunqi.common.third.weixin.mp.card.WxMpCardApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.kefu.WxMpKfApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.mass.WxMpMassApiProxy;
@@ -42,7 +43,8 @@ public class WxMpConfig {
 
     @Bean
     public WxMpTokenApiProxy wxMpTokenApiProxy(WebClient.Builder webClientBuilder) {
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2Config).build();
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpTokenApiProxy.class);
@@ -50,7 +52,8 @@ public class WxMpConfig {
 
     @Bean
     public WxMpKfApiProxy wxMpKfApiProxy(WebClient.Builder webClientBuilder) {
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2Config).build();
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpKfApiProxy.class);
@@ -58,23 +61,16 @@ public class WxMpConfig {
 
     @Bean
     public WxMpMenuApiProxy wxMpMenuApiProxy(WebClient.Builder webClientBuilder) {
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2Config).build();
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpMenuApiProxy.class);
     }
 
     @Bean
-    public WxMpMaterialApiProxy wxMpMaterialApiProxy(WebClient.Builder webClientBuilder, Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder) {
-        WebClient webClient = webClientBuilder.clone()
-                .codecs(configurer -> configurer
-                        .defaultCodecs()
-                        .jackson2JsonDecoder(new Jackson2JsonDecoder(jackson2ObjectMapperBuilder.build(),
-                                MediaType.APPLICATION_JSON,
-                                MediaType.TEXT_PLAIN
-                        )))
-                .build();
-
+    public WxMpMaterialApiProxy wxMpMaterialApiProxy(WebClient.Builder webClientBuilder) {
+        WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2ConfigSpecial).build();
         WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
@@ -83,7 +79,8 @@ public class WxMpConfig {
 
     @Bean
     public WxMpUserApiProxy wxMpUserApiProxy(WebClient.Builder webClientBuilder) {
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2Config).build();
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpUserApiProxy.class);
@@ -91,7 +88,8 @@ public class WxMpConfig {
 
     @Bean
     public WxMpMassApiProxy wxMpMassApiProxy(WebClient.Builder webClientBuilder) {
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2Config).build();
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpMassApiProxy.class);
@@ -99,7 +97,8 @@ public class WxMpConfig {
 
     @Bean
     public WxMpSubscribeMsgApiProxy wxMpSubscribeMsgApiProxy(WebClient.Builder webClientBuilder) {
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2Config).build();
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpSubscribeMsgApiProxy.class);
@@ -107,7 +106,8 @@ public class WxMpConfig {
 
     @Bean
     public WxMpTemplateMsgApiProxy wxMpTemplateMsgApiProxy(WebClient.Builder webClientBuilder) {
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2Config).build();
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpTemplateMsgApiProxy.class);
@@ -115,7 +115,8 @@ public class WxMpConfig {
 
     @Bean
     public WxMpCardApiProxy wxMpCardApiProxy(WebClient.Builder webClientBuilder) {
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2Config).build();
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpCardApiProxy.class);
