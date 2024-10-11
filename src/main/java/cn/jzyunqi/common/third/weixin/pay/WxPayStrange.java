@@ -8,6 +8,7 @@ import cn.jzyunqi.common.feature.pay.PayQueryReqDto;
 import cn.jzyunqi.common.feature.pay.RefundApplyReqDto;
 import cn.jzyunqi.common.feature.pay.RefundCallbackDto;
 import cn.jzyunqi.common.feature.pay.VerifyPayResult;
+import cn.jzyunqi.common.third.weixin.common.enums.WeixinType;
 import cn.jzyunqi.common.third.weixin.pay.callback.model.WxPayResultCb;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderRefundData;
@@ -28,6 +29,7 @@ public class WxPayStrange implements PayHelper {
     @Override
     public Object signForPay(PayApplyReqDto payApplyReqDto) throws BusinessException {
         return wxPayClient.order.signForPay(
+                WeixinType.valueOf(payApplyReqDto.getApplyPaySubType()),
                 payApplyReqDto.getApplyPayNo(),
                 payApplyReqDto.getSkuName(),
                 payApplyReqDto.getApplyPayAmount(),

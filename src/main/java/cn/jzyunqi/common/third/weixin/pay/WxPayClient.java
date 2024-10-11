@@ -3,6 +3,8 @@ package cn.jzyunqi.common.third.weixin.pay;
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.common.constant.WxCache;
+import cn.jzyunqi.common.third.weixin.common.enums.WeixinType;
+import cn.jzyunqi.common.third.weixin.mp.WxMpClientConfig;
 import cn.jzyunqi.common.third.weixin.pay.callback.model.WxPayResultCb;
 import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApiProxy;
 import cn.jzyunqi.common.third.weixin.pay.cert.model.PlantCertData;
@@ -26,6 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.net.ssl.SSLException;
 import java.io.ByteArrayInputStream;
@@ -35,6 +38,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +52,9 @@ public class WxPayClient {
 
     @Resource
     private WxPayClientConfig wxPayClientConfig;
+
+    @Autowired(required = false)
+    private WxMpClientConfig wxMpClientConfig;
 
     @Resource
     private WxPayOrderApiProxy wxPayOrderApiProxy;
@@ -72,13 +79,20 @@ public class WxPayClient {
 
     public class Order {
 
-        public UnifiedOrderV3Rsp signForPay(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes, String openId) throws BusinessException {
+        public UnifiedOrderV3Rsp signForPay(WeixinType weixinType, String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes, String openId) throws BusinessException {
             UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
-            unifiedOrderParam.setAppId(wxPayClientConfig.getAppId());
-            unifiedOrderParam.setMchId(wxPayClientConfig.getAppId());
+
+            String appId = switch (weixinType) {
+                case OPEN -> null;
+                case MP -> wxMpClientConfig.getAppId();
+                case MINI_APP -> null;
+            };
+
+            unifiedOrderParam.setAppId(appId);
+            unifiedOrderParam.setMchId(wxPayClientConfig.getMerchantId());
             unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
             unifiedOrderParam.setOutTradeNo(outTradeNo);
-            unifiedOrderParam.setTimeExpire(OffsetDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
+            unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
             unifiedOrderParam.setNotifyUrl(wxPayClientConfig.getPayCallbackUrl());
             unifiedOrderParam.getAmount().setTotal(amount.multiply(new BigDecimal(100)).intValue());
             unifiedOrderParam.getPayer().setOpenId(openId);
@@ -89,7 +103,7 @@ public class WxPayClient {
             String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
             Long timestamp = System.currentTimeMillis() / 1000;
             String needSignContent = StringUtilPlus.join(
-                    wxPayClientConfig.getAppId(), StringUtilPlus.ENTER,
+                    appId, StringUtilPlus.ENTER,
                     timestamp, StringUtilPlus.ENTER,
                     nonceStr, StringUtilPlus.ENTER,
                     pkg, StringUtilPlus.ENTER

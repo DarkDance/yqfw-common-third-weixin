@@ -12,11 +12,6 @@ import java.sql.Blob;
 public interface WxPayClientConfig {
 
     /**
-     * 应用唯一标识
-     */
-    String getAppId();
-
-    /**
      * 支付回调URL
      */
     String getPayCallbackUrl();

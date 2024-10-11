@@ -13,9 +13,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class WxPayResultData implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -1248956564460889857L;
+public class WxPayResultData {
 
     /**
      * 加密算法类型

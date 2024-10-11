@@ -1,13 +1,24 @@
 package cn.jzyunqi.common.third.weixin.pay;
 
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchangeWrapper;
+import cn.jzyunqi.common.third.weixin.common.utils.WxFormatUtils;
 import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApiProxy;
 import cn.jzyunqi.common.third.weixin.common.utils.AuthUtils;
 import cn.jzyunqi.common.third.weixin.pay.order.WxPayOrderApiProxy;
+import cn.jzyunqi.common.utils.StringUtilPlus;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.reactivestreams.Publisher;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.http.client.reactive.ClientHttpRequest;
+import org.springframework.http.client.reactive.ClientHttpRequestDecorator;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
+import org.springframework.lang.NonNull;
 import org.springframework.web.reactive.function.client.ClientRequest;
 import org.springframework.web.reactive.function.client.ExchangeFilterFunction;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -44,18 +55,30 @@ public class WxPayConfig {
     @Bean
     public WxPayOrderApiProxy wxPayOrderApiProxy(WebClient.Builder webClientBuilder, WxPayClientConfig wxPayClientConfig) {
         WebClient webClient = webClientBuilder.clone()
+                .codecs(codecConfig -> {
+                    codecConfig.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(WxFormatUtils.OBJECT_MAPPER));
+                    codecConfig.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(WxFormatUtils.OBJECT_MAPPER));
+                })
                 .filter(ExchangeFilterFunction.ofRequestProcessor(request -> {
                     ClientRequest filtered = ClientRequest.from(request)
-                            .header("Authorization",
-                                    AuthUtils.genAuthToken(
-                                            wxPayClientConfig.getMerchantId(),
-                                            wxPayClientConfig.getMerchantSerialNumber(),
-                                            wxPayClientConfig.getMerchantPrivateKey(),
-                                            request.method(),
-                                            request.url().getPath(),
-                                            request.body().toString()
-                                    )
-                            )
+                            .body((outputMessage, context) -> request.body().insert(new ClientHttpRequestDecorator(outputMessage) {
+                                @Override
+                                public @NonNull Mono<Void> writeWith(@NonNull Publisher<? extends DataBuffer> body) {
+                                    return DataBufferUtils.join(body).flatMap(buffer -> {
+                                        String bodyStr = buffer.toString(StringUtilPlus.UTF_8);
+                                        getHeaders().add("Authorization",
+                                                AuthUtils.genAuthToken(
+                                                        wxPayClientConfig.getMerchantId(),
+                                                        wxPayClientConfig.getMerchantSerialNumber(),
+                                                        wxPayClientConfig.getMerchantPrivateKey(),
+                                                        request.method(),
+                                                        request.url().getPath(),
+                                                        bodyStr
+                                                ));
+                                        return super.writeWith(Mono.just(buffer));
+                                    });
+                                }
+                            }, context))
                             .build();
                     return Mono.just(filtered);
                 }))
@@ -70,6 +93,10 @@ public class WxPayConfig {
     @Bean
     public WxPayCertApiProxy wxPayCertApiProxy(WebClient.Builder webClientBuilder, WxPayClientConfig wxPayClientConfig) {
         WebClient webClient = webClientBuilder.clone()
+                .codecs(codecConfig -> {
+                    codecConfig.defaultCodecs().jackson2JsonEncoder(new Jackson2JsonEncoder(WxFormatUtils.OBJECT_MAPPER));
+                    codecConfig.defaultCodecs().jackson2JsonDecoder(new Jackson2JsonDecoder(WxFormatUtils.OBJECT_MAPPER));
+                })
                 .filter(ExchangeFilterFunction.ofRequestProcessor(request -> {
                     ClientRequest filtered = ClientRequest.from(request)
                             .header("Authorization",

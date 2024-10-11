@@ -15,9 +15,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString
-public class UnifiedOrderV3Rsp implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -1336500637573348603L;
+public class UnifiedOrderV3Rsp {
 
     /**
      * 申请流水号

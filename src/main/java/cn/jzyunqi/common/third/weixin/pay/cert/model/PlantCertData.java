@@ -16,33 +16,25 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @ToString
-public class PlantCertData implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 2607510178884489441L;
+public class PlantCertData {
 
-    @JsonProperty("serial_no")
     private String serialNo;
 
-    @JsonProperty("effective_time")
     private OffsetDateTime effectiveTime;
 
-    @JsonProperty("expire_time")
     private OffsetDateTime expireTime;
 
-    @JsonProperty("encrypt_certificate")
     private EncryptCertificate encryptCertificate;
 
     @Getter
     @Setter
     @ToString
-    public static class EncryptCertificate implements Serializable{
-        @Serial
-        private static final long serialVersionUID = -8766601908808238086L;
+    public static class EncryptCertificate{
 
         private String algorithm;
+
         private String nonce;
 
-        @JsonProperty("associated_data")
         private String associatedData;
 
         @JsonProperty("ciphertext")

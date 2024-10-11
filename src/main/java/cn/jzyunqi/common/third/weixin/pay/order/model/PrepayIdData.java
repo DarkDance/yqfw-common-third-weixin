@@ -1,6 +1,7 @@
 package cn.jzyunqi.common.third.weixin.pay.order.model;
 
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 

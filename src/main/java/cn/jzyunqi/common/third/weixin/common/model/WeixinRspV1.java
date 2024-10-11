@@ -15,10 +15,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class WeixinRspV1 implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -6792109548151994746L;
-
+public class WeixinRspV1 {
     /**
      * 错误代码
      */

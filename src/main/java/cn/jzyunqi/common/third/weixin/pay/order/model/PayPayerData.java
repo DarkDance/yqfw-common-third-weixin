@@ -13,10 +13,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class PayPayerData implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1341366278701373383L;
-
+public class PayPayerData {
     /**
      * 微信用户标识
      */

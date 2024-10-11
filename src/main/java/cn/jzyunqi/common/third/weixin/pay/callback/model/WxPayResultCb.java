@@ -13,9 +13,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class WxPayResultCb implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 2984109498800330498L;
+public class WxPayResultCb {
 
     private String id;
 

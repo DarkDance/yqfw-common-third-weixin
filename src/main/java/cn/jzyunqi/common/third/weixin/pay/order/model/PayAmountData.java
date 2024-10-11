@@ -1,5 +1,6 @@
 package cn.jzyunqi.common.third.weixin.pay.order.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,10 +14,7 @@ import java.util.List;
  */
 @Getter
 @Setter
-public class PayAmountData implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -6167943782324982733L;
-
+public class PayAmountData {
     /**
      * 订单总金额，单位为分
      */

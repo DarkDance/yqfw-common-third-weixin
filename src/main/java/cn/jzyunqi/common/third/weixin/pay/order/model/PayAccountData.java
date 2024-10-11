@@ -13,10 +13,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class PayAccountData implements Serializable {
-    @Serial
-    private static final long serialVersionUID = -8836971743503652816L;
-
+public class PayAccountData {
     /**
      * 出资账户类型
      */

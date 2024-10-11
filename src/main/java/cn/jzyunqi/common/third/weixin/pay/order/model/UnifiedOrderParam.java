@@ -1,11 +1,15 @@
 package cn.jzyunqi.common.third.weixin.pay.order.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 /**
  * @author wiiyaya
@@ -13,8 +17,7 @@ import java.time.OffsetDateTime;
  */
 @Getter
 @Setter
-public class UnifiedOrderParam implements Serializable {
-    private static final long serialVersionUID = -3549100768853004121L;
+public class UnifiedOrderParam {
 
     @JsonProperty("appid")
     private String appId;
@@ -26,7 +29,7 @@ public class UnifiedOrderParam implements Serializable {
 
     private String outTradeNo;
 
-    private OffsetDateTime timeExpire;
+    private ZonedDateTime timeExpire;
 
     private String notifyUrl;
 
