@@ -209,7 +209,7 @@ public class WxMpClient {
         //会话控制 - 创建会话
         public void kfSessionCreate(String openid, String kfAccount) throws BusinessException {
             WxMpKfSessionData request = new WxMpKfSessionData();
-            request.setOpenid(openid);
+            request.setOpenId(openid);
             request.setKfAccount(kfAccount);
             wxMpKfApiProxy.kfSessionCreate(getClientToken(), request);
         }
@@ -217,7 +217,7 @@ public class WxMpClient {
         //会话控制 - 关闭会话
         public void kfSessionClose(String openid, String kfAccount) throws BusinessException {
             WxMpKfSessionData request = new WxMpKfSessionData();
-            request.setOpenid(openid);
+            request.setOpenId(openid);
             request.setKfAccount(kfAccount);
             wxMpKfApiProxy.kfSessionClose(getClientToken(), request);
         }
