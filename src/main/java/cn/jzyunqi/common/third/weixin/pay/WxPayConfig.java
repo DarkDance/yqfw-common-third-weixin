@@ -68,8 +68,26 @@ public class WxPayConfig {
     }
 
     @Bean
-    public WxPayCertApiProxy wxPayCertApiProxy(WebClient.Builder webClientBuilder) {
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+    public WxPayCertApiProxy wxPayCertApiProxy(WebClient.Builder webClientBuilder, WxPayClientConfig wxPayClientConfig) {
+        WebClient webClient = webClientBuilder.clone()
+                .filter(ExchangeFilterFunction.ofRequestProcessor(request -> {
+                    ClientRequest filtered = ClientRequest.from(request)
+                            .header("Authorization",
+                                    AuthUtils.genAuthToken(
+                                            wxPayClientConfig.getMerchantId(),
+                                            wxPayClientConfig.getMerchantSerialNumber(),
+                                            wxPayClientConfig.getMerchantPrivateKey(),
+                                            request.method(),
+                                            request.url().getPath(),
+                                            request.body().toString()
+                                    )
+                            )
+                            .build();
+                    return Mono.just(filtered);
+                }))
+                .build();
+
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxPayCertApiProxy.class);
