@@ -4,7 +4,8 @@ import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.pay.PayCallbackDto;
 import cn.jzyunqi.common.feature.pay.PayCallbackProcessor;
 import cn.jzyunqi.common.feature.pay.PayHelper;
-import cn.jzyunqi.common.third.weixin.pay.callback.model.PayResultCb;
+import cn.jzyunqi.common.third.weixin.pay.WxPayStrange;
+import cn.jzyunqi.common.third.weixin.pay.callback.model.WxPayResultCb;
 import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public abstract class AWxPayCbController implements PayCallbackProcessor {
 
     @Resource
-    @Qualifier("wxPayStrange")
+    @Qualifier(WxPayStrange.ID)
     private PayHelper wxPayStrange;
 
     /**
@@ -32,11 +33,11 @@ public abstract class AWxPayCbController implements PayCallbackProcessor {
      */
     @RequestMapping
     @ResponseBody
-    public void payApplyWeixinCallback(@RequestBody PayResultCb payResultCb, @RequestBody String body, @RequestHeader HttpHeaders headers) throws BusinessException {
+    public void payApplyWeixinCallback(@RequestBody WxPayResultCb payResultCb, @RequestBody String body, @RequestHeader HttpHeaders headers) throws BusinessException {
         //组装回调对象
         PayCallbackDto payCallbackDto = new PayCallbackDto();
         payCallbackDto.setApplyPayNo(null); //支付申请单号
-        payCallbackDto.setActualPayType("weixin"); //实际支付方式
+        payCallbackDto.setActualPayType(WxPayStrange.ID); //实际支付方式
         payCallbackDto.setActualPayNo(null); //实际支付单号
         payCallbackDto.setActualPayAmount(null); //实际支付金额
         payCallbackDto.setReturnHeaderMap(headers.toSingleValueMap());//支付接口返回header

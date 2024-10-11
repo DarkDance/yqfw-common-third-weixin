@@ -3,7 +3,7 @@ package cn.jzyunqi.common.third.weixin.pay;
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.common.constant.WxCache;
-import cn.jzyunqi.common.third.weixin.pay.callback.model.PayResultCb;
+import cn.jzyunqi.common.third.weixin.pay.callback.model.WxPayResultCb;
 import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApiProxy;
 import cn.jzyunqi.common.third.weixin.pay.cert.model.PlantCertData;
 import cn.jzyunqi.common.third.weixin.pay.cert.model.PlantCertRedisDto;
@@ -146,7 +146,7 @@ public class WxPayClient {
 
     public class Callback {
 
-        public OrderData decryptPayCallback(Map<String, String> returnHeaderMap, String returnParam, PayResultCb payResultCb) {
+        public OrderData decryptPayCallback(Map<String, String> returnHeaderMap, String returnParam, WxPayResultCb payResultCb) {
             try {
                 verifyHeader(returnHeaderMap, returnParam);
 
@@ -180,7 +180,7 @@ public class WxPayClient {
          * @param payResultCb 回调密文
          * @return 解码结果
          */
-        public OrderRefundData decryptRefundCallback(PayResultCb payResultCb) {
+        public OrderRefundData decryptRefundCallback(WxPayResultCb payResultCb) {
             try {
                 String cipherText = payResultCb.getResource().getCipherText();
                 String nonce = payResultCb.getResource().getNonce();

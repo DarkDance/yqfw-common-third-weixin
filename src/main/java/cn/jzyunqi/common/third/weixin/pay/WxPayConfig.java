@@ -31,6 +31,11 @@ public class WxPayConfig {
         return new WxHttpExchangeWrapper();
     }
 
+    @Bean(WxPayStrange.ID)
+    public WxPayStrange wxPayStrange() {
+        return new WxPayStrange();
+    }
+
     @Bean
     public WxPayClient wxPayClient() {
         return new WxPayClient();

@@ -13,7 +13,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
-public class PayResultData implements Serializable {
+public class WxPayResultData implements Serializable {
     @Serial
     private static final long serialVersionUID = -1248956564460889857L;
 
