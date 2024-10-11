@@ -56,16 +56,16 @@ public abstract class AWxMpMsgCbController {
      */
     @RequestMapping(consumes = "text/xml", produces = "text/xml")
     @ResponseBody
-    public Object userMessageCallback(MsgSimpleCb msgSimpleCb, @RequestBody(required = false) MsgDetailCb msgDetailCb, @RequestHeader Map<String, String[]> headers) {
+    public Object userMessageCallback(MsgSimpleCb msgSimpleCb, @RequestBody(required = false) MsgDetailCb msgDetailCb, @RequestBody(required = false) String msgDetailCbStr, @RequestHeader Map<String, String[]> headers) {
         log.debug("""
 
-                        ======Request Header : {}
-                        ======Request Params : {}
-                        ======Request Body   : {}
+                        ======Request Header    : {}
+                        ======Request Params    : {}
+                        ======Request BodyStr   : {}
                         """,
                 headers,
                 msgSimpleCb,
-                msgDetailCb
+                msgDetailCbStr
         );
         return wxMpClient.cb.replyMessageNotice(msgSimpleCb, msgDetailCb, decryptNotice ->
                 switch (decryptNotice.getMsgType()) {
