@@ -1,6 +1,7 @@
 package cn.jzyunqi.common.third.weixin.common.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -33,6 +34,7 @@ public class WxFormatUtils {
                 .serializationInclusion(JsonInclude.Include.NON_NULL) // 序列化时不输出null属性
                 .enable(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY) // 排序属性
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS) // 禁用时间戳
+                .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES) // 反序列化时忽略未知属性
                 .build();
     }
 
