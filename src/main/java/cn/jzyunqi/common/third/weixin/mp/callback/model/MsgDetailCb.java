@@ -185,22 +185,63 @@ public class MsgDetailCb {
     private Double precision;
 
     /**
-     * 事件消息-会员信息事件：会员卡id
+     * 事件消息-卡券事件：卡id
      */
     @XmlElement(name = "CardId")
     private String cardId;
 
     /**
-     * 事件消息-会员信息事件：会员卡code
+     * 事件消息-卡券事件：卡code
      */
     @XmlElement(name = "UserCardCode")
     private String userCardCode;
 
-    //private Long menuId;  //点击菜单跳转链接时的事件推送
+    /**
+     * 事件消息-卡券事件：是否为转赠领取，1代表是，0代表否。
+     */
+    @XmlElement(name = "IsGiveByFriend")
+    private Boolean isGiveByFriend;
 
-    //private ScanCodeInfo ScanCodeInfo; //扫码推事件
+    /**
+     * 事件消息-卡券事件：当IsGiveByFriend为1时填入的字段，表示发起转赠用户的openid
+     */
+    @XmlElement(name = "FriendUserName")
+    private String friendUserName;
 
-    //private SendPicsInfo SendPicsInfo; //弹出系统拍照发图
+    /**
+     * 事件消息-卡券事件：？？
+     */
+    @XmlElement(name = "OuterId")
+    private String outerId;
 
-    //private SendLocationInfo SendLocationInfo;//弹出地理位置选择
+    /**
+     * 事件消息-卡券事件：为保证安全，微信会在转赠发生后变更该卡券的code号，该字段表示转赠前的code。
+     */
+    @XmlElement(name = "OldUserCardCode")
+    private String oldUserCardCode;
+
+    /**
+     * 事件消息-卡券事件：用户删除会员卡后可重新找回，当用户本次操作为找回时，该值为1，否则为0
+     */
+    @XmlElement(name = "IsRestoreMemberCard")
+    private Boolean isRestoreMemberCard;
+
+    /**
+     * 事件消息-卡券事件：？？
+     */
+    @XmlElement(name = "IsRecommendByFriend")
+    private Boolean isRecommendByFriend;
+
+    /**
+     * 事件消息-卡券事件： ？？
+     */
+    @XmlElement(name = "SourceScene")
+    private String sourceScene;
+
+    /**
+     * 事件消息-卡券事件：领券用户的UnionId
+     */
+    @XmlElement(name = "UnionId")
+    private String unionId;
+
 }

@@ -105,8 +105,32 @@ public abstract class AWxMpMsgCbController {
                                 this.processLocationSelectEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case TEMPLATESENDJOBFINISH ->
                                 this.processTemplateSendJobFinishEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case card_pass_check ->
+                                this.processCardPassCheckEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case card_not_pass_check ->
+                                this.processCardNotPassCheckEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case user_gifting_card ->
+                                this.processUserGiftingCardEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case user_del_card ->
+                                this.processUserDelCardEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case user_pay_from_pay_cell ->
+                                this.processUserPayFromPayCellEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case user_enter_session_from_card ->
+                                this.processUserEnterSessionFromCardEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case update_member_card ->
+                                this.processUpdateMemberCardEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case card_sku_remind ->
+                                this.processCardSkuRemindEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case card_pay_order ->
+                                this.processCardPayOrderEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case submit_membercard_user_info ->
                                 this.processSubmitMemberCardEvent(BeanUtilPlus.copyAs(decryptNotice, MemberCardEventData.class));
+                        case user_get_card ->
+                                this.processUserGetCardEvent(BeanUtilPlus.copyAs(decryptNotice, MemberCardEventData.class));
+                        case user_consume_card ->
+                                this.processUserConsumeCardEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case user_view_card ->
+                                this.processUserViewCardEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                     };
                     case transfer_customer_service ->
                             this.processTransferCustomerServiceMsg(BeanUtilPlus.copyAs(decryptNotice, TransferCustomerServiceMsgData.class));
@@ -114,6 +138,54 @@ public abstract class AWxMpMsgCbController {
                             this.processMiniProgramPageMsg(BeanUtilPlus.copyAs(decryptNotice, MiniProgramPageMsgData.class));
                 }
         );
+    }
+
+    protected Object processUserViewCardEvent(EventMsgData eventMsgData) throws BusinessException {
+        return null;
+    }
+
+    protected Object processUserConsumeCardEvent(EventMsgData eventMsgData) throws BusinessException {
+        return null;
+    }
+
+    protected Object processUserGetCardEvent(MemberCardEventData eventMsgData) throws BusinessException {
+        return null;
+    }
+
+    protected Object processCardPayOrderEvent(EventMsgData eventMsgData) throws BusinessException {
+        return null;
+    }
+
+    protected Object processCardSkuRemindEvent(EventMsgData eventMsgData) throws BusinessException {
+        return null;
+    }
+
+    protected Object processUpdateMemberCardEvent(EventMsgData eventMsgData) throws BusinessException {
+        return null;
+    }
+
+    protected Object processUserEnterSessionFromCardEvent(EventMsgData eventMsgData) throws BusinessException {
+        return null;
+    }
+
+    protected Object processUserPayFromPayCellEvent(EventMsgData eventMsgData) throws BusinessException {
+        return null;
+    }
+
+    protected Object processUserDelCardEvent(EventMsgData eventMsgData) throws BusinessException {
+        return null;
+    }
+
+    protected Object processUserGiftingCardEvent(EventMsgData eventMsgData) throws BusinessException {
+        return null;
+    }
+
+    protected Object processCardNotPassCheckEvent(EventMsgData eventMsgData) throws BusinessException {
+        return null;
+    }
+
+    protected Object processCardPassCheckEvent(EventMsgData eventMsgData) throws BusinessException {
+        return null;
     }
 
     protected Object processSubmitMemberCardEvent(MemberCardEventData eventMsgData) throws BusinessException {
