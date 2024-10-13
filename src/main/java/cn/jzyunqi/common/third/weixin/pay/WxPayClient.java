@@ -4,7 +4,6 @@ import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.common.constant.WxCache;
 import cn.jzyunqi.common.third.weixin.common.enums.WeixinPaySubType;
-import cn.jzyunqi.common.third.weixin.common.enums.WeixinType;
 import cn.jzyunqi.common.third.weixin.mp.WxMpClientConfig;
 import cn.jzyunqi.common.third.weixin.pay.callback.model.WxPayResultCb;
 import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApiProxy;
@@ -15,6 +14,7 @@ import cn.jzyunqi.common.third.weixin.pay.order.enums.RefundStatus;
 import cn.jzyunqi.common.third.weixin.pay.order.enums.TradeState;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderRefundData;
+import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedAppOrderData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderRsp;
 import cn.jzyunqi.common.third.weixin.pay.order.model.RefundOrderParam;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderParam;
@@ -118,7 +118,7 @@ public class WxPayClient {
             UnifiedJsapiOrderData unifiedOrderV3Rsp = new UnifiedJsapiOrderData();
             unifiedOrderV3Rsp.setNonceStr(nonceStr);
             unifiedOrderV3Rsp.setTimeStamp(timestamp.toString());
-            unifiedOrderV3Rsp.setWeixinPackage(pkg);
+            unifiedOrderV3Rsp.setPackageValue(pkg);
             unifiedOrderV3Rsp.setSignType("RSA");
             unifiedOrderV3Rsp.setPaySign(sign);
             unifiedOrderV3Rsp.setApplyPayNo(outTradeNo);
@@ -185,16 +185,43 @@ public class WxPayClient {
         }
 
         //APP支付 - 预下单
-        public UnifiedOrderRsp unifiedAppOrder(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
+        public UnifiedAppOrderData unifiedAppOrder(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
+            String appId = "xxxxx";
             UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
-            unifiedOrderParam.setAppId(wxMpClientConfig.getAppId());//只能是公众号的appId
+            unifiedOrderParam.setAppId(appId);//只能是开放平台的appId
             unifiedOrderParam.setMchId(wxPayClientConfig.getMerchantId());
             unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
             unifiedOrderParam.setOutTradeNo(outTradeNo);
             unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
             unifiedOrderParam.setNotifyUrl(wxPayClientConfig.getPayCallbackUrl());
             unifiedOrderParam.getAmount().setTotal(amount.multiply(new BigDecimal(100)).intValue());
-            return wxPayOrderApiProxy.unifiedNativeOrder(unifiedOrderParam).getH5Url();
+
+            String prepayId = wxPayOrderApiProxy.unifiedNativeOrder(unifiedOrderParam).getPrepayId();
+
+            String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
+            Long timestamp = System.currentTimeMillis() / 1000;
+            String needSignContent = StringUtilPlus.join(
+                    appId, StringUtilPlus.ENTER,
+                    timestamp, StringUtilPlus.ENTER,
+                    nonceStr, StringUtilPlus.ENTER,
+                    prepayId, StringUtilPlus.ENTER
+            );
+            String sign = null;
+            try {
+                sign = DigestUtilPlus.RSA256.signPrivateKey(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(wxPayClientConfig.getMerchantPrivateKey()), Boolean.TRUE);
+            } catch (Exception e) {
+                log.error("=====unifiedAppOrder sign error", e);
+            }
+
+            UnifiedAppOrderData appOrderData = new UnifiedAppOrderData();
+            appOrderData.setAppId(appId);
+            appOrderData.setPartnerId(wxPayClientConfig.getMerchantId());
+            appOrderData.setPrepayId(prepayId);
+            appOrderData.setPackageValue("Sign=WXPay");
+            appOrderData.setNonceStr(nonceStr);
+            appOrderData.setTimeStamp(timestamp);
+            appOrderData.setSign(sign);
+            return appOrderData;
         }
     }
 

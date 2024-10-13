@@ -33,7 +33,7 @@ public class UnifiedJsapiOrderData {
      * 扩展字段
      */
     @JsonProperty("package")
-    private String weixinPackage;
+    private String packageValue;
 
     /**
      * 签名方式

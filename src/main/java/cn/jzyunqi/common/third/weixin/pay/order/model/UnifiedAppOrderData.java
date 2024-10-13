@@ -1,5 +1,7 @@
 package cn.jzyunqi.common.third.weixin.pay.order.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -15,7 +17,8 @@ public class UnifiedAppOrderData {
     /**
      * 微信开放平台审核通过的移动应用AppID 。
      */
-    private String appid;
+    @JsonProperty("appid")
+    private String appId;
 
     /**
      * 请填写商户号mchid对应的值。
@@ -30,6 +33,7 @@ public class UnifiedAppOrderData {
     /**
      * 暂填写固定值Sign=WXPay
      */
+    @JsonProperty("package")
     private String packageValue;
 
     /**
