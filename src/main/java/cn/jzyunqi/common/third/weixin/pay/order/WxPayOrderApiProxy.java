@@ -6,7 +6,7 @@ import cn.jzyunqi.common.third.weixin.pay.order.model.RefundOrderParam;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderRefundData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderParam;
-import cn.jzyunqi.common.third.weixin.pay.order.model.PrepayIdData;
+import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderRsp;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +23,7 @@ public interface WxPayOrderApiProxy {
 
     //JSAPI、小程序支付 - 预下单
     @PostExchange(url = "/v3/pay/transactions/jsapi")
-    PrepayIdData unifiedJsapiOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
+    UnifiedOrderRsp unifiedJsapiOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
 
     //小程序支付 - 订单查询(微信支付订单号)
     @PostExchange(url = "/v3/pay/transactions/id/{transaction_id}")
@@ -39,14 +39,14 @@ public interface WxPayOrderApiProxy {
 
     //Native支付 - 预下单
     @PostExchange(url = "/v3/pay/transactions/native")
-    PrepayIdData unifiedNativeOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
+    UnifiedOrderRsp unifiedNativeOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
 
     //H5支付 - 预下单
     @PostExchange(url = "/v3/pay/transactions/h5")
-    PrepayIdData unifiedH5Order(@RequestBody UnifiedOrderParam request) throws BusinessException;
+    UnifiedOrderRsp unifiedH5Order(@RequestBody UnifiedOrderParam request) throws BusinessException;
 
     //APP支付 - 预下单
     @PostExchange(url = "/v3/pay/transactions/app")
-    PrepayIdData unifiedAppOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
+    UnifiedOrderRsp unifiedAppOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
 
 }

@@ -14,10 +14,10 @@ import cn.jzyunqi.common.third.weixin.pay.order.enums.RefundStatus;
 import cn.jzyunqi.common.third.weixin.pay.order.enums.TradeState;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderRefundData;
-import cn.jzyunqi.common.third.weixin.pay.order.model.PrepayIdData;
+import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderRsp;
 import cn.jzyunqi.common.third.weixin.pay.order.model.RefundOrderParam;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderParam;
-import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderV3Rsp;
+import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderData;
 import cn.jzyunqi.common.utils.CollectionUtilPlus;
 import cn.jzyunqi.common.utils.DateTimeUtilPlus;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
@@ -78,15 +78,15 @@ public class WxPayClient {
 
     public class Order {
 
-        public UnifiedOrderV3Rsp signForPay(WeixinType weixinType, String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes, String openId) throws BusinessException {
-            UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
-
+        //JSAPI、小程序支付 - 预下单
+        public UnifiedOrderData unifiedJsapiOrder(WeixinType weixinType, String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes, String openId) throws BusinessException {
             String appId = switch (weixinType) {
                 case OPEN -> null;
                 case MP -> wxMpClientConfig.getAppId();
                 case MINI_APP -> null;
             };
 
+            UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
             unifiedOrderParam.setAppId(appId);
             unifiedOrderParam.setMchId(wxPayClientConfig.getMerchantId());
             unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
@@ -96,8 +96,8 @@ public class WxPayClient {
             unifiedOrderParam.getAmount().setTotal(amount.multiply(new BigDecimal(100)).intValue());
             unifiedOrderParam.getPayer().setOpenId(openId);
 
-            PrepayIdData prepayIdData = wxPayOrderApiProxy.unifiedJsapiOrder(unifiedOrderParam);
-            String pkg = "prepay_id=" + prepayIdData.getPrepayId();
+            UnifiedOrderRsp unifiedOrderTempRsp = wxPayOrderApiProxy.unifiedJsapiOrder(unifiedOrderParam);
+            String pkg = "prepay_id=" + unifiedOrderTempRsp.getPrepayId();
 
             String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
             Long timestamp = System.currentTimeMillis() / 1000;
@@ -111,10 +111,10 @@ public class WxPayClient {
             try {
                 sign = DigestUtilPlus.RSA256.signPrivateKey(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(wxPayClientConfig.getMerchantPrivateKey()), Boolean.TRUE);
             } catch (Exception e) {
-                log.error("=====sign error", e);
+                log.error("=====unifiedJsapiOrder sign error", e);
             }
 
-            UnifiedOrderV3Rsp unifiedOrderV3Rsp = new UnifiedOrderV3Rsp();
+            UnifiedOrderData unifiedOrderV3Rsp = new UnifiedOrderData();
             unifiedOrderV3Rsp.setNonceStr(nonceStr);
             unifiedOrderV3Rsp.setTimeStamp(timestamp.toString());
             unifiedOrderV3Rsp.setWeixinPackage(pkg);
@@ -154,6 +154,20 @@ public class WxPayClient {
                 log.warn("=====refundApply orderRefundData parse error", e);
             }
             return orderRefundData;
+        }
+
+        //Native支付 - 预下单
+        public String unifiedNativeOrder(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
+            UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
+            unifiedOrderParam.setAppId(wxMpClientConfig.getAppId());//只能是公众号的appId
+            unifiedOrderParam.setMchId(wxPayClientConfig.getMerchantId());
+            unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
+            unifiedOrderParam.setOutTradeNo(outTradeNo);
+            unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
+            unifiedOrderParam.setNotifyUrl(wxPayClientConfig.getPayCallbackUrl());
+            unifiedOrderParam.getAmount().setTotal(amount.multiply(new BigDecimal(100)).intValue());
+
+            return wxPayOrderApiProxy.unifiedNativeOrder(unifiedOrderParam).getCodeUrl();
         }
     }
 
