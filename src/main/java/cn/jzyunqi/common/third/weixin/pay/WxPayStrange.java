@@ -8,6 +8,8 @@ import cn.jzyunqi.common.feature.pay.PayQueryReqDto;
 import cn.jzyunqi.common.feature.pay.RefundApplyReqDto;
 import cn.jzyunqi.common.feature.pay.RefundCallbackDto;
 import cn.jzyunqi.common.feature.pay.VerifyPayResult;
+import cn.jzyunqi.common.third.weixin.common.enums.TradeType;
+import cn.jzyunqi.common.third.weixin.common.enums.WeixinPaySubType;
 import cn.jzyunqi.common.third.weixin.common.enums.WeixinType;
 import cn.jzyunqi.common.third.weixin.pay.callback.model.WxPayResultCb;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderData;
@@ -28,14 +30,17 @@ public class WxPayStrange implements PayHelper {
 
     @Override
     public Object signForPay(PayApplyReqDto payApplyReqDto) throws BusinessException {
-        return wxPayClient.order.signForPay(
-                WeixinType.valueOf(payApplyReqDto.getApplyPaySubType()),
-                payApplyReqDto.getApplyPayNo(),
-                payApplyReqDto.getSkuName(),
-                payApplyReqDto.getApplyPayAmount(),
-                payApplyReqDto.getExpireTime(),
-                payApplyReqDto.getApplyOpenId()
-        );
+        WeixinPaySubType paySubType = WeixinPaySubType.valueOf(payApplyReqDto.getApplyPaySubType());
+        return switch (paySubType) {
+            case APP ->
+                    wxPayClient.order.unifiedAppOrder(payApplyReqDto.getApplyPayNo(), payApplyReqDto.getSkuName(), payApplyReqDto.getApplyPayAmount(), payApplyReqDto.getExpireTime());
+            case MP_NATIVE ->
+                    wxPayClient.order.unifiedNativeOrder(payApplyReqDto.getApplyPayNo(), payApplyReqDto.getSkuName(), payApplyReqDto.getApplyPayAmount(), payApplyReqDto.getExpireTime());
+            case MP_H5 ->
+                    wxPayClient.order.unifiedH5Order(payApplyReqDto.getApplyPayNo(), payApplyReqDto.getSkuName(), payApplyReqDto.getApplyPayAmount(), payApplyReqDto.getExpireTime());
+            case MP_JSAPI, MINI_APP ->
+                    wxPayClient.order.unifiedJsapiOrder(paySubType, payApplyReqDto.getApplyPayNo(), payApplyReqDto.getSkuName(), payApplyReqDto.getApplyPayAmount(), payApplyReqDto.getExpireTime(), payApplyReqDto.getApplyOpenId());
+        };
     }
 
     @Override

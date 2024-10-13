@@ -8,23 +8,19 @@ import lombok.Getter;
  * @since 2018/6/26.
  */
 @Getter
-@AllArgsConstructor
 public enum WeixinType {
     /**
      * 开放平台
      */
-    OPEN(TradeType.APP),
+    OPEN,
 
     /**
      * 公众平台
      */
-    MP(TradeType.JSAPI),
+    MP,
 
     /**
      * 小程序
      */
-    MINI_APP(TradeType.JSAPI),
-    ;
-
-    private final TradeType tradeType;
+    MINI_APP
 }

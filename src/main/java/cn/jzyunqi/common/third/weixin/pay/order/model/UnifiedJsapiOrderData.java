@@ -12,7 +12,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class UnifiedOrderData {
+public class UnifiedJsapiOrderData {
 
     /**
      * 申请流水号
