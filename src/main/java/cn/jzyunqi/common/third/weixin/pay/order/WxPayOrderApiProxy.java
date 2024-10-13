@@ -21,9 +21,9 @@ import org.springframework.web.service.annotation.PostExchange;
 @HttpExchange(url = "https://api.mch.weixin.qq.com", accept = {"application/json"}, contentType = "application/json")
 public interface WxPayOrderApiProxy {
 
-    //小程序支付 - 预下单
+    //JSAPI、小程序支付 - 预下单
     @PostExchange(url = "/v3/pay/transactions/jsapi")
-    PrepayIdData unifiedOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
+    PrepayIdData unifiedJsapiOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
 
     //小程序支付 - 订单查询(微信支付订单号)
     @PostExchange(url = "/v3/pay/transactions/id/{transaction_id}")
@@ -36,4 +36,17 @@ public interface WxPayOrderApiProxy {
     //小程序支付 - 退款申请
     @PostExchange(url = "/v3/refund/domestic/refunds")
     OrderRefundData refundApply(@RequestBody RefundOrderParam request) throws BusinessException;
+
+    //Native支付 - 预下单
+    @PostExchange(url = "/v3/pay/transactions/native")
+    PrepayIdData unifiedNativeOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
+
+    //H5支付 - 预下单
+    @PostExchange(url = "/v3/pay/transactions/h5")
+    PrepayIdData unifiedH5Order(@RequestBody UnifiedOrderParam request) throws BusinessException;
+
+    //APP支付 - 预下单
+    @PostExchange(url = "/v3/pay/transactions/app")
+    PrepayIdData unifiedAppOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
+
 }

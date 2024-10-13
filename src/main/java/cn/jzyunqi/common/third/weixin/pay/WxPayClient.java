@@ -37,7 +37,6 @@ import java.math.RoundingMode;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +96,7 @@ public class WxPayClient {
             unifiedOrderParam.getAmount().setTotal(amount.multiply(new BigDecimal(100)).intValue());
             unifiedOrderParam.getPayer().setOpenId(openId);
 
-            PrepayIdData prepayIdData = wxPayOrderApiProxy.unifiedOrder(unifiedOrderParam);
+            PrepayIdData prepayIdData = wxPayOrderApiProxy.unifiedJsapiOrder(unifiedOrderParam);
             String pkg = "prepay_id=" + prepayIdData.getPrepayId();
 
             String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
