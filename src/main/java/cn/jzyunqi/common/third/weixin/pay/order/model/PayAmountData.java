@@ -25,8 +25,6 @@ public class PayAmountData {
      */
     private String currency;
 
-    //=======================
-
     /**
      * 退款金额
      */

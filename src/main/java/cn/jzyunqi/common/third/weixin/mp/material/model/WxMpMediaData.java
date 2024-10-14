@@ -17,9 +17,6 @@ import java.io.Serial;
 @Setter
 @ToString(callSuper = true)
 public class WxMpMediaData extends WeixinRspV1 {
-    @Serial
-    private static final long serialVersionUID = 7921679008435737891L;
-
     /**
      * 类型
      */
@@ -28,13 +25,11 @@ public class WxMpMediaData extends WeixinRspV1 {
     /**
      * media_id
      */
-    @JsonProperty("media_id")
     private String mediaId;
 
     /**
      * thumb_media_id
      */
-    @JsonProperty("thumb_media_id")
     private String thumbMediaId;
 
     /**
@@ -45,6 +40,5 @@ public class WxMpMediaData extends WeixinRspV1 {
     /**
      * 创建时间戳
      */
-    @JsonProperty("created_at")
     private Long createdAt;
 }

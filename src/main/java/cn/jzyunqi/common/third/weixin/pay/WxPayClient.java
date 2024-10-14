@@ -14,6 +14,8 @@ import cn.jzyunqi.common.third.weixin.pay.order.enums.RefundStatus;
 import cn.jzyunqi.common.third.weixin.pay.order.enums.TradeState;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderRefundData;
+import cn.jzyunqi.common.third.weixin.pay.order.model.PayAmountData;
+import cn.jzyunqi.common.third.weixin.pay.order.model.PayPayerData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedAppOrderData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderRsp;
 import cn.jzyunqi.common.third.weixin.pay.order.model.RefundOrderParam;
@@ -94,8 +96,14 @@ public class WxPayClient {
             unifiedOrderParam.setOutTradeNo(outTradeNo);
             unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
             unifiedOrderParam.setNotifyUrl(wxPayClientConfig.getPayCallbackUrl());
-            unifiedOrderParam.getAmount().setTotal(amount.multiply(new BigDecimal(100)).intValue());
-            unifiedOrderParam.getPayer().setOpenId(openId);
+
+            PayAmountData payAmountData = new PayAmountData();
+            payAmountData.setTotal(amount.multiply(new BigDecimal(100)).intValue());
+            unifiedOrderParam.setAmount(payAmountData);
+
+            PayPayerData payer = new PayPayerData();
+            payer.setOpenId(openId);
+            unifiedOrderParam.setPayer(payer);
 
             UnifiedOrderRsp unifiedOrderTempRsp = wxPayOrderApiProxy.unifiedJsapiOrder(unifiedOrderParam);
             String pkg = "prepay_id=" + unifiedOrderTempRsp.getPrepayId();
@@ -166,7 +174,10 @@ public class WxPayClient {
             unifiedOrderParam.setOutTradeNo(outTradeNo);
             unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
             unifiedOrderParam.setNotifyUrl(wxPayClientConfig.getPayCallbackUrl());
-            unifiedOrderParam.getAmount().setTotal(amount.multiply(new BigDecimal(100)).intValue());
+
+            PayAmountData payAmountData = new PayAmountData();
+            payAmountData.setTotal(amount.multiply(new BigDecimal(100)).intValue());
+            unifiedOrderParam.setAmount(payAmountData);
 
             return wxPayOrderApiProxy.unifiedNativeOrder(unifiedOrderParam).getCodeUrl();
         }
@@ -180,7 +191,10 @@ public class WxPayClient {
             unifiedOrderParam.setOutTradeNo(outTradeNo);
             unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
             unifiedOrderParam.setNotifyUrl(wxPayClientConfig.getPayCallbackUrl());
-            unifiedOrderParam.getAmount().setTotal(amount.multiply(new BigDecimal(100)).intValue());
+
+            PayAmountData payAmountData = new PayAmountData();
+            payAmountData.setTotal(amount.multiply(new BigDecimal(100)).intValue());
+            unifiedOrderParam.setAmount(payAmountData);
             return wxPayOrderApiProxy.unifiedH5Order(unifiedOrderParam).getH5Url();
         }
 
@@ -194,7 +208,10 @@ public class WxPayClient {
             unifiedOrderParam.setOutTradeNo(outTradeNo);
             unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
             unifiedOrderParam.setNotifyUrl(wxPayClientConfig.getPayCallbackUrl());
-            unifiedOrderParam.getAmount().setTotal(amount.multiply(new BigDecimal(100)).intValue());
+
+            PayAmountData payAmountData = new PayAmountData();
+            payAmountData.setTotal(amount.multiply(new BigDecimal(100)).intValue());
+            unifiedOrderParam.setAmount(payAmountData);
 
             String prepayId = wxPayOrderApiProxy.unifiedNativeOrder(unifiedOrderParam).getPrepayId();
 

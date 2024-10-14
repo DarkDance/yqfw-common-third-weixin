@@ -132,7 +132,7 @@ public class UnifiedOrderParam {
      *  订单金额信息
      * </pre>
      */
-    private PayAmountData amount = new PayAmountData();
+    private PayAmountData amount;
     /**
      * <pre>
      * 字段名：支付者
@@ -143,7 +143,7 @@ public class UnifiedOrderParam {
      *  支付者信息
      * </pre>
      */
-    private PayPayerData payer = new PayPayerData();
+    private PayPayerData payer;
     /**
      * <pre>
      * 字段名：优惠功能
@@ -154,7 +154,7 @@ public class UnifiedOrderParam {
      *  优惠功能
      * </pre>
      */
-    private DiscountData detail = new DiscountData();
+    private DiscountData detail;
     /**
      * <pre>
      * 字段名：场景信息
