@@ -48,6 +48,7 @@ public abstract class AWxPayCbController implements PayCallbackProcessor {
         PayCallbackDto payCallbackDto = new PayCallbackDto();
         payCallbackDto.setApplyPayNo(null); //支付申请单号
         payCallbackDto.setActualPayType(WxPayStrange.ID); //实际支付方式
+        payCallbackDto.setActualPaySubType(null); //这里不知道是哪个子支付
         payCallbackDto.setActualPayNo(null); //实际支付单号
         payCallbackDto.setActualPayAmount(null); //实际支付金额
         payCallbackDto.setReturnHeaderMap(headers.toSingleValueMap());//支付接口返回header

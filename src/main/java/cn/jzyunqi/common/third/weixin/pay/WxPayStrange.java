@@ -90,6 +90,7 @@ public class WxPayStrange implements PayHelper {
         if (orderData != null) {
             PayCallbackDto payCallbackDto = new PayCallbackDto();
             payCallbackDto.setActualPayType(WxPayStrange.ID);
+            payCallbackDto.setActualPaySubType(payQueryReqDto.getActualPaySubType());
             payCallbackDto.setApplyPayNo(orderData.getOutTradeNo()); //申请支付单号
             payCallbackDto.setActualPayNo(orderData.getTransactionId()); //微信支付单号
             payCallbackDto.setActualPayAmount(orderData.getActualPayAmount()); //支付金额
