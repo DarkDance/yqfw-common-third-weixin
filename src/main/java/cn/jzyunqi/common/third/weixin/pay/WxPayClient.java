@@ -316,9 +316,9 @@ public class WxPayClient {
         String nonce = returnHeaderMap.get("Wechatpay-Nonce");
 
         long currTimeStamp = System.currentTimeMillis() / 1000;
-        //if (currTimeStamp - 600 > Long.parseLong(timestamp) || currTimeStamp + 600 < Long.parseLong(timestamp)) {
-        //    throw new SSLException("sign currTimeStamp verify failed!");
-        //}
+        if (currTimeStamp - 600 > Long.parseLong(timestamp) || currTimeStamp + 600 < Long.parseLong(timestamp)) {
+            throw new SSLException("sign currTimeStamp verify failed!");
+        }
 
         String waitSign = String.format("%s\n%s\n%s\n", timestamp, nonce, returnParam);
         //获取证书
