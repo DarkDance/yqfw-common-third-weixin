@@ -4,6 +4,7 @@ import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.common.constant.WxCache;
 import cn.jzyunqi.common.third.weixin.common.enums.WeixinPaySubType;
+import cn.jzyunqi.common.third.weixin.common.utils.WxFormatUtils;
 import cn.jzyunqi.common.third.weixin.mp.WxMpClientConfig;
 import cn.jzyunqi.common.third.weixin.pay.callback.model.WxPayResultCb;
 import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApiProxy;
@@ -66,9 +67,6 @@ public class WxPayClient {
 
     @Resource
     private RedisHelper redisHelper;
-
-    @Resource
-    private ObjectMapper objectMapper;
 
     public final Order order = new Order();
     public final Callback cb = new Callback();
@@ -158,7 +156,7 @@ public class WxPayClient {
             OrderRefundData orderRefundData = wxPayOrderApiProxy.refundApply(refundOrderParam);
             orderRefundData.setActualRefundAmount(BigDecimal.valueOf(orderRefundData.getAmount().getPayerRefund()).divide(BigDecimal.valueOf(100), 2, RoundingMode.DOWN));
             try {
-                orderRefundData.setResponseStr(objectMapper.writeValueAsString(orderRefundData));
+                orderRefundData.setResponseStr(WxFormatUtils.OBJECT_MAPPER.writeValueAsString(orderRefundData));
             } catch (JsonProcessingException e) {
                 log.warn("=====refundApply orderRefundData parse error", e);
             }
@@ -257,13 +255,13 @@ public class WxPayClient {
                         nonce.getBytes(StringUtilPlus.UTF_8),
                         associatedData.getBytes(StringUtilPlus.UTF_8)
                 );
-                OrderData orderQueryV3Rsp = objectMapper.readValue(realCallback, OrderData.class);
+                OrderData orderQueryV3Rsp = WxFormatUtils.OBJECT_MAPPER.readValue(realCallback, OrderData.class);
                 if (orderQueryV3Rsp.getTradeState() == TradeState.SUCCESS) {
                     orderQueryV3Rsp.setActualPayAmount(BigDecimal.valueOf(orderQueryV3Rsp.getAmount().getPayerTotal()).divide(BigDecimal.valueOf(100), 2, RoundingMode.DOWN)); //订单总金额，单位为分
-                    orderQueryV3Rsp.setResponseStr("接口回调:" + objectMapper.writeValueAsString(orderQueryV3Rsp));
+                    orderQueryV3Rsp.setResponseStr("接口回调:" + realCallback);
                     return orderQueryV3Rsp;
                 } else {
-                    log.error("======WeixinPayV3Helper decryptPayCallback result[{}] not success:", objectMapper.writeValueAsString(orderQueryV3Rsp));
+                    log.error("======WeixinPayV3Helper decryptPayCallback result[{}] not success:", realCallback);
                     return null;
                 }
             } catch (Exception e) {
@@ -289,13 +287,13 @@ public class WxPayClient {
                         nonce.getBytes(StringUtilPlus.UTF_8),
                         associatedData.getBytes(StringUtilPlus.UTF_8)
                 );
-                OrderRefundData orderRefundV3Rsp = objectMapper.readValue(realCallback, OrderRefundData.class);
+                OrderRefundData orderRefundV3Rsp = WxFormatUtils.OBJECT_MAPPER.readValue(realCallback, OrderRefundData.class);
                 if (orderRefundV3Rsp.getStatus() == RefundStatus.SUCCESS) {
                     orderRefundV3Rsp.setActualRefundAmount(BigDecimal.valueOf(orderRefundV3Rsp.getAmount().getPayerTotal()).divide(BigDecimal.valueOf(100), 2, RoundingMode.DOWN)); //订单总金额，单位为分
-                    orderRefundV3Rsp.setResponseStr(objectMapper.writeValueAsString(orderRefundV3Rsp));
+                    orderRefundV3Rsp.setResponseStr(realCallback);
                     return orderRefundV3Rsp;
                 } else {
-                    log.error("======WeixinPayV3Helper decryptRefundCallback result[{}] not success:", objectMapper.writeValueAsString(orderRefundV3Rsp));
+                    log.error("======WeixinPayV3Helper decryptRefundCallback result[{}] not success:", realCallback);
                     return null;
                 }
             } catch (Exception e) {
@@ -318,9 +316,9 @@ public class WxPayClient {
         String nonce = returnHeaderMap.get("Wechatpay-Nonce");
 
         long currTimeStamp = System.currentTimeMillis() / 1000;
-        if (currTimeStamp - 600 > Long.parseLong(timestamp) || currTimeStamp + 600 < Long.parseLong(timestamp)) {
-            throw new SSLException("sign currTimeStamp verify failed!");
-        }
+        //if (currTimeStamp - 600 > Long.parseLong(timestamp) || currTimeStamp + 600 < Long.parseLong(timestamp)) {
+        //    throw new SSLException("sign currTimeStamp verify failed!");
+        //}
 
         String waitSign = String.format("%s\n%s\n%s\n", timestamp, nonce, returnParam);
         //获取证书

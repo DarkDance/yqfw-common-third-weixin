@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter;
  */
 public class WxFormatUtils {
 
-    private static final ObjectMapper OBJECT_MAPPER;
+    public static final ObjectMapper OBJECT_MAPPER;
 
     static {
         JavaTimeModule javaTimeModule = new JavaTimeModule();
