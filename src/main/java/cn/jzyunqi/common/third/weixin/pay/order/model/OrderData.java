@@ -74,12 +74,12 @@ public class OrderData extends WeixinRspV1 {
     /**
      * 订单金额
      */
-    private PayAmountData amount = new PayAmountData();
+    private PayAmountData amount;
 
     /**
      * 支付者
      */
-    private PayPayerData payer = new PayPayerData();
+    private PayPayerData payer;
 
     /**
      * 支付金额(非接口返回，手动计算)
