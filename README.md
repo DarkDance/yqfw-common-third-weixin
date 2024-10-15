@@ -38,3 +38,18 @@ public WxMpClientConfig wxMpClientConfig() {
 2. 实现paySuccess方法来处理支付成功后的业务逻辑
 3. 在微信商户后台配置这个完整回调地址
 
+### 微信微信公众平台配置
+1. 设置与开发->基本配置
+- 可获取公众号的AppID、AppSecret、
+- 配置IP白名单
+- 配置服务器回调地址和消息加解密相关信息
+- 绑定开放平台账号用来获取unionId
+2. 如果需要开发微信内访问的H5页面，设置与开发->公众号设置->功能设置
+- 配置业务域名，自己开发的H5在微信内部访问时不会出现风险提示
+- 配置JS接口安全域名，如果自己开发的H5页面需要用到JSSDK，需要配置这个域名
+- 配置网页授权域名，在这个域名下的URL可以通过微信oauth2的地址转发来获取用户授权code
+    * 微信授权URL https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect
+    * 自己开发的H5页面会收到 REDIRECT_URI?code=CODE&state=STATE 的请求
+
+### 微信支付配置（商户平台）
+1. TODO
