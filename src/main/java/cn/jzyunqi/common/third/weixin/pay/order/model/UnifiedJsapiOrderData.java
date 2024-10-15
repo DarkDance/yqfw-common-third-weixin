@@ -17,6 +17,11 @@ public class UnifiedJsapiOrderData {
     /**
      * 申请流水号
      */
+    private String appId;
+
+    /**
+     * 申请流水号
+     */
     private String applyPayNo;
 
     /**

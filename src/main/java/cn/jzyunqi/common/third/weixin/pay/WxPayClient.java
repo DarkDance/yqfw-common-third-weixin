@@ -121,6 +121,7 @@ public class WxPayClient {
             }
 
             UnifiedJsapiOrderData unifiedOrderV3Rsp = new UnifiedJsapiOrderData();
+            unifiedOrderV3Rsp.setAppId(appId);
             unifiedOrderV3Rsp.setNonceStr(nonceStr);
             unifiedOrderV3Rsp.setTimeStamp(timestamp.toString());
             unifiedOrderV3Rsp.setPackageValue(pkg);
