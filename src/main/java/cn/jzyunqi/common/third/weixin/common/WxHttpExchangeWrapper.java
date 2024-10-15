@@ -30,7 +30,7 @@ public class WxHttpExchangeWrapper {
 
     @Around(value = "wxHttpExchange() ", argNames = "proceedingJoinPoint")
     public Object Around(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
-        log.debug("======wxHttpExchange start=======");
+        log.debug("======wxHttpExchange[{}] start=======", proceedingJoinPoint.getSignature().getName());
         Object resultObj;
         try {
             resultObj = proceedingJoinPoint.proceed();
