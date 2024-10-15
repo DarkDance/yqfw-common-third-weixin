@@ -4,6 +4,7 @@ import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.io.Serial;
 
@@ -13,9 +14,8 @@ import java.io.Serial;
  */
 @Getter
 @Setter
+@ToString
 public class UserTokenData extends WeixinRspV1 {
-    @Serial
-    private static final long serialVersionUID = -7705834619669304828L;
 
     /**
      * 微信unionId

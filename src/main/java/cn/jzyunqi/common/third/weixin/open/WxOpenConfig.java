@@ -1,6 +1,7 @@
 package cn.jzyunqi.common.third.weixin.open;
 
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchangeWrapper;
+import cn.jzyunqi.common.third.weixin.common.utils.WxFormatUtils;
 import cn.jzyunqi.common.third.weixin.open.user.WxOpenUserApiProxy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +32,8 @@ public class WxOpenConfig {
 
     @Bean
     public WxOpenUserApiProxy wxOpenUserApiProxy(WebClient.Builder webClientBuilder) {
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2ConfigSpecial).build();
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxOpenUserApiProxy.class);
