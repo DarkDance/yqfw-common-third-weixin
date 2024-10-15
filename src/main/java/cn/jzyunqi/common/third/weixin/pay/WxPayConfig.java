@@ -33,6 +33,8 @@ import java.time.Duration;
 @Slf4j
 public class WxPayConfig {
 
+    private static final String HEADER_AUTHORIZATION = "Authorization";
+
     @Bean
     @ConditionalOnMissingBean
     public WxHttpExchangeWrapper responseCheckWrapper() {
@@ -56,7 +58,7 @@ public class WxPayConfig {
                 .filter(ExchangeFilterFunction.ofRequestProcessor(request -> {
                     ClientRequest.Builder amendRequest = ClientRequest.from(request);
                     if(request.method() == HttpMethod.GET){
-                        amendRequest.header("Authorization", AuthUtils.genAuthToken(
+                        amendRequest.header(HEADER_AUTHORIZATION, AuthUtils.genAuthToken(
                                 wxPayClientConfig.getMerchantId(),
                                 wxPayClientConfig.getMerchantSerialNumber(),
                                 wxPayClientConfig.getMerchantPrivateKey(),
@@ -70,7 +72,7 @@ public class WxPayConfig {
                             public @NonNull Mono<Void> writeWith(@NonNull Publisher<? extends DataBuffer> body) {
                                 return DataBufferUtils.join(body).flatMap(buffer -> {
                                     String bodyStr = buffer.toString(StringUtilPlus.UTF_8);
-                                    getHeaders().add("Authorization",
+                                    getHeaders().add(HEADER_AUTHORIZATION,
                                             AuthUtils.genAuthToken(
                                                     wxPayClientConfig.getMerchantId(),
                                                     wxPayClientConfig.getMerchantSerialNumber(),
@@ -100,7 +102,7 @@ public class WxPayConfig {
                 .codecs(WxFormatUtils::jackson2Config)
                 .filter(ExchangeFilterFunction.ofRequestProcessor(request -> {
                     ClientRequest filtered = ClientRequest.from(request)
-                            .header("Authorization",
+                            .header(HEADER_AUTHORIZATION,
                                     AuthUtils.genAuthToken(
                                             wxPayClientConfig.getMerchantId(),
                                             wxPayClientConfig.getMerchantSerialNumber(),
