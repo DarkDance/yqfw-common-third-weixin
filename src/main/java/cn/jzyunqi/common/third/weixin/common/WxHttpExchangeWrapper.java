@@ -35,10 +35,10 @@ public class WxHttpExchangeWrapper {
         try {
             resultObj = proceedingJoinPoint.proceed();
         } catch (Throwable e) {
-            log.debug("======wxHttpExchange proceed throw exception=======");
+            log.debug("======wxHttpExchange[{}] proceed throw exception=======", proceedingJoinPoint.getSignature().getName());
             throw new BusinessException("common_error_wx_http_exchange_error", e);
         }
-        log.debug("======wxHttpExchange proceed success=======");
+        log.debug("======wxHttpExchange[{}] proceed success=======", proceedingJoinPoint.getSignature().getName());
         if (resultObj instanceof WeixinRspV1 weixinRsp) {
             if (StringUtilPlus.isNotBlank(weixinRsp.getErrorCode()) && !"0".equals(weixinRsp.getErrorCode())) {
                 throw new BusinessException("common_error_wx_http_exchange_failed", weixinRsp.getErrorCode(), weixinRsp.getErrorMsg());
@@ -48,7 +48,7 @@ public class WxHttpExchangeWrapper {
                 throw new BusinessException("common_error_wx_http_exchange_failed", weixinRsp.getCode(), weixinRsp.getMessage());
             }
         }
-        log.debug("======wxHttpExchange end=======");
+        log.debug("======wxHttpExchange[{}] end=======", proceedingJoinPoint.getSignature().getName());
         return resultObj;
     }
 }
