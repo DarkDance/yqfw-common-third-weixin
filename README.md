@@ -50,6 +50,7 @@ public WxMpClientConfig wxMpClientConfig() {
 - 配置网页授权域名，在这个域名下的URL可以通过微信oauth2的地址转发来获取用户授权code
     * 微信授权URL https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect
     * 自己开发的H5页面会收到 REDIRECT_URI?code=CODE&state=STATE 的请求
+    * 注意：只有当scope为"snsapi_userinfo"时才返回unionid
 
 ### 微信支付配置（商户平台）
 1. TODO
