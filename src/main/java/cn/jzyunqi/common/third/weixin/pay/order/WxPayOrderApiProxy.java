@@ -10,6 +10,7 @@ import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderRsp;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
 
@@ -26,11 +27,11 @@ public interface WxPayOrderApiProxy {
     UnifiedOrderRsp unifiedJsapiOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
 
     //小程序支付 - 订单查询(微信支付订单号)
-    @PostExchange(url = "/v3/pay/transactions/id/{transaction_id}")
+    @GetExchange(url = "/v3/pay/transactions/id/{transaction_id}")
     OrderData queryOrderByTransactionId(@PathVariable String transaction_id, @RequestParam String mchid) throws BusinessException;
 
     //小程序支付 - 订单查询(商户订单号)
-    @PostExchange(url = "/v3/pay/transactions/out-trade-no/{out_trade_no}")
+    @GetExchange(url = "/v3/pay/transactions/out-trade-no/{out_trade_no}")
     OrderData queryOrderByOutTradeNo(@PathVariable String out_trade_no, @RequestParam String mchid) throws BusinessException;
 
     //小程序支付 - 退款申请
