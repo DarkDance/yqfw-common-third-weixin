@@ -49,7 +49,7 @@ public class WxPayStrange implements PayHelper {
         WxPayResultCb payResultCb = (WxPayResultCb) payCallbackDto.getReturnParamObject();
         if (StringUtilPlus.equalsIgnoreCase(payResultCb.getEventType(), "TRANSACTION.SUCCESS")) {
             OrderData orderQueryV3Rsp = wxPayClient.cb.decryptPayCallback(payCallbackDto.getReturnHeaderMap(), payCallbackDto.getReturnParam(), payResultCb);
-            if (orderQueryV3Rsp != null) {
+            if (orderQueryV3Rsp.getTradeState() == TradeState.SUCCESS) {
                 payCallbackDto.setApplyPayNo(orderQueryV3Rsp.getOutTradeNo()); //申请支付单号
                 payCallbackDto.setActualPayNo(orderQueryV3Rsp.getTransactionId()); //微信支付单号
                 payCallbackDto.setActualPayAmount(orderQueryV3Rsp.getActualPayAmount()); //支付金额
