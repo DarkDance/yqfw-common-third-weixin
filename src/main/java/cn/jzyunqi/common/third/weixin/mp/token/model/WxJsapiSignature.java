@@ -16,6 +16,8 @@ public class WxJsapiSignature {
 
     private long timestamp;
 
+    private String url;
+
     private String signature;
 
 }

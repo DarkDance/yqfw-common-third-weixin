@@ -756,7 +756,6 @@ public class WxMpClient {
     }
 
     public WxJsapiSignature createJsapiSignature(String url) throws BusinessException {
-        log.debug("need sign url: [{}]", url);
         long timestamp = System.currentTimeMillis() / 1000;//从1970年1月1日00:00:00至今的秒数
         String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
         String jsapiTicket = getTicket(TicketType.JSAPI);
@@ -764,10 +763,12 @@ public class WxMpClient {
         String needSign = String.format(WX_JS_API_TICKET_SIGN, jsapiTicket, nonceStr, timestamp, url);
         String signature = DigestUtilPlus.SHA.sign(needSign, DigestUtilPlus.SHAAlgo._1, Boolean.FALSE);
 
+        log.debug("needSign:[{}]", needSign);
         WxJsapiSignature jsapiSignature = new WxJsapiSignature();
         jsapiSignature.setAppId(wxMpClientConfig.getAppId());
         jsapiSignature.setTimestamp(timestamp);
         jsapiSignature.setNonceStr(nonceStr);
+        jsapiSignature.setUrl(url);//这个url不能删除，删除后jssdk会失败，文档上没有这个字段
         jsapiSignature.setSignature(signature);
         return jsapiSignature;
     }
