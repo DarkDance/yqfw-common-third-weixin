@@ -18,36 +18,31 @@ import java.util.Map;
 @Slf4j
 public class AuthUtils {
 
-    private static final String WX_PUBLIC_BASE_FMT_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=#wechat_redirect";
-
+    private static final String IN_WX_USER_CODE_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect";
+    private static final String OUT_WX_USER_CODE_URL = "https://open.weixin.qq.com/connect/qrconnect?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_login&state=%s#wechat_redirect";
 
     /**
      * 获取微信公众号授权链接
      *
-     * @param appId          公众号id
-     * @param redirectDomain 重定向域名
-     * @param redirectPage   重定向页面
-     * @param hash           页面hash
-     * @param redirectParams 重定向参数
-     * @param infoScope      授权信息范围
+     * @param appId           微信各种号id
+     * @param redirectRootUrl 重定向URL
+     * @param infoScope       授权信息范围
      * @return 微信公众号授权链接
      */
-    public String prepareUserSyncUrl(String appId, String redirectDomain, String redirectPage, String hash, Map<String, String> redirectParams, InfoScope infoScope) {
-        StringBuilder realPage = new StringBuilder();
-        realPage.append(redirectPage);
-        realPage.append("?_=");
-        realPage.append(System.currentTimeMillis());
-        if (CollectionUtilPlus.Map.isNotEmpty(redirectParams)) {
-            realPage.append("&");
-            realPage.append(CollectionUtilPlus.Map.getUrlParam(redirectParams, false, false, true));
-        }
-        if (StringUtilPlus.isNotBlank(hash)) {
-            realPage.append("#/");
-            realPage.append(hash);
-        }
+    public static String inWxUserAuthCodeUrl(String appId, String redirectRootUrl, InfoScope infoScope) {
+        return userAuthUrl(true, appId, redirectRootUrl, infoScope, null, null, null);
+    }
 
-        String redirectUri = redirectDomain + DigestUtilPlus.Base64.encodeBase64String(realPage.toString().getBytes());
-        return String.format(WX_PUBLIC_BASE_FMT_URL, appId, URLEncoder.encode(redirectUri, StringUtilPlus.UTF_8), infoScope);
+    public static String inWxUserAuthCodeUrl(String appId, String redirectRootUrl, InfoScope infoScope, String nextPage, String nextPageHash, Map<String, String> nextPageParams) {
+        return userAuthUrl(true, appId, redirectRootUrl, infoScope, nextPage, nextPageHash, nextPageParams);
+    }
+
+    public static String outWxUserAuthUrl(String appId, String redirectRootUrl) {
+        return userAuthUrl(false, appId, redirectRootUrl, null, null, null, null);
+    }
+
+    public static String outWxUserAuthUrl(String appId, String redirectRootUrl, String nextPage, String nextPageHash, Map<String, String> nextPageParams) {
+        return userAuthUrl(false, appId, redirectRootUrl, null, nextPage, nextPageHash, nextPageParams);
     }
 
     /**
@@ -86,5 +81,43 @@ public class AuthUtils {
                 timestamp,
                 sign
         );
+    }
+
+    /**
+     * 获取微信公众号授权链接
+     *
+     * @param inWeixin        是否在微信内部授权
+     * @param appId           微信各种号id
+     * @param redirectRootUrl 重定向URL
+     * @param infoScope       授权信息范围
+     * @param nextPage        应用内页面
+     * @param nextPageHash    应用内页面锚点hash
+     * @param nextPageParams  重定向参数
+     * @return 微信公众号授权链接
+     */
+    private static String userAuthUrl(boolean inWeixin, String appId, String redirectRootUrl, InfoScope infoScope, String nextPage, String nextPageHash, Map<String, String> nextPageParams) {
+        String nextPageLink = "";
+        if (StringUtilPlus.isNotBlank(nextPage)) {
+            StringBuilder realPage = new StringBuilder();
+            realPage.append(nextPage);
+            realPage.append("?_=");
+            realPage.append(System.currentTimeMillis());
+            if (CollectionUtilPlus.Map.isNotEmpty(nextPageParams)) {
+                realPage.append("&");
+                realPage.append(CollectionUtilPlus.Map.getUrlParam(nextPageParams, false, false, true));
+            }
+            if (StringUtilPlus.isNotBlank(nextPageHash)) {
+                realPage.append("#/");
+                realPage.append(nextPageHash);
+            }
+            nextPageLink = DigestUtilPlus.Base64.encodeBase64String(realPage.toString().getBytes());
+        }
+        String redirectUri = redirectRootUrl + nextPageLink;
+        String status = RandomUtilPlus.String.randomAlphanumeric(32);
+        if (inWeixin) {
+            return String.format(IN_WX_USER_CODE_URL, appId, URLEncoder.encode(redirectUri, StringUtilPlus.UTF_8), infoScope, status);
+        } else {
+            return String.format(OUT_WX_USER_CODE_URL, appId, URLEncoder.encode(redirectUri, StringUtilPlus.UTF_8), status);
+        }
     }
 }
