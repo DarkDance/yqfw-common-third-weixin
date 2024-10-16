@@ -12,6 +12,7 @@ import cn.jzyunqi.common.third.weixin.common.enums.TradeType;
 import cn.jzyunqi.common.third.weixin.common.enums.WeixinPaySubType;
 import cn.jzyunqi.common.third.weixin.common.enums.WeixinType;
 import cn.jzyunqi.common.third.weixin.pay.callback.model.WxPayResultCb;
+import cn.jzyunqi.common.third.weixin.pay.order.enums.TradeState;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderRefundData;
 import cn.jzyunqi.common.utils.StringUtilPlus;
@@ -87,7 +88,7 @@ public class WxPayStrange implements PayHelper {
     @Override
     public PayCallbackDto queryPay(PayQueryReqDto payQueryReqDto) throws BusinessException {
         OrderData orderData = wxPayClient.order.queryOrder(payQueryReqDto.getActualPayNo(), payQueryReqDto.getApplyPayNo());
-        if (orderData != null) {
+        if (orderData.getTradeState() == TradeState.SUCCESS) {
             PayCallbackDto payCallbackDto = new PayCallbackDto();
             payCallbackDto.setActualPayType(WxPayStrange.ID);
             payCallbackDto.setActualPaySubType(payQueryReqDto.getActualPaySubType());
