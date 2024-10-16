@@ -50,7 +50,16 @@ public WxMpClientConfig wxMpClientConfig() {
 - 配置网页授权域名，在这个域名下的URL可以通过微信oauth2的地址转发来获取用户授权code
     * 微信授权URL https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect
     * 自己开发的H5页面会收到 REDIRECT_URI?code=CODE&state=STATE 的请求
-    * 注意：只有当scope为"snsapi_userinfo"时才返回unionid
+    * 注意：只有当scope为"snsapi_userinfo"时服务端使用code换取信息才会返回unionid
 
 ### 微信支付配置（商户平台）
 1. TODO
+
+### 微信开放平台
+1. 网站开发(不在微信内打开)
+- 方式一：网页授权方式
+  * 微信授权二维码 https://open.weixin.qq.com/connect/qrconnect?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=snsapi_login&state=STATE#wechat_redirect
+  * 自己开发的H5页面会收到 REDIRECT_URI?code=CODE&state=STATE 的请求
+- 方式二：二维码授权方式
+  * 引入weixinJS文件http://res.wx.qq.com/connect/zh_CN/htmledition/js/wxLogin.js
+  * 使用weixinJS文件提供的对象方法生成二维码var obj = new WxLogin({...});
