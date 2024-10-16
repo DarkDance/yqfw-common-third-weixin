@@ -13,4 +13,5 @@ public class LocationMsgData extends BaseMsgData {
     private Double locationX;
     private Double locationY;
     private Integer scale;
+    private String label;
 }
