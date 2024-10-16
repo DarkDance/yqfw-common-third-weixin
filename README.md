@@ -51,6 +51,7 @@ public WxMpClientConfig wxMpClientConfig() {
     * 微信授权URL https://open.weixin.qq.com/connect/oauth2/authorize?appid=APPID&redirect_uri=REDIRECT_URI&response_type=code&scope=SCOPE&state=STATE#wechat_redirect
     * 自己开发的H5页面会收到 REDIRECT_URI?code=CODE&state=STATE 的请求
     * 注意：只有当scope为"snsapi_userinfo"时服务端使用code换取信息才会返回unionid
+    * 注意：REDIRECT_URI必须要encodeURI编码
 
 ### 微信支付配置（商户平台）
 1. TODO
