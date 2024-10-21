@@ -4,6 +4,8 @@ import cn.jzyunqi.common.feature.redis.Cache;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.time.Duration;
+
 /**
  * @author wiiyaya
  * @since 2024/9/23
@@ -11,11 +13,18 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum WxCache implements Cache {
-    WX_MP_V(0L, Boolean.FALSE),
 
-    WX_PAY_H(0L, Boolean.FALSE);
+    /**
+     * 微信公众号缓存
+     */
+    THIRD_WX_MP_V(Duration.ZERO, Boolean.FALSE),
 
-    private final Long expiration;
+    /**
+     * 微信支付缓存
+     */
+    THIRD_WX_PAY_H(Duration.ZERO, Boolean.FALSE);
+
+    private final Duration expiration;
 
     private final Boolean autoRenew;
 }

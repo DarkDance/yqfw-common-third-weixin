@@ -770,17 +770,17 @@ public class WxMpClient {
 
     private String getClientToken() throws BusinessException {
         String tokenKey = getClientTokenKey();
-        return redisHelper.lockAndGet(WxCache.WX_MP_V, tokenKey, Duration.ofSeconds(3), (locked) -> {
+        return redisHelper.lockAndGet(WxCache.THIRD_WX_MP_V, tokenKey, Duration.ofSeconds(3), (locked) -> {
             if (locked) {
                 ClientTokenData clientTokenData = wxMpTokenApiProxy.getClientToken(wxMpClientConfig.getAppId(), wxMpClientConfig.getAppSecret());
                 ClientTokenRedisDto clientToken = new ClientTokenRedisDto();
                 clientToken.setToken(clientTokenData.getAccessToken()); //获取到的凭证
                 clientToken.setExpireTime(LocalDateTime.now().plusSeconds(clientTokenData.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
 
-                redisHelper.vPut(WxCache.WX_MP_V, tokenKey, clientToken);
+                redisHelper.vPut(WxCache.THIRD_WX_MP_V, tokenKey, clientToken);
                 return clientTokenData.getAccessToken();
             } else {
-                ClientTokenRedisDto clientToken = (ClientTokenRedisDto) redisHelper.vGet(WxCache.WX_MP_V, tokenKey);
+                ClientTokenRedisDto clientToken = (ClientTokenRedisDto) redisHelper.vGet(WxCache.THIRD_WX_MP_V, tokenKey);
                 if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
                     return clientToken.getToken();
                 } else {
@@ -792,17 +792,17 @@ public class WxMpClient {
 
     private String getTicket(TicketType type) throws BusinessException {
         String ticketKey = chooseTicketKey(type);
-        return redisHelper.lockAndGet(WxCache.WX_MP_V, ticketKey, Duration.ofSeconds(3), (locked) -> {
+        return redisHelper.lockAndGet(WxCache.THIRD_WX_MP_V, ticketKey, Duration.ofSeconds(3), (locked) -> {
             if (locked) {
                 TicketRsp ticketRsp = wxMpTokenApiProxy.getTicket(getClientToken(), type.getCode());
                 TicketRedisDto ticketRedisDto = new TicketRedisDto();
                 ticketRedisDto.setTicket(ticketRsp.getTicket()); //获取到的凭证
                 ticketRedisDto.setExpireTime(LocalDateTime.now().plusSeconds(ticketRsp.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
 
-                redisHelper.vPut(WxCache.WX_MP_V, ticketKey, ticketRedisDto);
+                redisHelper.vPut(WxCache.THIRD_WX_MP_V, ticketKey, ticketRedisDto);
                 return ticketRsp.getTicket();
             } else {
-                TicketRedisDto ticketRedisDto = (TicketRedisDto) redisHelper.vGet(WxCache.WX_MP_V, ticketKey);
+                TicketRedisDto ticketRedisDto = (TicketRedisDto) redisHelper.vGet(WxCache.THIRD_WX_MP_V, ticketKey);
                 if (ticketRedisDto != null && LocalDateTime.now().isBefore(ticketRedisDto.getExpireTime())) {
                     return ticketRedisDto.getTicket();
                 } else {

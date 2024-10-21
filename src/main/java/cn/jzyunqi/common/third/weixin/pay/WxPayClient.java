@@ -336,14 +336,14 @@ public class WxPayClient {
     private PlantCertRedisDto plantCert(String weixinPemSerial) throws BusinessException {
         //如果没有证书编号且已经下载过证书了，忽略这个请求
         if (StringUtilPlus.isBlank(weixinPemSerial)) {
-            Map<String, Object> redisWeixinPem = redisHelper.hGetAll(WxCache.WX_PAY_H, wxPayClientConfig.getMerchantId());
+            Map<String, Object> redisWeixinPem = redisHelper.hGetAll(WxCache.THIRD_WX_PAY_H, wxPayClientConfig.getMerchantId());
             if (CollectionUtilPlus.Map.isNotEmpty(redisWeixinPem)) {
                 return null;
             }
         }
 
         String redisKey = wxPayClientConfig.getMerchantId();
-        return redisHelper.lockAndGet(WxCache.WX_PAY_H, weixinPemSerial, Duration.ofSeconds(5), (locked) -> {
+        return redisHelper.lockAndGet(WxCache.THIRD_WX_PAY_H, weixinPemSerial, Duration.ofSeconds(5), (locked) -> {
             if (locked) {
                 List<PlantCertData> plantCertDataList = wxPayCertApiProxy.certDownload().getData();
                 Map<String, Object> weixinPem = new HashMap<>();
@@ -373,14 +373,14 @@ public class WxPayClient {
                             needReturn = plantCertRedisDto;
                         }
                     }
-                    redisHelper.hPutAll(WxCache.WX_PAY_H, redisKey, weixinPem);
+                    redisHelper.hPutAll(WxCache.THIRD_WX_PAY_H, redisKey, weixinPem);
                     return needReturn;
                 } catch (Exception e) {
                     log.error("weixin plantCert error: ", e);
                     return null;
                 }
             } else {
-                PlantCertRedisDto plantCertRedisDto = (PlantCertRedisDto) redisHelper.hGet(WxCache.WX_PAY_H, redisKey, weixinPemSerial);
+                PlantCertRedisDto plantCertRedisDto = (PlantCertRedisDto) redisHelper.hGet(WxCache.THIRD_WX_PAY_H, redisKey, weixinPemSerial);
                 if (plantCertRedisDto != null && LocalDateTime.now().isBefore(plantCertRedisDto.getExpireTime())) {
                     return plantCertRedisDto;
                 } else {
