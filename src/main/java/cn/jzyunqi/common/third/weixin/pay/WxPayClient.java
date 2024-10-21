@@ -380,6 +380,9 @@ public class WxPayClient {
                     return null;
                 }
             } else {
+                if(StringUtilPlus.isBlank(weixinPemSerial)){
+                    return null;
+                }
                 PlantCertRedisDto plantCertRedisDto = (PlantCertRedisDto) redisHelper.hGet(WxCache.THIRD_WX_PAY_H, redisKey, weixinPemSerial);
                 if (plantCertRedisDto != null && LocalDateTime.now().isBefore(plantCertRedisDto.getExpireTime())) {
                     return plantCertRedisDto;
