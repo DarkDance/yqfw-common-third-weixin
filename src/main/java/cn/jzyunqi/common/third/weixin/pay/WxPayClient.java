@@ -341,6 +341,9 @@ public class WxPayClient {
         if (plantCertRedisDto != null && LocalDateTime.now().isBefore(plantCertRedisDto.getExpireTime())) {
             return plantCertRedisDto;
         }
+
+
+
         List<PlantCertData> plantCertDataList = wxPayCertApiProxy.certDownload().getData();
         weixinPem = new HashMap<>();
         try {
