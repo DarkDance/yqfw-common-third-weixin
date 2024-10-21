@@ -17,18 +17,17 @@ import cn.jzyunqi.common.third.weixin.pay.order.model.OrderData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderRefundData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.PayAmountData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.PayPayerData;
-import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedAppOrderData;
-import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderRsp;
 import cn.jzyunqi.common.third.weixin.pay.order.model.RefundOrderParam;
-import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderParam;
+import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedAppOrderData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedJsapiOrderData;
+import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderParam;
+import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderRsp;
 import cn.jzyunqi.common.utils.CollectionUtilPlus;
 import cn.jzyunqi.common.utils.DateTimeUtilPlus;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
 import cn.jzyunqi.common.utils.RandomUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -255,18 +254,18 @@ public class WxPayClient {
                         nonce.getBytes(StringUtilPlus.UTF_8),
                         associatedData.getBytes(StringUtilPlus.UTF_8)
                 );
-                OrderData orderQueryV3Rsp = WxFormatUtils.OBJECT_MAPPER.readValue(realCallback, OrderData.class);
-                if (orderQueryV3Rsp.getTradeState() == TradeState.SUCCESS) {
-                    orderQueryV3Rsp.setActualPayAmount(BigDecimal.valueOf(orderQueryV3Rsp.getAmount().getPayerTotal()).divide(BigDecimal.valueOf(100), 2, RoundingMode.DOWN)); //订单总金额，单位为分
-                    orderQueryV3Rsp.setResponseStr("接口回调:" + realCallback);
-                    return orderQueryV3Rsp;
+                OrderData orderData = WxFormatUtils.OBJECT_MAPPER.readValue(realCallback, OrderData.class);
+                if (orderData.getTradeState() == TradeState.SUCCESS) {
+                    orderData.setActualPayAmount(BigDecimal.valueOf(orderData.getAmount().getPayerTotal()).divide(BigDecimal.valueOf(100), 2, RoundingMode.DOWN)); //订单总金额，单位为分
+                    orderData.setResponseStr("接口回调:" + realCallback);
+                    return orderData;
                 } else {
                     log.error("======WeixinPayV3Helper decryptPayCallback result[{}] not success:", realCallback);
-                    return null;
+                    return new OrderData();
                 }
             } catch (Exception e) {
                 log.error("======WeixinPayV3Helper decryptPayCallback error:", e);
-                return null;
+                return new OrderData();
             }
         }
 
