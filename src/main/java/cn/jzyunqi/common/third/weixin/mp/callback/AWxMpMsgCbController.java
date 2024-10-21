@@ -140,99 +140,99 @@ public abstract class AWxMpMsgCbController {
         );
     }
 
-    protected Object processUserViewCardEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processUserViewCardEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processUserConsumeCardEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processUserConsumeCardEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processUserGetCardEvent(MemberCardEventData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processUserGetCardEvent(MemberCardEventData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processCardPayOrderEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processCardPayOrderEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processCardSkuRemindEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processCardSkuRemindEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processUpdateMemberCardEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processUpdateMemberCardEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processUserEnterSessionFromCardEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processUserEnterSessionFromCardEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processUserPayFromPayCellEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processUserPayFromPayCellEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processUserDelCardEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processUserDelCardEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processUserGiftingCardEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processUserGiftingCardEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processCardNotPassCheckEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processCardNotPassCheckEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processCardPassCheckEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processCardPassCheckEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processSubmitMemberCardEvent(MemberCardEventData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processSubmitMemberCardEvent(MemberCardEventData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processTemplateSendJobFinishEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processTemplateSendJobFinishEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processLocationSelectEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processLocationSelectEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processPicWeixinEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processPicWeixinEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processPicPhotoOrAlbumEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processPicPhotoOrAlbumEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processPicSysphotoEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processPicSysphotoEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processScancodeWaitMsgEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processScancodeWaitMsgEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processScancodePushEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processScancodePushEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processViewEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processViewEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processClickEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processClickEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processLocationEvent(LocationEventData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processLocationEvent(LocationEventData eventMsgData) throws BusinessException {
         return null;
     }
 
-    protected Object processUnsubscribeEvent(EventMsgData eventMsgData) throws BusinessException {
+    protected ReplyMsgData processUnsubscribeEvent(EventMsgData eventMsgData) throws BusinessException {
         return null;
     }
 

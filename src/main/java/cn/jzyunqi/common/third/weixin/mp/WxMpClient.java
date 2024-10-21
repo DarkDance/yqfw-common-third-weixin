@@ -1,7 +1,6 @@
 package cn.jzyunqi.common.third.weixin.mp;
 
 import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.feature.redis.LockType;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.common.constant.WxCache;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
@@ -88,17 +87,12 @@ import jakarta.xml.bind.Unmarshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.service.annotation.PostExchange;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -387,7 +381,7 @@ public class WxMpClient {
              * @param decryptNotice 解密后的消息
              * @return null -> 代表成功 / 其它代表返回数据
              */
-            Object prepareReplyMessage(MsgDetailCb decryptNotice) throws BusinessException;
+            ReplyMsgData apply(MsgDetailCb decryptNotice) throws BusinessException;
         }
 
         /**
@@ -418,7 +412,7 @@ public class WxMpClient {
                 }
 
                 try {
-                    Object reply = callback.prepareReplyMessage(msgDetailCb);
+                    Object reply = callback.apply(msgDetailCb);
                     log.debug("======WxMpClient replyMessageNotice reply:{}", reply);
                     return reply == null ? REPLAY_MESSAGE_SUCCESS : reply;
                 } catch (BusinessException e) {
@@ -756,7 +750,7 @@ public class WxMpClient {
 
     }
 
-    public WxJsapiSignature createJsapiSignature(String url) {
+    public WxJsapiSignature createJsapiSignature(String url) throws BusinessException {
         long timestamp = System.currentTimeMillis() / 1000;//从1970年1月1日00:00:00至今的秒数
         String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
         String jsapiTicket = getTicket(TicketType.JSAPI);
@@ -774,22 +768,17 @@ public class WxMpClient {
         return jsapiSignature;
     }
 
-    private String getClientToken() {
+    private String getClientToken() throws BusinessException {
         String tokenKey = getClientTokenKey();
         return redisHelper.lockAndGet(WxCache.WX_MP_V, tokenKey, Duration.ofSeconds(3), (locked) -> {
             if (locked) {
-                try {
-                    ClientTokenData clientTokenData = wxMpTokenApiProxy.getClientToken(wxMpClientConfig.getAppId(), wxMpClientConfig.getAppSecret());
-                    ClientTokenRedisDto clientToken = new ClientTokenRedisDto();
-                    clientToken.setToken(clientTokenData.getAccessToken()); //获取到的凭证
-                    clientToken.setExpireTime(LocalDateTime.now().plusSeconds(clientTokenData.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
+                ClientTokenData clientTokenData = wxMpTokenApiProxy.getClientToken(wxMpClientConfig.getAppId(), wxMpClientConfig.getAppSecret());
+                ClientTokenRedisDto clientToken = new ClientTokenRedisDto();
+                clientToken.setToken(clientTokenData.getAccessToken()); //获取到的凭证
+                clientToken.setExpireTime(LocalDateTime.now().plusSeconds(clientTokenData.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
 
-                    redisHelper.vPut(WxCache.WX_MP_V, tokenKey, clientToken);
-                    return clientTokenData.getAccessToken();
-                } catch (Exception e) {
-                    log.error("getClientToken error: ", e);
-                    return null;
-                }
+                redisHelper.vPut(WxCache.WX_MP_V, tokenKey, clientToken);
+                return clientTokenData.getAccessToken();
             } else {
                 ClientTokenRedisDto clientToken = (ClientTokenRedisDto) redisHelper.vGet(WxCache.WX_MP_V, tokenKey);
                 if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
@@ -801,22 +790,17 @@ public class WxMpClient {
         });
     }
 
-    private String getTicket(TicketType type) {
+    private String getTicket(TicketType type) throws BusinessException {
         String ticketKey = chooseTicketKey(type);
         return redisHelper.lockAndGet(WxCache.WX_MP_V, ticketKey, Duration.ofSeconds(3), (locked) -> {
             if (locked) {
-                try {
-                    TicketRsp ticketRsp = wxMpTokenApiProxy.getTicket(getClientToken(), type.getCode());
-                    TicketRedisDto ticketRedisDto = new TicketRedisDto();
-                    ticketRedisDto.setTicket(ticketRsp.getTicket()); //获取到的凭证
-                    ticketRedisDto.setExpireTime(LocalDateTime.now().plusSeconds(ticketRsp.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
+                TicketRsp ticketRsp = wxMpTokenApiProxy.getTicket(getClientToken(), type.getCode());
+                TicketRedisDto ticketRedisDto = new TicketRedisDto();
+                ticketRedisDto.setTicket(ticketRsp.getTicket()); //获取到的凭证
+                ticketRedisDto.setExpireTime(LocalDateTime.now().plusSeconds(ticketRsp.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
 
-                    redisHelper.vPut(WxCache.WX_MP_V, ticketKey, ticketRedisDto);
-                    return ticketRsp.getTicket();
-                } catch (Exception e) {
-                    log.error("getTicket error: ", e);
-                    return null;
-                }
+                redisHelper.vPut(WxCache.WX_MP_V, ticketKey, ticketRedisDto);
+                return ticketRsp.getTicket();
             } else {
                 TicketRedisDto ticketRedisDto = (TicketRedisDto) redisHelper.vGet(WxCache.WX_MP_V, ticketKey);
                 if (ticketRedisDto != null && LocalDateTime.now().isBefore(ticketRedisDto.getExpireTime())) {

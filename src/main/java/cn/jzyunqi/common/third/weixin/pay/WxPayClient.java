@@ -333,11 +333,11 @@ public class WxPayClient {
         }
     }
 
-    private PlantCertRedisDto plantCert(String weixinPemSerial) {
+    private PlantCertRedisDto plantCert(String weixinPemSerial) throws BusinessException {
         //如果没有证书编号且已经下载过证书了，忽略这个请求
         if (StringUtilPlus.isBlank(weixinPemSerial)) {
             Map<String, Object> redisWeixinPem = redisHelper.hGetAll(WxCache.WX_PAY_H, wxPayClientConfig.getMerchantId());
-            if(CollectionUtilPlus.Map.isNotEmpty(redisWeixinPem)){
+            if (CollectionUtilPlus.Map.isNotEmpty(redisWeixinPem)) {
                 return null;
             }
         }
@@ -345,10 +345,10 @@ public class WxPayClient {
         String redisKey = wxPayClientConfig.getMerchantId();
         return redisHelper.lockAndGet(WxCache.WX_PAY_H, weixinPemSerial, Duration.ofSeconds(5), (locked) -> {
             if (locked) {
+                List<PlantCertData> plantCertDataList = wxPayCertApiProxy.certDownload().getData();
+                Map<String, Object> weixinPem = new HashMap<>();
+                PlantCertRedisDto needReturn = null;
                 try {
-                    List<PlantCertData> plantCertDataList = wxPayCertApiProxy.certDownload().getData();
-                    Map<String, Object> weixinPem = new HashMap<>();
-                    PlantCertRedisDto needReturn = null;
                     for (PlantCertData certData : plantCertDataList) {
                         String cipherText = certData.getEncryptCertificate().getCipherText();
                         String nonce = certData.getEncryptCertificate().getNonce();
