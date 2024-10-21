@@ -786,7 +786,8 @@ public class WxMpClient {
 
                     redisHelper.vPut(WxCache.WX_MP_V, tokenKey, clientToken);
                     return clientTokenData.getAccessToken();
-                } catch (BusinessException e) {
+                } catch (Exception e) {
+                    log.error("getClientToken error: ", e);
                     return null;
                 }
             } else {
@@ -812,7 +813,8 @@ public class WxMpClient {
 
                     redisHelper.vPut(WxCache.WX_MP_V, ticketKey, ticketRedisDto);
                     return ticketRsp.getTicket();
-                } catch (BusinessException e) {
+                } catch (Exception e) {
+                    log.error("getTicket error: ", e);
                     return null;
                 }
             } else {

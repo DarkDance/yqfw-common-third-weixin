@@ -39,6 +39,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
@@ -332,59 +333,60 @@ public class WxPayClient {
         }
     }
 
-    private PlantCertRedisDto plantCert(String weixinPemSerial) throws BusinessException {
-        Map<String, Object> weixinPem = redisHelper.hGetAll(WxCache.WX_PAY_H, wxPayClientConfig.getMerchantId());
-        if (CollectionUtilPlus.Map.isNotEmpty(weixinPem) && StringUtilPlus.isBlank(weixinPemSerial)) {
-            return null;
-        }
-        PlantCertRedisDto plantCertRedisDto = switchNewestPem(weixinPem, weixinPemSerial);
-        if (plantCertRedisDto != null && LocalDateTime.now().isBefore(plantCertRedisDto.getExpireTime())) {
-            return plantCertRedisDto;
-        }
-
-
-
-        List<PlantCertData> plantCertDataList = wxPayCertApiProxy.certDownload().getData();
-        weixinPem = new HashMap<>();
-        try {
-            for (PlantCertData certData : plantCertDataList) {
-                String cipherText = certData.getEncryptCertificate().getCipherText();
-                String nonce = certData.getEncryptCertificate().getNonce();
-                String associatedData = certData.getEncryptCertificate().getAssociatedData();
-                String pem = DigestUtilPlus.AES.decryptGCM(
-                        DigestUtilPlus.Base64.decodeBase64(cipherText),
-                        wxPayClientConfig.getMerchantAesKey().getBytes(StringUtilPlus.UTF_8),
-                        nonce.getBytes(StringUtilPlus.UTF_8),
-                        associatedData.getBytes(StringUtilPlus.UTF_8)
-                );
-
-                //通过服务器证书获取服务器支付公钥
-                CertificateFactory cf = CertificateFactory.getInstance("X509");
-                X509Certificate x509Cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(pem.getBytes(StringUtilPlus.UTF_8)));
-                x509Cert.checkValidity();
-                String weixinPublicKey = DigestUtilPlus.Base64.encodeBase64String(x509Cert.getPublicKey().getEncoded());
-
-                //存入缓存
-                plantCertRedisDto = new PlantCertRedisDto();
-                plantCertRedisDto.setSerialNo(certData.getSerialNo());
-                plantCertRedisDto.setEffectiveTime(certData.getEffectiveTime().toLocalDateTime());
-                plantCertRedisDto.setExpireTime(certData.getExpireTime().toLocalDateTime());
-                plantCertRedisDto.setPublicKey(weixinPublicKey);
-
-                weixinPem.put(certData.getSerialNo(), plantCertRedisDto);
+    private PlantCertRedisDto plantCert(String weixinPemSerial) {
+        //如果没有证书编号且已经下载过证书了，忽略这个请求
+        if (StringUtilPlus.isBlank(weixinPemSerial)) {
+            Map<String, Object> redisWeixinPem = redisHelper.hGetAll(WxCache.WX_PAY_H, wxPayClientConfig.getMerchantId());
+            if(CollectionUtilPlus.Map.isNotEmpty(redisWeixinPem)){
+                return null;
             }
-        } catch (Exception e) {
-            throw new BusinessException(e, "common_error_wx_plant_cert_error", "-1", "readValue error");
         }
-        redisHelper.hPutAll(WxCache.WX_PAY_H, wxPayClientConfig.getMerchantId(), weixinPem);
-        return switchNewestPem(weixinPem, weixinPemSerial);
-    }
 
-    private PlantCertRedisDto switchNewestPem(Map<String, Object> weixinPem, String weixinPemSerial) {
-        return weixinPem != null ? weixinPem.values().stream()
-                .map(o -> (PlantCertRedisDto) o)
-                .filter(plantCertRedisDto -> StringUtilPlus.equals(plantCertRedisDto.getSerialNo(), weixinPemSerial))
-                .findFirst()
-                .orElse(null) : null;
+        String redisKey = wxPayClientConfig.getMerchantId();
+        return redisHelper.lockAndGet(WxCache.WX_PAY_H, weixinPemSerial, Duration.ofSeconds(5), (locked) -> {
+            if (locked) {
+                try {
+                    List<PlantCertData> plantCertDataList = wxPayCertApiProxy.certDownload().getData();
+                    Map<String, Object> weixinPem = new HashMap<>();
+                    PlantCertRedisDto needReturn = null;
+                    for (PlantCertData certData : plantCertDataList) {
+                        String cipherText = certData.getEncryptCertificate().getCipherText();
+                        String nonce = certData.getEncryptCertificate().getNonce();
+                        String associatedData = certData.getEncryptCertificate().getAssociatedData();
+                        String pem = DigestUtilPlus.AES.decryptGCM(DigestUtilPlus.Base64.decodeBase64(cipherText), wxPayClientConfig.getMerchantAesKey().getBytes(StringUtilPlus.UTF_8), nonce.getBytes(StringUtilPlus.UTF_8), associatedData.getBytes(StringUtilPlus.UTF_8));
+
+                        //通过服务器证书获取服务器支付公钥
+                        CertificateFactory cf = CertificateFactory.getInstance("X509");
+                        X509Certificate x509Cert = (X509Certificate) cf.generateCertificate(new ByteArrayInputStream(pem.getBytes(StringUtilPlus.UTF_8)));
+                        x509Cert.checkValidity();
+                        String weixinPublicKey = DigestUtilPlus.Base64.encodeBase64String(x509Cert.getPublicKey().getEncoded());
+
+                        //存入缓存
+                        PlantCertRedisDto plantCertRedisDto = new PlantCertRedisDto();
+                        plantCertRedisDto.setSerialNo(certData.getSerialNo());
+                        plantCertRedisDto.setEffectiveTime(certData.getEffectiveTime().toLocalDateTime());
+                        plantCertRedisDto.setExpireTime(certData.getExpireTime().toLocalDateTime());
+                        plantCertRedisDto.setPublicKey(weixinPublicKey);
+                        weixinPem.put(certData.getSerialNo(), plantCertRedisDto);
+
+                        if (StringUtilPlus.equals(plantCertRedisDto.getSerialNo(), weixinPemSerial)) {
+                            needReturn = plantCertRedisDto;
+                        }
+                    }
+                    redisHelper.hPutAll(WxCache.WX_PAY_H, redisKey, weixinPem);
+                    return needReturn;
+                } catch (Exception e) {
+                    log.error("weixin plantCert error: ", e);
+                    return null;
+                }
+            } else {
+                PlantCertRedisDto plantCertRedisDto = (PlantCertRedisDto) redisHelper.hGet(WxCache.WX_PAY_H, redisKey, weixinPemSerial);
+                if (plantCertRedisDto != null && LocalDateTime.now().isBefore(plantCertRedisDto.getExpireTime())) {
+                    return plantCertRedisDto;
+                } else {
+                    return null;
+                }
+            }
+        });
     }
 }

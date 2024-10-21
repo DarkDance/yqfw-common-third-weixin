@@ -29,7 +29,7 @@ public class WxMaClient {
 
         //小程序码与小程序链接 - 获取不限制的小程序码
         public org.springframework.core.io.Resource getClientToken(String access_token, QrcodeParam request) throws BusinessException {
-            return wxMaQrcodeApiProxy.getClientToken(access_token, request);
+            return wxMaQrcodeApiProxy.getCodeUnLimit(access_token, request);
         }
 
     }
