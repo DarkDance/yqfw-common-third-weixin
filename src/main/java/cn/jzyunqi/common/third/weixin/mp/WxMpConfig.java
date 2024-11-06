@@ -72,7 +72,7 @@ public class WxMpConfig {
     public WxMpMaterialApiProxy wxMpMaterialApiProxy(WebClient.Builder webClientBuilder) {
         WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2ConfigSpecial).build();
         WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
-        webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
+        webClientAdapter.setBlockTimeout(Duration.ofSeconds(30));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpMaterialApiProxy.class);
     }
