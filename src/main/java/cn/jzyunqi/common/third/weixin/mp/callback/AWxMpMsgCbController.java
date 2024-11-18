@@ -104,6 +104,8 @@ public abstract class AWxMpMsgCbController {
                                 this.processPicWeixinEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case location_select ->
                                 this.processLocationSelectEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case view_miniprogram ->
+                                this.processViewMiniProgramEvent(BeanUtilPlus.copyAs(decryptNotice, MenuMsgData.class));
                         case TEMPLATESENDJOBFINISH ->
                                 this.processTemplateSendJobFinishEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case card_pass_check ->
@@ -132,8 +134,6 @@ public abstract class AWxMpMsgCbController {
                                 this.processUserConsumeCardEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case user_view_card ->
                                 this.processUserViewCardEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
-                        case view_miniprogram ->
-                                this.processViewMiniProgramEvent(BeanUtilPlus.copyAs(decryptNotice, MenuMsgData.class));
                     };
                     case transfer_customer_service ->
                             this.processTransferCustomerServiceMsg(BeanUtilPlus.copyAs(decryptNotice, TransferCustomerServiceMsgData.class));
