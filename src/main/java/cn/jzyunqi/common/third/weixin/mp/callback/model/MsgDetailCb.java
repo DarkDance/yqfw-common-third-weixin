@@ -244,4 +244,10 @@ public class MsgDetailCb {
     @XmlElement(name = "UnionId")
     private String unionId;
 
+    /**
+     * 事件消息-点击菜单跳转小程序事件：菜单ID，如果是个性化菜单，则可以通过这个字段，知道是哪个规则的菜单被点击了
+     */
+    @XmlElement(name = "MenuId")
+    private String menuId;
+
 }

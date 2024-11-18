@@ -8,6 +8,7 @@ import cn.jzyunqi.common.third.weixin.mp.callback.model.LinkMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.LocationEventData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.LocationMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MemberCardEventData;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.MenuMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MiniProgramPageMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MpNewsMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
@@ -131,6 +132,8 @@ public abstract class AWxMpMsgCbController {
                                 this.processUserConsumeCardEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case user_view_card ->
                                 this.processUserViewCardEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case view_miniprogram ->
+                                this.processViewMiniProgramEvent(BeanUtilPlus.copyAs(decryptNotice, MenuMsgData.class));
                     };
                     case transfer_customer_service ->
                             this.processTransferCustomerServiceMsg(BeanUtilPlus.copyAs(decryptNotice, TransferCustomerServiceMsgData.class));
@@ -138,6 +141,10 @@ public abstract class AWxMpMsgCbController {
                             this.processMiniProgramPageMsg(BeanUtilPlus.copyAs(decryptNotice, MiniProgramPageMsgData.class));
                 }
         );
+    }
+
+    private ReplyMsgData processViewMiniProgramEvent(MenuMsgData menuMsgData) {
+        return null;
     }
 
     protected ReplyMsgData processUserViewCardEvent(EventMsgData eventMsgData) throws BusinessException {

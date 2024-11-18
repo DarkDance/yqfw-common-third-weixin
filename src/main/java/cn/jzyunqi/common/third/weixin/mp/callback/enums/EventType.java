@@ -128,5 +128,10 @@ public enum EventType {
      * 用户在进入会员卡时，微信会把这个事件推送到开发者,需要开发者在首页时填入need_push_on_view 字段并设置为true
      */
     user_view_card,
+
+    /**
+     * 点击菜单跳转小程序的事件推送
+     */
+    view_miniprogram,
     ;
 }
