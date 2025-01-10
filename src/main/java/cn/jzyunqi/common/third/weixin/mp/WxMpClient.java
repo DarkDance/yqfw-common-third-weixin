@@ -2,6 +2,7 @@ package cn.jzyunqi.common.third.weixin.mp;
 
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.feature.redis.RedisHelper;
+import cn.jzyunqi.common.model.ThirdTokenRedisDto;
 import cn.jzyunqi.common.third.weixin.common.constant.WxCache;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV2;
@@ -69,7 +70,6 @@ import cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateMsgParam;
 import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.token.enums.TicketType;
 import cn.jzyunqi.common.third.weixin.mp.token.model.ClientTokenData;
-import cn.jzyunqi.common.third.weixin.mp.token.model.ClientTokenRedisDto;
 import cn.jzyunqi.common.third.weixin.mp.token.model.TicketRedisDto;
 import cn.jzyunqi.common.third.weixin.mp.token.model.TicketRsp;
 import cn.jzyunqi.common.third.weixin.mp.token.model.WxJsapiSignature;
@@ -773,14 +773,14 @@ public class WxMpClient {
         return redisHelper.lockAndGet(WxCache.THIRD_WX_MP_V, tokenKey, Duration.ofSeconds(3), (locked) -> {
             if (locked) {
                 ClientTokenData clientTokenData = wxMpTokenApiProxy.getClientToken(wxMpClientConfig.getAppId(), wxMpClientConfig.getAppSecret());
-                ClientTokenRedisDto clientToken = new ClientTokenRedisDto();
+                ThirdTokenRedisDto clientToken = new ThirdTokenRedisDto();
                 clientToken.setToken(clientTokenData.getAccessToken()); //获取到的凭证
                 clientToken.setExpireTime(LocalDateTime.now().plusSeconds(clientTokenData.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
 
                 redisHelper.vPut(WxCache.THIRD_WX_MP_V, tokenKey, clientToken);
                 return clientTokenData.getAccessToken();
             } else {
-                ClientTokenRedisDto clientToken = (ClientTokenRedisDto) redisHelper.vGet(WxCache.THIRD_WX_MP_V, tokenKey);
+                ThirdTokenRedisDto clientToken = (ThirdTokenRedisDto) redisHelper.vGet(WxCache.THIRD_WX_MP_V, tokenKey);
                 if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
                     return clientToken.getToken();
                 } else {
