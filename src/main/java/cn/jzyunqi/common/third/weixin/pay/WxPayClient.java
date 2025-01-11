@@ -109,7 +109,7 @@ public class WxPayClient {
             UnifiedOrderRsp unifiedOrderTempRsp = wxPayOrderApiProxy.unifiedJsapiOrder(unifiedOrderParam);
             String pkg = "prepay_id=" + unifiedOrderTempRsp.getPrepayId();
 
-            String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
+            String nonceStr = RandomUtilPlus.String.nextAlphanumeric(32);
             Long timestamp = System.currentTimeMillis() / 1000;
             String needSignContent = StringUtilPlus.join(
                     appId, StringUtilPlus.ENTER,
@@ -217,7 +217,7 @@ public class WxPayClient {
 
             String prepayId = wxPayOrderApiProxy.unifiedNativeOrder(unifiedOrderParam).getPrepayId();
 
-            String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
+            String nonceStr = RandomUtilPlus.String.nextAlphanumeric(32);
             Long timestamp = System.currentTimeMillis() / 1000;
             String needSignContent = StringUtilPlus.join(
                     appId, StringUtilPlus.ENTER,

@@ -58,7 +58,7 @@ public class AuthUtils {
      */
     public static String genAuthToken(String merchantId, String merchantSerialNumber, String merchantPrivateKey, HttpMethod method, String path, String body) {
         Long timestamp = System.currentTimeMillis() / 1000;
-        String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
+        String nonceStr = RandomUtilPlus.String.nextAlphanumeric(32);
         String needSignContent = StringUtilPlus.join(
                 method, StringUtilPlus.ENTER,
                 path, StringUtilPlus.ENTER,
@@ -113,7 +113,7 @@ public class AuthUtils {
             nextPageLink = DigestUtilPlus.Base64.encodeBase64String(realPage.toString().getBytes());
         }
         String redirectUri = redirectRootUrl + nextPageLink;
-        String status = RandomUtilPlus.String.randomAlphanumeric(32);
+        String status = RandomUtilPlus.String.nextAlphanumeric(32);
         if (inWeixin) {
             return String.format(IN_WX_USER_CODE_URL, appId, URLEncoder.encode(redirectUri, StringUtilPlus.UTF_8), infoScope, status);
         } else {

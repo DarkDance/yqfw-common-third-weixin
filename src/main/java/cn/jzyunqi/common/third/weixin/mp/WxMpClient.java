@@ -429,7 +429,7 @@ public class WxMpClient {
          * @return 加密结果
          */
         private String encryptMsg(String msg) {
-            Byte[] randomStrBytes = ArrayUtils.toObject(RandomUtilPlus.String.randomAlphanumeric(16).getBytes(StringUtilPlus.UTF_8));
+            Byte[] randomStrBytes = ArrayUtils.toObject(RandomUtilPlus.String.nextAlphanumeric(16).getBytes(StringUtilPlus.UTF_8));
             Byte[] textBytes = ArrayUtils.toObject(msg.getBytes(StringUtilPlus.UTF_8));
             Byte[] networkBytesOrder = ArrayUtils.toObject(getNetworkBytesOrder(textBytes.length));
             Byte[] appidBytes = ArrayUtils.toObject(wxMpClientConfig.getAppId().getBytes(StringUtilPlus.UTF_8));
@@ -455,7 +455,7 @@ public class WxMpClient {
                 String encryptMsg = DigestUtilPlus.AES.encryptCBCNoPadding(unencrypted, aesKey, aesIv, true);
                 //消息签名
                 Long timestamp = System.currentTimeMillis() / 1000;
-                String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
+                String nonceStr = RandomUtilPlus.String.nextAlphanumeric(32);
                 String signature = signString(wxMpClientConfig.getMsgToken(), timestamp.toString(), nonceStr, encryptMsg);
 
                 return String.format(RESPONSE_MSG, encryptMsg, signature, timestamp, nonceStr);
@@ -752,7 +752,7 @@ public class WxMpClient {
 
     public WxJsapiSignature createJsapiSignature(String url) throws BusinessException {
         long timestamp = System.currentTimeMillis() / 1000;//从1970年1月1日00:00:00至今的秒数
-        String nonceStr = RandomUtilPlus.String.randomAlphanumeric(32);
+        String nonceStr = RandomUtilPlus.String.nextAlphanumeric(32);
         String jsapiTicket = getTicket(TicketType.JSAPI);
         //注意这里参数名必须全部小写，且必须有序
         String needSign = String.format(WX_JS_API_TICKET_SIGN, jsapiTicket, nonceStr, timestamp, url);
