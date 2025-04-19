@@ -87,7 +87,7 @@ public class WxPayClient {
         public UnifiedJsapiOrderData unifiedJsapiOrder(WeixinPaySubType paySubType, String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes, String openId) throws BusinessException {
             String appId = switch (paySubType.getWeixinType()) {
                 case OPEN, MINI_APP -> null;
-                case MP -> wxMpClientConfig.getAppId();
+                case MP, PC -> wxMpClientConfig.getAppId();
             };
 
             UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();

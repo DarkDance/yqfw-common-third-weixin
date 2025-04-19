@@ -13,8 +13,8 @@ public enum WeixinPaySubType {
 
     APP(WeixinType.OPEN, TradeType.APP),
     MP_JSAPI(WeixinType.MP, TradeType.JSAPI),
-    MP_NATIVE(WeixinType.MP, TradeType.NATIVE),
     MP_H5(WeixinType.MP, TradeType.MWEB),
+    PC_NATIVE(WeixinType.PC, TradeType.NATIVE),
     MINI_APP(WeixinType.MP, TradeType.JSAPI),
     ;
     private final WeixinType weixinType;

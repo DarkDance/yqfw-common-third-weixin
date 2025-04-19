@@ -22,5 +22,10 @@ public enum WeixinType {
     /**
      * 小程序
      */
-    MINI_APP
+    MINI_APP,
+
+    /**
+     * PC端
+     */
+    PC
 }
