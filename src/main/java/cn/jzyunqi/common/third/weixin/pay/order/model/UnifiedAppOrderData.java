@@ -50,4 +50,9 @@ public class UnifiedAppOrderData {
      * 签名，使用字段AppID、timeStamp、nonceStr、prepayid计算得出的签名值 注意：取值RSA格式
      */
     private String sign;
+
+    /**
+     * 申请流水号
+     */
+    private String applyPayNo;
 }

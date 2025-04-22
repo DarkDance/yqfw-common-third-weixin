@@ -251,6 +251,7 @@ public class WxPayClient {
             appOrderData.setNonceStr(nonceStr);
             appOrderData.setTimeStamp(timestamp);
             appOrderData.setSign(sign);
+            appOrderData.setApplyPayNo(outTradeNo);
             return appOrderData;
         }
     }
