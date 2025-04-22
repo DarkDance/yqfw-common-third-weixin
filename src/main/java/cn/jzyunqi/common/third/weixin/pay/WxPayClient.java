@@ -226,7 +226,7 @@ public class WxPayClient {
             payAmountData.setTotal(amount.multiply(new BigDecimal(100)).intValue());
             unifiedOrderParam.setAmount(payAmountData);
 
-            String prepayId = wxPayOrderApiProxy.unifiedNativeOrder(unifiedOrderParam).getPrepayId();
+            String prepayId = wxPayOrderApiProxy.unifiedAppOrder(unifiedOrderParam).getPrepayId();
 
             String nonceStr = RandomUtilPlus.String.nextAlphanumeric(32);
             Long timestamp = System.currentTimeMillis() / 1000;
