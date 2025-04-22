@@ -20,6 +20,7 @@ import cn.jzyunqi.common.third.weixin.pay.order.model.PayAmountData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.PayPayerData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.RefundOrderParam;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedAppOrderData;
+import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedH5OrderData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedJsapiOrderData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderParam;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderRsp;
@@ -168,7 +169,7 @@ public class WxPayClient {
         }
 
         //Native支付 - 预下单
-        public String unifiedNativeOrder(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
+        public UnifiedH5OrderData unifiedNativeOrder(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
             UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
             unifiedOrderParam.setAppId(wxMpClientConfig.getAppId());//只能是公众号的appId
             unifiedOrderParam.setMchId(wxPayClientConfig.getMerchantId());
@@ -181,11 +182,15 @@ public class WxPayClient {
             payAmountData.setTotal(amount.multiply(new BigDecimal(100)).intValue());
             unifiedOrderParam.setAmount(payAmountData);
 
-            return wxPayOrderApiProxy.unifiedNativeOrder(unifiedOrderParam).getCodeUrl();
+            String codeUrl = wxPayOrderApiProxy.unifiedNativeOrder(unifiedOrderParam).getCodeUrl();
+            UnifiedH5OrderData h5OrderData = new UnifiedH5OrderData();
+            h5OrderData.setApplyPayNo(outTradeNo);
+            h5OrderData.setUrl(codeUrl);
+            return h5OrderData;
         }
 
         //H5支付 - 预下单
-        public String unifiedH5Order(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
+        public UnifiedH5OrderData unifiedH5Order(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
             UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
             unifiedOrderParam.setAppId(wxMpClientConfig.getAppId());//只能是公众号的appId
             unifiedOrderParam.setMchId(wxPayClientConfig.getMerchantId());
@@ -197,7 +202,13 @@ public class WxPayClient {
             PayAmountData payAmountData = new PayAmountData();
             payAmountData.setTotal(amount.multiply(new BigDecimal(100)).intValue());
             unifiedOrderParam.setAmount(payAmountData);
-            return wxPayOrderApiProxy.unifiedH5Order(unifiedOrderParam).getH5Url();
+
+            String h5Url = wxPayOrderApiProxy.unifiedH5Order(unifiedOrderParam).getH5Url();
+
+            UnifiedH5OrderData h5OrderData = new UnifiedH5OrderData();
+            h5OrderData.setApplyPayNo(outTradeNo);
+            h5OrderData.setUrl(h5Url);
+            return h5OrderData;
         }
 
         //APP支付 - 预下单
@@ -384,7 +395,7 @@ public class WxPayClient {
                     return null;
                 }
             } else {
-                if(StringUtilPlus.isBlank(weixinPemSerial)){
+                if (StringUtilPlus.isBlank(weixinPemSerial)) {
                     return null;
                 }
                 PlantCertRedisDto plantCertRedisDto = (PlantCertRedisDto) redisHelper.hGet(WxCache.THIRD_WX_PAY_H, redisKey, weixinPemSerial);
