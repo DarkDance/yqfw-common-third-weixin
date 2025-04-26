@@ -58,7 +58,7 @@ public abstract class AWxMpMsgCbController {
      */
     @RequestMapping(consumes = "text/xml", produces = "text/xml")
     @ResponseBody
-    public Object userMessageCallback(@PathVariable String wxMpAppId, MsgSimpleCb msgSimpleCb, @RequestBody(required = false) MsgDetailCb msgDetailCb, @RequestBody(required = false) String msgDetailCbStr, @RequestHeader Map<String, String[]> headers) {
+    public Object userMessageCallback(@PathVariable String appId, MsgSimpleCb msgSimpleCb, @RequestBody(required = false) MsgDetailCb msgDetailCb, @RequestBody(required = false) String msgDetailCbStr, @RequestHeader Map<String, String[]> headers) {
         log.debug("""
 
                         ======Request Header    : {}
@@ -69,7 +69,7 @@ public abstract class AWxMpMsgCbController {
                 msgSimpleCb,
                 msgDetailCbStr
         );
-        return wxMpClient.cb.replyMessageNotice(wxMpAppId, msgSimpleCb, msgDetailCb, decryptNotice ->
+        return wxMpClient.cb.replyMessageNotice(appId, msgSimpleCb, msgDetailCb, decryptNotice ->
                 switch (decryptNotice.getMsgType()) {
                     case text -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
                     case image -> this.processImageMsg(BeanUtilPlus.copyAs(decryptNotice, ImageMsgData.class));
