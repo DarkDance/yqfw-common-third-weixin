@@ -4,6 +4,7 @@ import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchange;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV3;
 import cn.jzyunqi.common.third.weixin.pay.cert.model.PlantCertData;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.annotation.HttpExchange;
 import org.springframework.web.service.annotation.PostExchange;
@@ -20,5 +21,5 @@ public interface WxPayCertApiProxy {
 
     //安全工具 - 平台证书下载
     @GetExchange(url = "/v3/certificates")
-    WeixinRspV3<List<PlantCertData>> certDownload() throws BusinessException;
+    WeixinRspV3<List<PlantCertData>> certDownload(@RequestAttribute String wxAppId) throws BusinessException;
 }

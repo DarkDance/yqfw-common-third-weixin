@@ -8,6 +8,7 @@ import cn.jzyunqi.common.third.weixin.pay.order.model.OrderRefundData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderParam;
 import cn.jzyunqi.common.third.weixin.pay.order.model.UnifiedOrderRsp;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.service.annotation.GetExchange;
@@ -24,30 +25,30 @@ public interface WxPayOrderApiProxy {
 
     //JSAPI、小程序支付 - 预下单
     @PostExchange(url = "/v3/pay/transactions/jsapi")
-    UnifiedOrderRsp unifiedJsapiOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
+    UnifiedOrderRsp unifiedJsapiOrder(@RequestAttribute String wxAppId, @RequestBody UnifiedOrderParam request) throws BusinessException;
 
     //小程序支付 - 订单查询(微信支付订单号)
     @GetExchange(url = "/v3/pay/transactions/id/{transaction_id}")
-    OrderData queryOrderByTransactionId(@PathVariable String transaction_id, @RequestParam String mchid) throws BusinessException;
+    OrderData queryOrderByTransactionId(@RequestAttribute String wxAppId, @PathVariable String transaction_id, @RequestParam String mchid) throws BusinessException;
 
     //小程序支付 - 订单查询(商户订单号)
     @GetExchange(url = "/v3/pay/transactions/out-trade-no/{out_trade_no}")
-    OrderData queryOrderByOutTradeNo(@PathVariable String out_trade_no, @RequestParam String mchid) throws BusinessException;
+    OrderData queryOrderByOutTradeNo(@RequestAttribute String wxAppId, @PathVariable String out_trade_no, @RequestParam String mchid) throws BusinessException;
 
     //小程序支付 - 退款申请
     @PostExchange(url = "/v3/refund/domestic/refunds")
-    OrderRefundData refundApply(@RequestBody RefundOrderParam request) throws BusinessException;
+    OrderRefundData refundApply(@RequestAttribute String wxAppId, @RequestBody RefundOrderParam request) throws BusinessException;
 
     //Native支付 - 预下单
     @PostExchange(url = "/v3/pay/transactions/native")
-    UnifiedOrderRsp unifiedNativeOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
+    UnifiedOrderRsp unifiedNativeOrder(@RequestAttribute String wxAppId, @RequestBody UnifiedOrderParam request) throws BusinessException;
 
     //H5支付 - 预下单
     @PostExchange(url = "/v3/pay/transactions/h5")
-    UnifiedOrderRsp unifiedH5Order(@RequestBody UnifiedOrderParam request) throws BusinessException;
+    UnifiedOrderRsp unifiedH5Order(@RequestAttribute String wxAppId, @RequestBody UnifiedOrderParam request) throws BusinessException;
 
     //APP支付 - 预下单
     @PostExchange(url = "/v3/pay/transactions/app")
-    UnifiedOrderRsp unifiedAppOrder(@RequestBody UnifiedOrderParam request) throws BusinessException;
+    UnifiedOrderRsp unifiedAppOrder(@RequestAttribute String wxAppId, @RequestBody UnifiedOrderParam request) throws BusinessException;
 
 }

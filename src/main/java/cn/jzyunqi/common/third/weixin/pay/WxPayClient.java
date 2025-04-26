@@ -5,9 +5,6 @@ import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.common.constant.WxCache;
 import cn.jzyunqi.common.third.weixin.common.enums.WeixinPaySubType;
 import cn.jzyunqi.common.third.weixin.common.utils.WxFormatUtils;
-import cn.jzyunqi.common.third.weixin.mp.WxMpAuth;
-import cn.jzyunqi.common.third.weixin.mp.WxMpAuthRepository;
-import cn.jzyunqi.common.third.weixin.open.WxOpenClientConfig;
 import cn.jzyunqi.common.third.weixin.pay.callback.model.WxPayResultCb;
 import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApiProxy;
 import cn.jzyunqi.common.third.weixin.pay.cert.model.PlantCertData;
@@ -34,7 +31,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.net.ssl.SSLException;
 import java.io.ByteArrayInputStream;
@@ -57,15 +53,6 @@ import java.util.Map;
 public class WxPayClient {
 
     @Resource
-    private WxPayClientConfig wxPayClientConfig;
-
-    @Autowired(required = false)
-    private WxMpAuth wxMpAuth;
-
-    @Autowired(required = false)
-    private WxOpenClientConfig wxOpenClientConfig;
-
-    @Resource
     private WxPayOrderApiProxy wxPayOrderApiProxy;
 
     @Resource
@@ -77,28 +64,34 @@ public class WxPayClient {
     public final Order order = new Order();
     public final Callback cb = new Callback();
 
+    @Resource
+    private WxPayAuthRepository wxPayAuthRepository;
+
     @PostConstruct
     public void plantCertInit() throws BusinessException {
-        //构造完成立即调用一次
-        this.plantCert(null);
+        for (WxPayAuth wxPayAuth : wxPayAuthRepository.getWxPayAuthList()) {
+            //构造完成立即调用一次
+            this.plantCert(wxPayAuth, null);
+        }
     }
 
     public class Order {
 
         //JSAPI、小程序支付 - 预下单
-        public UnifiedJsapiOrderData unifiedJsapiOrder(WeixinPaySubType paySubType, String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes, String openId) throws BusinessException {
+        public UnifiedJsapiOrderData unifiedJsapiOrder(String wxAppId, WeixinPaySubType paySubType, String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes, String openId) throws BusinessException {
+            WxPayAuth wxPayAuth = wxPayAuthRepository.choosWxPayAuth(wxAppId);
             String appId = switch (paySubType.getWeixinType()) {
                 case OPEN, MINI_APP -> null;
-                case MP, PC -> wxMpAuth.getAppId();
+                case MP, PC -> wxPayAuth.getWxAppId();
             };
 
             UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
             unifiedOrderParam.setAppId(appId);
-            unifiedOrderParam.setMchId(wxPayClientConfig.getMerchantId());
+            unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
             unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
             unifiedOrderParam.setOutTradeNo(outTradeNo);
             unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
-            unifiedOrderParam.setNotifyUrl(wxPayClientConfig.getPayCallbackUrl());
+            unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
 
             PayAmountData payAmountData = new PayAmountData();
             payAmountData.setTotal(amount.multiply(new BigDecimal(100)).intValue());
@@ -108,7 +101,7 @@ public class WxPayClient {
             payer.setOpenId(openId);
             unifiedOrderParam.setPayer(payer);
 
-            UnifiedOrderRsp unifiedOrderTempRsp = wxPayOrderApiProxy.unifiedJsapiOrder(unifiedOrderParam);
+            UnifiedOrderRsp unifiedOrderTempRsp = wxPayOrderApiProxy.unifiedJsapiOrder(wxPayAuth.getWxAppId(), unifiedOrderParam);
             String pkg = "prepay_id=" + unifiedOrderTempRsp.getPrepayId();
 
             String nonceStr = RandomUtilPlus.String.nextAlphanumeric(32);
@@ -121,7 +114,7 @@ public class WxPayClient {
             );
             String sign = null;
             try {
-                sign = DigestUtilPlus.RSA256.signPrivateKey(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(wxPayClientConfig.getMerchantPrivateKey()), Boolean.TRUE);
+                sign = DigestUtilPlus.RSA256.signPrivateKey(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(wxPayAuth.getMerchantPrivateKey()), Boolean.TRUE);
             } catch (Exception e) {
                 log.error("=====unifiedJsapiOrder sign error", e);
             }
@@ -138,28 +131,30 @@ public class WxPayClient {
         }
 
         //小程序支付 - 订单查询
-        public OrderData queryOrder(String transactionId, String outTradeNo) throws BusinessException {
+        public OrderData queryOrder(String wxAppId, String transactionId, String outTradeNo) throws BusinessException {
+            WxPayAuth wxPayAuth = wxPayAuthRepository.choosWxPayAuth(wxAppId);
             OrderData orderData;
             if (StringUtilPlus.isNotEmpty(transactionId)) {
-                orderData = wxPayOrderApiProxy.queryOrderByTransactionId(transactionId, wxPayClientConfig.getMerchantId());
+                orderData = wxPayOrderApiProxy.queryOrderByTransactionId(wxPayAuth.getWxAppId(), transactionId, wxPayAuth.getMerchantId());
             } else {
-                orderData = wxPayOrderApiProxy.queryOrderByOutTradeNo(outTradeNo, wxPayClientConfig.getMerchantId());
+                orderData = wxPayOrderApiProxy.queryOrderByOutTradeNo(wxPayAuth.getWxAppId(), outTradeNo, wxPayAuth.getMerchantId());
             }
             return orderData;
         }
 
         //小程序支付 - 退款申请
-        public OrderRefundData refundApply(String transactionId, String outRefundNo, BigDecimal totalFee, BigDecimal refundFee, String refundDesc) throws BusinessException {
+        public OrderRefundData refundApply(String wxAppId, String transactionId, String outRefundNo, BigDecimal totalFee, BigDecimal refundFee, String refundDesc) throws BusinessException {
+            WxPayAuth wxPayAuth = wxPayAuthRepository.choosWxPayAuth(wxAppId);
             RefundOrderParam refundOrderParam = new RefundOrderParam();
             refundOrderParam.setTransactionId(transactionId);
             refundOrderParam.setOutRefundNo(outRefundNo);
             refundOrderParam.setReason(refundDesc);
-            refundOrderParam.setNotifyUrl(wxPayClientConfig.getRefundCallbackUrl());
+            refundOrderParam.setNotifyUrl(wxPayAuth.getRefundCallbackUrl());
             refundOrderParam.getAmount().setRefund(refundFee.multiply(new BigDecimal(100)).intValue());
             refundOrderParam.getAmount().setTotal(totalFee.multiply(new BigDecimal(100)).intValue());
             refundOrderParam.getAmount().setCurrency("CNY");
 
-            OrderRefundData orderRefundData = wxPayOrderApiProxy.refundApply(refundOrderParam);
+            OrderRefundData orderRefundData = wxPayOrderApiProxy.refundApply(wxPayAuth.getWxAppId(), refundOrderParam);
             orderRefundData.setActualRefundAmount(BigDecimal.valueOf(orderRefundData.getAmount().getPayerRefund()).divide(BigDecimal.valueOf(100), 2, RoundingMode.DOWN));
             try {
                 orderRefundData.setResponseStr(WxFormatUtils.OBJECT_MAPPER.writeValueAsString(orderRefundData));
@@ -170,20 +165,21 @@ public class WxPayClient {
         }
 
         //Native支付 - 预下单
-        public UnifiedH5OrderData unifiedNativeOrder(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
+        public UnifiedH5OrderData unifiedNativeOrder(String wxAppId, String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
+            WxPayAuth wxPayAuth = wxPayAuthRepository.choosWxPayAuth(wxAppId);
             UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
-            unifiedOrderParam.setAppId(wxMpAuth.getAppId());//只能是公众号的appId
-            unifiedOrderParam.setMchId(wxPayClientConfig.getMerchantId());
+            unifiedOrderParam.setAppId(wxPayAuth.getWxAppId());//只能是公众号的appId
+            unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
             unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
             unifiedOrderParam.setOutTradeNo(outTradeNo);
             unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
-            unifiedOrderParam.setNotifyUrl(wxPayClientConfig.getPayCallbackUrl());
+            unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
 
             PayAmountData payAmountData = new PayAmountData();
             payAmountData.setTotal(amount.multiply(new BigDecimal(100)).intValue());
             unifiedOrderParam.setAmount(payAmountData);
 
-            String codeUrl = wxPayOrderApiProxy.unifiedNativeOrder(unifiedOrderParam).getCodeUrl();
+            String codeUrl = wxPayOrderApiProxy.unifiedNativeOrder(wxPayAuth.getWxAppId(), unifiedOrderParam).getCodeUrl();
             UnifiedH5OrderData h5OrderData = new UnifiedH5OrderData();
             h5OrderData.setApplyPayNo(outTradeNo);
             h5OrderData.setUrl(codeUrl);
@@ -191,20 +187,21 @@ public class WxPayClient {
         }
 
         //H5支付 - 预下单
-        public UnifiedH5OrderData unifiedH5Order(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
+        public UnifiedH5OrderData unifiedH5Order(String wxAppId, String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
+            WxPayAuth wxPayAuth = wxPayAuthRepository.choosWxPayAuth(wxAppId);
             UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
-            unifiedOrderParam.setAppId(wxMpAuth.getAppId());//只能是公众号的appId
-            unifiedOrderParam.setMchId(wxPayClientConfig.getMerchantId());
+            unifiedOrderParam.setAppId(wxPayAuth.getWxAppId());//只能是公众号的appId
+            unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
             unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
             unifiedOrderParam.setOutTradeNo(outTradeNo);
             unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
-            unifiedOrderParam.setNotifyUrl(wxPayClientConfig.getPayCallbackUrl());
+            unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
 
             PayAmountData payAmountData = new PayAmountData();
             payAmountData.setTotal(amount.multiply(new BigDecimal(100)).intValue());
             unifiedOrderParam.setAmount(payAmountData);
 
-            String h5Url = wxPayOrderApiProxy.unifiedH5Order(unifiedOrderParam).getH5Url();
+            String h5Url = wxPayOrderApiProxy.unifiedH5Order(wxPayAuth.getWxAppId(), unifiedOrderParam).getH5Url();
 
             UnifiedH5OrderData h5OrderData = new UnifiedH5OrderData();
             h5OrderData.setApplyPayNo(outTradeNo);
@@ -213,40 +210,40 @@ public class WxPayClient {
         }
 
         //APP支付 - 预下单
-        public UnifiedAppOrderData unifiedAppOrder(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
-            String appId = wxOpenClientConfig.getAppId();//只能是开放平台的appId
+        public UnifiedAppOrderData unifiedAppOrder(String wxAppId, String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
+            WxPayAuth wxPayAuth = wxPayAuthRepository.choosWxPayAuth(wxAppId);
             UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
-            unifiedOrderParam.setAppId(appId);
-            unifiedOrderParam.setMchId(wxPayClientConfig.getMerchantId());
+            unifiedOrderParam.setAppId(wxPayAuth.getWxAppId());//只能是开放平台的appId
+            unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
             unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
             unifiedOrderParam.setOutTradeNo(outTradeNo);
             unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
-            unifiedOrderParam.setNotifyUrl(wxPayClientConfig.getPayCallbackUrl());
+            unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
 
             PayAmountData payAmountData = new PayAmountData();
             payAmountData.setTotal(amount.multiply(new BigDecimal(100)).intValue());
             unifiedOrderParam.setAmount(payAmountData);
 
-            String prepayId = wxPayOrderApiProxy.unifiedAppOrder(unifiedOrderParam).getPrepayId();
+            String prepayId = wxPayOrderApiProxy.unifiedAppOrder(wxPayAuth.getWxAppId(), unifiedOrderParam).getPrepayId();
 
             String nonceStr = RandomUtilPlus.String.nextAlphanumeric(32);
             Long timestamp = System.currentTimeMillis() / 1000;
             String needSignContent = StringUtilPlus.join(
-                    appId, StringUtilPlus.ENTER,
+                    wxPayAuth.getWxAppId(), StringUtilPlus.ENTER,
                     timestamp, StringUtilPlus.ENTER,
                     nonceStr, StringUtilPlus.ENTER,
                     prepayId, StringUtilPlus.ENTER
             );
             String sign = null;
             try {
-                sign = DigestUtilPlus.RSA256.signPrivateKey(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(wxPayClientConfig.getMerchantPrivateKey()), Boolean.TRUE);
+                sign = DigestUtilPlus.RSA256.signPrivateKey(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(wxPayAuth.getMerchantPrivateKey()), Boolean.TRUE);
             } catch (Exception e) {
                 log.error("=====unifiedAppOrder sign error", e);
             }
 
             UnifiedAppOrderData appOrderData = new UnifiedAppOrderData();
-            appOrderData.setAppId(appId);
-            appOrderData.setPartnerId(wxPayClientConfig.getMerchantId());
+            appOrderData.setAppId(wxPayAuth.getWxAppId());
+            appOrderData.setPartnerId(wxPayAuth.getMerchantId());
             appOrderData.setPrepayId(prepayId);
             appOrderData.setPackageValue("Sign=WXPay");
             appOrderData.setNonceStr(nonceStr);
@@ -259,16 +256,17 @@ public class WxPayClient {
 
     public class Callback {
 
-        public OrderData decryptPayCallback(Map<String, String> returnHeaderMap, String returnParam, WxPayResultCb payResultCb) {
+        public OrderData decryptPayCallback(String wxAppId, Map<String, String> returnHeaderMap, String returnParam, WxPayResultCb payResultCb) {
+            WxPayAuth wxPayAuth = wxPayAuthRepository.choosWxPayAuth(wxAppId);
             try {
-                verifyHeader(returnHeaderMap, returnParam);
+                verifyHeader(wxPayAuth, returnHeaderMap, returnParam);
 
                 String cipherText = payResultCb.getResource().getCipherText();
                 String nonce = payResultCb.getResource().getNonce();
                 String associatedData = payResultCb.getResource().getAssociatedData();
                 String realCallback = DigestUtilPlus.AES.decryptGCM(
                         DigestUtilPlus.Base64.decodeBase64(cipherText),
-                        wxPayClientConfig.getMerchantAesKey().getBytes(StringUtilPlus.UTF_8),
+                        wxPayAuth.getMerchantAesKey().getBytes(StringUtilPlus.UTF_8),
                         nonce.getBytes(StringUtilPlus.UTF_8),
                         associatedData.getBytes(StringUtilPlus.UTF_8)
                 );
@@ -293,14 +291,15 @@ public class WxPayClient {
          * @param payResultCb 回调密文
          * @return 解码结果
          */
-        public OrderRefundData decryptRefundCallback(WxPayResultCb payResultCb) {
+        public OrderRefundData decryptRefundCallback(String wxAppId, WxPayResultCb payResultCb) {
+            WxPayAuth wxPayAuth = wxPayAuthRepository.choosWxPayAuth(wxAppId);
             try {
                 String cipherText = payResultCb.getResource().getCipherText();
                 String nonce = payResultCb.getResource().getNonce();
                 String associatedData = payResultCb.getResource().getAssociatedData();
                 String realCallback = DigestUtilPlus.AES.decryptGCM(
                         DigestUtilPlus.Base64.decodeBase64(cipherText),
-                        wxPayClientConfig.getMerchantAesKey().getBytes(StringUtilPlus.UTF_8),
+                        wxPayAuth.getMerchantAesKey().getBytes(StringUtilPlus.UTF_8),
                         nonce.getBytes(StringUtilPlus.UTF_8),
                         associatedData.getBytes(StringUtilPlus.UTF_8)
                 );
@@ -326,7 +325,7 @@ public class WxPayClient {
      * @param returnHeaderMap 头信息
      * @param returnParam     体信息
      */
-    private void verifyHeader(Map<String, String> returnHeaderMap, String returnParam) throws SSLException {
+    private void verifyHeader(WxPayAuth wxPayAuth, Map<String, String> returnHeaderMap, String returnParam) throws SSLException {
         String weixinSign = returnHeaderMap.get("Wechatpay-Signature");
         String weixinPemSerial = returnHeaderMap.get("Wechatpay-Serial");
         String timestamp = returnHeaderMap.get("Wechatpay-Timestamp");
@@ -340,7 +339,7 @@ public class WxPayClient {
         String waitSign = String.format("%s\n%s\n%s\n", timestamp, nonce, returnParam);
         //获取证书
         try {
-            PlantCertRedisDto plantCertRedisDto = this.plantCert(weixinPemSerial);
+            PlantCertRedisDto plantCertRedisDto = this.plantCert(wxPayAuth, weixinPemSerial);
             boolean matchResult = DigestUtilPlus.RSA256.verifySignPublicKey(waitSign.getBytes(StringUtilPlus.UTF_8), weixinSign, DigestUtilPlus.Base64.decodeBase64(plantCertRedisDto.getPublicKey()));
             if (!matchResult) {
                 throw new SSLException("sign not match!");
@@ -350,19 +349,19 @@ public class WxPayClient {
         }
     }
 
-    private PlantCertRedisDto plantCert(String weixinPemSerial) throws BusinessException {
+    private PlantCertRedisDto plantCert(WxPayAuth wxPayAuth, String weixinPemSerial) throws BusinessException {
         //如果没有证书编号且已经下载过证书了，忽略这个请求
         if (StringUtilPlus.isBlank(weixinPemSerial)) {
-            Map<String, Object> redisWeixinPem = redisHelper.hGetAll(WxCache.THIRD_WX_PAY_H, wxPayClientConfig.getMerchantId());
+            Map<String, Object> redisWeixinPem = redisHelper.hGetAll(WxCache.THIRD_WX_PAY_H, wxPayAuth.getMerchantId());
             if (CollectionUtilPlus.Map.isNotEmpty(redisWeixinPem)) {
                 return null;
             }
         }
 
-        String redisKey = wxPayClientConfig.getMerchantId();
+        String redisKey = wxPayAuth.getMerchantId();
         return redisHelper.lockAndGet(WxCache.THIRD_WX_PAY_H, weixinPemSerial, Duration.ofSeconds(5), (locked) -> {
             if (locked) {
-                List<PlantCertData> plantCertDataList = wxPayCertApiProxy.certDownload().getData();
+                List<PlantCertData> plantCertDataList = wxPayCertApiProxy.certDownload(wxPayAuth.getWxAppId()).getData();
                 Map<String, Object> weixinPem = new HashMap<>();
                 PlantCertRedisDto needReturn = null;
                 try {
@@ -370,7 +369,7 @@ public class WxPayClient {
                         String cipherText = certData.getEncryptCertificate().getCipherText();
                         String nonce = certData.getEncryptCertificate().getNonce();
                         String associatedData = certData.getEncryptCertificate().getAssociatedData();
-                        String pem = DigestUtilPlus.AES.decryptGCM(DigestUtilPlus.Base64.decodeBase64(cipherText), wxPayClientConfig.getMerchantAesKey().getBytes(StringUtilPlus.UTF_8), nonce.getBytes(StringUtilPlus.UTF_8), associatedData.getBytes(StringUtilPlus.UTF_8));
+                        String pem = DigestUtilPlus.AES.decryptGCM(DigestUtilPlus.Base64.decodeBase64(cipherText), wxPayAuth.getMerchantAesKey().getBytes(StringUtilPlus.UTF_8), nonce.getBytes(StringUtilPlus.UTF_8), associatedData.getBytes(StringUtilPlus.UTF_8));
 
                         //通过服务器证书获取服务器支付公钥
                         CertificateFactory cf = CertificateFactory.getInstance("X509");

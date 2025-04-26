@@ -47,21 +47,24 @@ public class WxPayConfig {
     }
 
     @Bean
-    public WxPayOrderApiProxy wxPayOrderApiProxy(WebClient.Builder webClientBuilder, WxPayClientConfig wxPayClientConfig) {
+    public WxPayOrderApiProxy wxPayOrderApiProxy(WebClient.Builder webClientBuilder, WxPayAuthRepository wxPayClientConfig) {
         WebClient webClient = webClientBuilder.clone()
                 .codecs(WxFormatUtils::jackson2Config)
                 .filter(ExchangeFilterFunction.ofRequestProcessor(request -> {
+                    String wxAppId = (String) request.attribute("wxAppId").orElse(null);
+                    WxPayAuth auth = wxPayClientConfig.choosWxPayAuth(wxAppId);
+
                     ClientRequest.Builder amendRequest = ClientRequest.from(request);
-                    if(request.method() == HttpMethod.GET){
+                    if (request.method() == HttpMethod.GET) {
                         amendRequest.header(HEADER_AUTHORIZATION, AuthUtils.genAuthToken(
-                                wxPayClientConfig.getMerchantId(),
-                                wxPayClientConfig.getMerchantSerialNumber(),
-                                wxPayClientConfig.getMerchantPrivateKey(),
+                                auth.getMerchantId(),
+                                auth.getMerchantSerialNumber(),
+                                auth.getMerchantPrivateKey(),
                                 request.method(),
                                 request.url().getPath() + "?" + request.url().getQuery(),
                                 null
                         ));
-                    }else{
+                    } else {
                         amendRequest.body((outputMessage, context) -> request.body().insert(new ClientHttpRequestDecorator(outputMessage) {
                             @Override
                             public @NonNull Mono<Void> writeWith(@NonNull Publisher<? extends DataBuffer> body) {
@@ -69,9 +72,9 @@ public class WxPayConfig {
                                     String bodyStr = buffer.toString(StringUtilPlus.UTF_8);
                                     getHeaders().add(HEADER_AUTHORIZATION,
                                             AuthUtils.genAuthToken(
-                                                    wxPayClientConfig.getMerchantId(),
-                                                    wxPayClientConfig.getMerchantSerialNumber(),
-                                                    wxPayClientConfig.getMerchantPrivateKey(),
+                                                    auth.getMerchantId(),
+                                                    auth.getMerchantSerialNumber(),
+                                                    auth.getMerchantPrivateKey(),
                                                     request.method(),
                                                     request.url().getPath(),
                                                     bodyStr
@@ -92,16 +95,19 @@ public class WxPayConfig {
     }
 
     @Bean
-    public WxPayCertApiProxy wxPayCertApiProxy(WebClient.Builder webClientBuilder, WxPayClientConfig wxPayClientConfig) {
+    public WxPayCertApiProxy wxPayCertApiProxy(WebClient.Builder webClientBuilder, WxPayAuthRepository wxPayClientConfig) {
         WebClient webClient = webClientBuilder.clone()
                 .codecs(WxFormatUtils::jackson2Config)
                 .filter(ExchangeFilterFunction.ofRequestProcessor(request -> {
+                    String wxAppId = (String) request.attribute("wxAppId").orElse(null);
+                    WxPayAuth auth = wxPayClientConfig.choosWxPayAuth(wxAppId);
+
                     ClientRequest filtered = ClientRequest.from(request)
                             .header(HEADER_AUTHORIZATION,
                                     AuthUtils.genAuthToken(
-                                            wxPayClientConfig.getMerchantId(),
-                                            wxPayClientConfig.getMerchantSerialNumber(),
-                                            wxPayClientConfig.getMerchantPrivateKey(),
+                                            auth.getMerchantId(),
+                                            auth.getMerchantSerialNumber(),
+                                            auth.getMerchantPrivateKey(),
                                             request.method(),
                                             request.url().getPath(),
                                             null
