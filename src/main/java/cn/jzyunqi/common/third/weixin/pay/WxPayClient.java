@@ -5,7 +5,8 @@ import cn.jzyunqi.common.feature.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.common.constant.WxCache;
 import cn.jzyunqi.common.third.weixin.common.enums.WeixinPaySubType;
 import cn.jzyunqi.common.third.weixin.common.utils.WxFormatUtils;
-import cn.jzyunqi.common.third.weixin.mp.WxMpClientConfig;
+import cn.jzyunqi.common.third.weixin.mp.WxMpAuth;
+import cn.jzyunqi.common.third.weixin.mp.WxMpAuthRepository;
 import cn.jzyunqi.common.third.weixin.open.WxOpenClientConfig;
 import cn.jzyunqi.common.third.weixin.pay.callback.model.WxPayResultCb;
 import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApiProxy;
@@ -59,7 +60,7 @@ public class WxPayClient {
     private WxPayClientConfig wxPayClientConfig;
 
     @Autowired(required = false)
-    private WxMpClientConfig wxMpClientConfig;
+    private WxMpAuth wxMpAuth;
 
     @Autowired(required = false)
     private WxOpenClientConfig wxOpenClientConfig;
@@ -88,7 +89,7 @@ public class WxPayClient {
         public UnifiedJsapiOrderData unifiedJsapiOrder(WeixinPaySubType paySubType, String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes, String openId) throws BusinessException {
             String appId = switch (paySubType.getWeixinType()) {
                 case OPEN, MINI_APP -> null;
-                case MP, PC -> wxMpClientConfig.getAppId();
+                case MP, PC -> wxMpAuth.getAppId();
             };
 
             UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
@@ -171,7 +172,7 @@ public class WxPayClient {
         //Native支付 - 预下单
         public UnifiedH5OrderData unifiedNativeOrder(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
             UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
-            unifiedOrderParam.setAppId(wxMpClientConfig.getAppId());//只能是公众号的appId
+            unifiedOrderParam.setAppId(wxMpAuth.getAppId());//只能是公众号的appId
             unifiedOrderParam.setMchId(wxPayClientConfig.getMerchantId());
             unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
             unifiedOrderParam.setOutTradeNo(outTradeNo);
@@ -192,7 +193,7 @@ public class WxPayClient {
         //H5支付 - 预下单
         public UnifiedH5OrderData unifiedH5Order(String outTradeNo, String simpleDesc, BigDecimal amount, int expiresInMinutes) throws BusinessException {
             UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
-            unifiedOrderParam.setAppId(wxMpClientConfig.getAppId());//只能是公众号的appId
+            unifiedOrderParam.setAppId(wxMpAuth.getAppId());//只能是公众号的appId
             unifiedOrderParam.setMchId(wxPayClientConfig.getMerchantId());
             unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
             unifiedOrderParam.setOutTradeNo(outTradeNo);

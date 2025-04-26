@@ -26,6 +26,7 @@ import cn.jzyunqi.common.third.weixin.mp.callback.model.WxCardMsgData;
 import cn.jzyunqi.common.utils.BeanUtilPlus;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -49,7 +50,7 @@ public abstract class AWxMpMsgCbController {
 
 
     /***
-     * 微信小程序消息回调
+     * 微信公众号消息回调
      *
      * @param msgSimpleCb url参数
      * @param msgDetailCb 消息详细
@@ -57,7 +58,7 @@ public abstract class AWxMpMsgCbController {
      */
     @RequestMapping(consumes = "text/xml", produces = "text/xml")
     @ResponseBody
-    public Object userMessageCallback(MsgSimpleCb msgSimpleCb, @RequestBody(required = false) MsgDetailCb msgDetailCb, @RequestBody(required = false) String msgDetailCbStr, @RequestHeader Map<String, String[]> headers) {
+    public Object userMessageCallback(@PathVariable String wxMpAppId, MsgSimpleCb msgSimpleCb, @RequestBody(required = false) MsgDetailCb msgDetailCb, @RequestBody(required = false) String msgDetailCbStr, @RequestHeader Map<String, String[]> headers) {
         log.debug("""
 
                         ======Request Header    : {}
@@ -68,7 +69,7 @@ public abstract class AWxMpMsgCbController {
                 msgSimpleCb,
                 msgDetailCbStr
         );
-        return wxMpClient.cb.replyMessageNotice(msgSimpleCb, msgDetailCb, decryptNotice ->
+        return wxMpClient.cb.replyMessageNotice(wxMpAppId, msgSimpleCb, msgDetailCb, decryptNotice ->
                 switch (decryptNotice.getMsgType()) {
                     case text -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
                     case image -> this.processImageMsg(BeanUtilPlus.copyAs(decryptNotice, ImageMsgData.class));

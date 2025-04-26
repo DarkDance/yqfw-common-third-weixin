@@ -81,6 +81,7 @@ import cn.jzyunqi.common.utils.DigestUtilPlus;
 import cn.jzyunqi.common.utils.IOUtilPlus;
 import cn.jzyunqi.common.utils.RandomUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
@@ -93,6 +94,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -135,9 +138,6 @@ public class WxMpClient {
     private WxMpCardApiProxy wxMpCardApiProxy;
 
     @Resource
-    private WxMpClientConfig wxMpClientConfig;
-
-    @Resource
     private RedisHelper redisHelper;
 
     public final Kefu kf = new Kefu();
@@ -150,208 +150,221 @@ public class WxMpClient {
     public final Template template = new Template();
     public final Card card = new Card();
 
+    @Resource
+    private WxMpAuthRepository wxMpAuthRepository;
+
+    private final Map<String, WxMpAuth> authMap = new ConcurrentHashMap<>();
+
+    @PostConstruct
+    public void init() {
+        List<WxMpAuth> wxMpAuthList = wxMpAuthRepository.getWxMpAuthList();
+        for (WxMpAuth wxMpAuth : wxMpAuthList) {
+            authMap.put(wxMpAuth.getAppId(), wxMpAuth);
+        }
+    }
+
     public class Kefu {
         //客服管理 - 添加客服账号（添加后不可用，需要再邀请）
-        public WeixinRspV1 kfAccountAdd(WxMpKfAccountParam request) throws BusinessException {
-            return wxMpKfApiProxy.kfAccountAdd(getClientToken(), request);
+        public WeixinRspV1 kfAccountAdd(String wxMpAppId, WxMpKfAccountParam request) throws BusinessException {
+            return wxMpKfApiProxy.kfAccountAdd(getClientToken(wxMpAppId), request);
         }
 
         //客服管理 - 邀请绑定客服账号
-        public WeixinRspV1 kfAccountInviteWorker(WxMpKfAccountParam request) throws BusinessException {
-            return wxMpKfApiProxy.kfAccountInviteWorker(getClientToken(), request);
+        public WeixinRspV1 kfAccountInviteWorker(String wxMpAppId, WxMpKfAccountParam request) throws BusinessException {
+            return wxMpKfApiProxy.kfAccountInviteWorker(getClientToken(wxMpAppId), request);
         }
 
         //客服管理 - 修改客服账号
-        public WeixinRspV1 kfAccountUpdate(WxMpKfAccountParam request) throws BusinessException {
-            return wxMpKfApiProxy.kfAccountUpdate(getClientToken(), request);
+        public WeixinRspV1 kfAccountUpdate(String wxMpAppId, WxMpKfAccountParam request) throws BusinessException {
+            return wxMpKfApiProxy.kfAccountUpdate(getClientToken(wxMpAppId), request);
         }
 
         //客服管理 - 删除客服账号
-        public WeixinRspV1 kfAccountDel(String kfAccount) throws BusinessException {
+        public WeixinRspV1 kfAccountDel(String wxMpAppId, String kfAccount) throws BusinessException {
             WxMpKfAccountParam request = new WxMpKfAccountParam();
             request.setKfAccount(kfAccount);
-            return wxMpKfApiProxy.kfAccountDel(getClientToken(), request);
+            return wxMpKfApiProxy.kfAccountDel(getClientToken(wxMpAppId), request);
         }
 
         //客服管理 - 设置客服账号的头像，文件大小为5M以内
-        public WeixinRspV1 kfAccountUploadHeadImg(String kfAccount, org.springframework.core.io.Resource media) throws BusinessException {
-            return wxMpKfApiProxy.kfAccountUploadHeadImg(getClientToken(), kfAccount, media);
+        public WeixinRspV1 kfAccountUploadHeadImg(String wxMpAppId, String kfAccount, org.springframework.core.io.Resource media) throws BusinessException {
+            return wxMpKfApiProxy.kfAccountUploadHeadImg(getClientToken(wxMpAppId), kfAccount, media);
         }
 
         //客服管理 - 获取所有客服账号
-        public WxMpKfListRsp kfList() throws BusinessException {
-            return wxMpKfApiProxy.kfList(getClientToken());
+        public WxMpKfListRsp kfList(String wxMpAppId) throws BusinessException {
+            return wxMpKfApiProxy.kfList(getClientToken(wxMpAppId));
         }
 
         //客服管理 - 获取所有客服在线账号
-        public WxMpKfListRsp kfOnlineList() throws BusinessException {
-            return wxMpKfApiProxy.kfOnlineList(getClientToken());
+        public WxMpKfListRsp kfOnlineList(String wxMpAppId) throws BusinessException {
+            return wxMpKfApiProxy.kfOnlineList(getClientToken(wxMpAppId));
         }
 
         //客服消息 - 发消息
-        public void sendKefuMessageWithResponse(ReplyMsgData request) throws BusinessException {
-            wxMpKfApiProxy.sendKefuMessageWithResponse(getClientToken(), request);
+        public void sendKefuMessageWithResponse(String wxMpAppId, ReplyMsgData request) throws BusinessException {
+            wxMpKfApiProxy.sendKefuMessageWithResponse(getClientToken(wxMpAppId), request);
         }
 
         //客服消息 - 发送客服输入状态
-        public void sendKfTypingState(String openid, TypingType command) throws BusinessException {
+        public void sendKfTypingState(String wxMpAppId, String openid, TypingType command) throws BusinessException {
             WxMpKfTypingParam request = new WxMpKfTypingParam();
             request.setToUser(openid);
             request.setCommand(command);
-            wxMpKfApiProxy.sendKfTypingState(getClientToken(), request);
+            wxMpKfApiProxy.sendKfTypingState(getClientToken(wxMpAppId), request);
         }
 
         //会话控制 - 创建会话
-        public void kfSessionCreate(String openid, String kfAccount) throws BusinessException {
+        public void kfSessionCreate(String wxMpAppId, String openid, String kfAccount) throws BusinessException {
             WxMpKfSessionData request = new WxMpKfSessionData();
             request.setOpenId(openid);
             request.setKfAccount(kfAccount);
-            wxMpKfApiProxy.kfSessionCreate(getClientToken(), request);
+            wxMpKfApiProxy.kfSessionCreate(getClientToken(wxMpAppId), request);
         }
 
         //会话控制 - 关闭会话
-        public void kfSessionClose(String openid, String kfAccount) throws BusinessException {
+        public void kfSessionClose(String wxMpAppId, String openid, String kfAccount) throws BusinessException {
             WxMpKfSessionData request = new WxMpKfSessionData();
             request.setOpenId(openid);
             request.setKfAccount(kfAccount);
-            wxMpKfApiProxy.kfSessionClose(getClientToken(), request);
+            wxMpKfApiProxy.kfSessionClose(getClientToken(wxMpAppId), request);
         }
 
         //会话控制 - 获取客户会话状态
-        public WxMpKfSessionData kfSessionInfo(String openid) throws BusinessException {
-            return wxMpKfApiProxy.kfSessionInfo(getClientToken(), openid);
+        public WxMpKfSessionData kfSessionInfo(String wxMpAppId, String openid) throws BusinessException {
+            return wxMpKfApiProxy.kfSessionInfo(getClientToken(wxMpAppId), openid);
         }
 
         //会话控制 - 获取客服会话列表
-        public WxMpKfSessionListRsp kfSessionList(String kfAccount) throws BusinessException {
-            return wxMpKfApiProxy.kfSessionList(getClientToken(), kfAccount);
+        public WxMpKfSessionListRsp kfSessionList(String wxMpAppId, String kfAccount) throws BusinessException {
+            return wxMpKfApiProxy.kfSessionList(getClientToken(wxMpAppId), kfAccount);
         }
 
         //会话控制 - 获取未接入会话列表
-        public WxMpKfSessionListRsp kfSessionWaitCase() throws BusinessException {
-            return wxMpKfApiProxy.kfSessionWaitCase(getClientToken());
+        public WxMpKfSessionListRsp kfSessionWaitCase(String wxMpAppId) throws BusinessException {
+            return wxMpKfApiProxy.kfSessionWaitCase(getClientToken(wxMpAppId));
         }
 
         //获取聊天记录
-        public WxMpKfMsgListRsp kfMsgList(LocalDateTime startTime, LocalDateTime endTime, Long msgId, Integer number) throws BusinessException {
+        public WxMpKfMsgListRsp kfMsgList(String wxMpAppId, LocalDateTime startTime, LocalDateTime endTime, Long msgId, Integer number) throws BusinessException {
             WxMpKfMsgListParam request = new WxMpKfMsgListParam();
             request.setStartTime(DateTimeUtilPlus.toEpochSecond(startTime));
             request.setEndTime(DateTimeUtilPlus.toEpochSecond(endTime));
             request.setMsgId(msgId);
             request.setNumber(number);
-            return wxMpKfApiProxy.kfMsgList(getClientToken(), request);
+            return wxMpKfApiProxy.kfMsgList(getClientToken(wxMpAppId), request);
         }
     }
 
     public class Menu {
         //自定义菜单 - 创建接口
-        public WeixinRspV1 menuCreate(WxMenuData request) throws BusinessException {
+        public WeixinRspV1 menuCreate(String wxMpAppId, WxMenuData request) throws BusinessException {
             if (request.getMatchRule() != null) {
-                return wxMpMenuApiProxy.selfMenuCreate(getClientToken(), request);
+                return wxMpMenuApiProxy.selfMenuCreate(getClientToken(wxMpAppId), request);
             } else {
-                return wxMpMenuApiProxy.menuCreate(getClientToken(), request);
+                return wxMpMenuApiProxy.menuCreate(getClientToken(wxMpAppId), request);
             }
         }
 
         //自定义菜单 - 查询接口（包括官网设置的菜单和AIP设置的菜单）
-        public WxMpSelfMenuInfoRsp allMenuInfo() throws BusinessException {
-            return wxMpMenuApiProxy.allMenuInfo(getClientToken());
+        public WxMpSelfMenuInfoRsp allMenuInfo(String wxMpAppId) throws BusinessException {
+            return wxMpMenuApiProxy.allMenuInfo(getClientToken(wxMpAppId));
         }
 
         //自定义菜单 - 删除接口
-        public WeixinRspV1 menuDelete() throws BusinessException {
-            return wxMpMenuApiProxy.menuDelete(getClientToken());
+        public WeixinRspV1 menuDelete(String wxMpAppId) throws BusinessException {
+            return wxMpMenuApiProxy.menuDelete(getClientToken(wxMpAppId));
         }
 
         //自定义菜单 - 删除个性化菜单
-        public WeixinRspV1 selfMenuDelete(String menuId) throws BusinessException {
+        public WeixinRspV1 selfMenuDelete(String wxMpAppId, String menuId) throws BusinessException {
             WxMenuData request = new WxMenuData();
             request.setMenuId(menuId);
-            return wxMpMenuApiProxy.selfMenuDelete(getClientToken(), request);
+            return wxMpMenuApiProxy.selfMenuDelete(getClientToken(wxMpAppId), request);
         }
 
         //自定义菜单 - 测试个性化菜单匹配结果
-        public WxMenuData selfMenuTryMatch(String openId) throws BusinessException {
+        public WxMenuData selfMenuTryMatch(String wxMpAppId, String openId) throws BusinessException {
             WxMenuTryMatchParam request = new WxMenuTryMatchParam();
             request.setUserId(openId);
-            return wxMpMenuApiProxy.selfMenuTryMatch(getClientToken(), request);
+            return wxMpMenuApiProxy.selfMenuTryMatch(getClientToken(wxMpAppId), request);
         }
 
         //自定义菜单 - 获取自定义菜单配置(只能查询API定义的菜单)
-        public WxMenuRsp selfMenuGet() throws BusinessException {
-            return wxMpMenuApiProxy.selfMenuGet(getClientToken());
+        public WxMenuRsp selfMenuGet(String wxMpAppId) throws BusinessException {
+            return wxMpMenuApiProxy.selfMenuGet(getClientToken(wxMpAppId));
         }
     }
 
     public class Material {
         //素材管理 - 新增临时素材
-        public WxMpMediaData tempMaterialUpload(MaterialType type, org.springframework.core.io.Resource media) throws BusinessException {
-            return wxMpMaterialApiProxy.mediaUpload(getClientToken(), type, media);
+        public WxMpMediaData tempMaterialUpload(String wxMpAppId, MaterialType type, org.springframework.core.io.Resource media) throws BusinessException {
+            return wxMpMaterialApiProxy.mediaUpload(getClientToken(wxMpAppId), type, media);
         }
 
         //素材管理 - 获取临时素材
-        public org.springframework.core.io.Resource tempMaterialDownload(String mediaId) throws BusinessException {
-            return wxMpMaterialApiProxy.mediaDownload(getClientToken(), mediaId);
+        public org.springframework.core.io.Resource tempMaterialDownload(String wxMpAppId, String mediaId) throws BusinessException {
+            return wxMpMaterialApiProxy.mediaDownload(getClientToken(wxMpAppId), mediaId);
         }
 
         //素材管理 - 获取临时高清语音素材
-        public org.springframework.core.io.Resource tempVoiceDownload(String mediaId) throws BusinessException {
-            return wxMpMaterialApiProxy.jssdkMediaDownload(getClientToken(), mediaId);
+        public org.springframework.core.io.Resource tempVoiceDownload(String wxMpAppId, String mediaId) throws BusinessException {
+            return wxMpMaterialApiProxy.jssdkMediaDownload(getClientToken(wxMpAppId), mediaId);
         }
 
         //素材管理 - 新增图片永久素材
-        public WxMpMediaData imageUpload(org.springframework.core.io.Resource media) throws BusinessException {
-            return wxMpMaterialApiProxy.mediaImgUpload(getClientToken(), media);
+        public WxMpMediaData imageUpload(String wxMpAppId, org.springframework.core.io.Resource media) throws BusinessException {
+            return wxMpMaterialApiProxy.mediaImgUpload(getClientToken(wxMpAppId), media);
         }
 
         //素材管理 - 新增其它永久素材
-        public WxMpMediaData materialUpload(MaterialType type, WxMpMaterialVideoParam videoParam, org.springframework.core.io.Resource media) throws BusinessException {
+        public WxMpMediaData materialUpload(String wxMpAppId, MaterialType type, WxMpMaterialVideoParam videoParam, org.springframework.core.io.Resource media) throws BusinessException {
             if (type != MaterialType.video) {
                 videoParam = null;
             }
-            return wxMpMaterialApiProxy.materialUpload(getClientToken(), type, videoParam, media);
+            return wxMpMaterialApiProxy.materialUpload(getClientToken(wxMpAppId), type, videoParam, media);
         }
 
         //素材管理 - 图文永久素材获取
-        public WxMpMaterialNewsData newsInfo(String mediaId) throws BusinessException {
+        public WxMpMaterialNewsData newsInfo(String wxMpAppId, String mediaId) throws BusinessException {
             WxMpMediaData request = new WxMpMediaData();
             request.setMediaId(mediaId);
-            return wxMpMaterialApiProxy.materialNewsInfo(getClientToken(), request);
+            return wxMpMaterialApiProxy.materialNewsInfo(getClientToken(wxMpAppId), request);
         }
 
         //素材管理 - 视频永久素材获取
-        public WxMpMaterialVideoRsp videoInfo(String mediaId) throws BusinessException {
+        public WxMpMaterialVideoRsp videoInfo(String wxMpAppId, String mediaId) throws BusinessException {
             WxMpMediaData request = new WxMpMediaData();
             request.setMediaId(mediaId);
-            return wxMpMaterialApiProxy.materialVideoInfo(getClientToken(), request);
+            return wxMpMaterialApiProxy.materialVideoInfo(getClientToken(wxMpAppId), request);
         }
 
         //素材管理 - 其它永久素材获取
-        public org.springframework.core.io.Resource materialDownload(String mediaId) throws BusinessException {
+        public org.springframework.core.io.Resource materialDownload(String wxMpAppId, String mediaId) throws BusinessException {
             WxMpMediaData request = new WxMpMediaData();
             request.setMediaId(mediaId);
-            return wxMpMaterialApiProxy.materialOtherDownload(getClientToken(), request);
+            return wxMpMaterialApiProxy.materialOtherDownload(getClientToken(wxMpAppId), request);
         }
 
         //素材管理 - 删除永久素材
-        public WeixinRspV1 materialDelete(String mediaId) throws BusinessException {
+        public WeixinRspV1 materialDelete(String wxMpAppId, String mediaId) throws BusinessException {
             WxMpMediaData request = new WxMpMediaData();
             request.setMediaId(mediaId);
-            return wxMpMaterialApiProxy.materialDelete(getClientToken(), request);
+            return wxMpMaterialApiProxy.materialDelete(getClientToken(wxMpAppId), request);
         }
 
         //素材管理 - 获取永久素材总数
-        public WxMpMaterialCountData materialCount() throws BusinessException {
-            return wxMpMaterialApiProxy.materialCount(getClientToken());
+        public WxMpMaterialCountData materialCount(String wxMpAppId) throws BusinessException {
+            return wxMpMaterialApiProxy.materialCount(getClientToken(wxMpAppId));
         }
 
         //素材管理 - 获取永久素材列表
-        public WxMpMaterialSearchRsp materialPage(MaterialType type, Integer offset, Integer count) throws BusinessException {
+        public WxMpMaterialSearchRsp materialPage(String wxMpAppId, MaterialType type, Integer offset, Integer count) throws BusinessException {
             WxMpMaterialSearchParam request = new WxMpMaterialSearchParam();
             request.setType(type);
             request.setOffset(offset);
             request.setCount(count);
-            return wxMpMaterialApiProxy.materialBatchGet(getClientToken(), request);
+            return wxMpMaterialApiProxy.materialBatchGet(getClientToken(wxMpAppId), request);
         }
     }
 
@@ -392,20 +405,21 @@ public class WxMpClient {
          * @param callback    回调
          * @return 回复，根据情况返回回调数据或"failed"或"success"
          */
-        public Object replyMessageNotice(MsgSimpleCb msgSimpleCb, MsgDetailCb msgDetailCb, MessageReplyCallback callback) {
+        public Object replyMessageNotice(String wxMpAppId, MsgSimpleCb msgSimpleCb, MsgDetailCb msgDetailCb, MessageReplyCallback callback) {
             //验证安全签名，如果有消息体，校验后解码消息体
+            WxMpAuth wxMpAuth = choosWxMpAuth(wxMpAppId);
             if (msgDetailCb == null) {//没有消息体，属于连接测试
-                String needSign = signString(wxMpClientConfig.getMsgToken(), msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce()).equals(msgSimpleCb.getSignature()) ? msgSimpleCb.getEchostr() : REPLAY_MESSAGE_FAILED;
+                String needSign = signString(wxMpAuth.getVerificationToken(), msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce()).equals(msgSimpleCb.getSignature()) ? msgSimpleCb.getEchostr() : REPLAY_MESSAGE_FAILED;
                 log.debug("======WxMpClient replyMessageNotice needSign:{}, echostr:{}", needSign, msgSimpleCb.getEchostr());
                 return needSign;
             } else {
                 if (StringUtilPlus.isNotEmpty(msgDetailCb.getEncrypt())) {//消息是密文传输，需要解密
-                    String selfMsgSignature = signString(wxMpClientConfig.getMsgToken(), msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce(), msgDetailCb.getEncrypt());//组装消息验证码
+                    String selfMsgSignature = signString(wxMpAuth.getVerificationToken(), msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce(), msgDetailCb.getEncrypt());//组装消息验证码
                     if (!selfMsgSignature.equals(msgSimpleCb.getMsg_signature())) {
                         return REPLAY_MESSAGE_FAILED;
                     }
                     //解密消息
-                    msgDetailCb = decryptMsg(msgDetailCb.getEncrypt());
+                    msgDetailCb = decryptMsg(wxMpAuth, msgDetailCb.getEncrypt());
                     if (msgDetailCb == null) {
                         return REPLAY_MESSAGE_FAILED;
                     }
@@ -428,11 +442,12 @@ public class WxMpClient {
          * @param msg 消息字符串
          * @return 加密结果
          */
-        private String encryptMsg(String msg) {
+        private String encryptMsg(String wxMpAppId, String msg) {
+            WxMpAuth wxMpAuth = choosWxMpAuth(wxMpAppId);
             Byte[] randomStrBytes = ArrayUtils.toObject(RandomUtilPlus.String.nextAlphanumeric(16).getBytes(StringUtilPlus.UTF_8));
             Byte[] textBytes = ArrayUtils.toObject(msg.getBytes(StringUtilPlus.UTF_8));
             Byte[] networkBytesOrder = ArrayUtils.toObject(getNetworkBytesOrder(textBytes.length));
-            Byte[] appidBytes = ArrayUtils.toObject(wxMpClientConfig.getAppId().getBytes(StringUtilPlus.UTF_8));
+            Byte[] appidBytes = ArrayUtils.toObject(wxMpAuth.getAppId().getBytes(StringUtilPlus.UTF_8));
 
             // randomStr + networkBytesOrder + text + appid
             List<Byte> byteList = new ArrayList<>();
@@ -450,13 +465,13 @@ public class WxMpClient {
 
             try {
                 // 加密
-                byte[] aesKey = DigestUtilPlus.Base64.decodeBase64(wxMpClientConfig.getMsgEncodingAesKey());
+                byte[] aesKey = DigestUtilPlus.Base64.decodeBase64(wxMpAuth.getEncryptKey());
                 byte[] aesIv = Arrays.copyOfRange(Base64.decodeBase64(aesKey), 0, 16);
                 String encryptMsg = DigestUtilPlus.AES.encryptCBCNoPadding(unencrypted, aesKey, aesIv, true);
                 //消息签名
                 Long timestamp = System.currentTimeMillis() / 1000;
                 String nonceStr = RandomUtilPlus.String.nextAlphanumeric(32);
-                String signature = signString(wxMpClientConfig.getMsgToken(), timestamp.toString(), nonceStr, encryptMsg);
+                String signature = signString(wxMpAuth.getVerificationToken(), timestamp.toString(), nonceStr, encryptMsg);
 
                 return String.format(RESPONSE_MSG, encryptMsg, signature, timestamp, nonceStr);
             } catch (Exception e) {
@@ -471,9 +486,9 @@ public class WxMpClient {
          * @param encryptMsg 加密字符串
          * @return 解密结果
          */
-        private MsgDetailCb decryptMsg(String encryptMsg) {
+        private MsgDetailCb decryptMsg(WxMpAuth wxMpAuth, String encryptMsg) {
             try {
-                byte[] aesKey = DigestUtilPlus.Base64.decodeBase64(wxMpClientConfig.getMsgEncodingAesKey());
+                byte[] aesKey = DigestUtilPlus.Base64.decodeBase64(wxMpAuth.getEncryptKey());
                 byte[] aesIv = Arrays.copyOfRange(Base64.decodeBase64(aesKey), 0, 16);
                 String rst = DigestUtilPlus.AES.decryptCBCNoPadding(DigestUtilPlus.Base64.decodeBase64(encryptMsg), aesKey, aesIv);
                 // 去除补位字符
@@ -482,7 +497,7 @@ public class WxMpClient {
                 int xmlLength = recoverNetworkBytesOrder(Arrays.copyOfRange(bytes, 16, 20));
                 //检查id是否正确
                 String fromAppId = new String(Arrays.copyOfRange(bytes, 20 + xmlLength, bytes.length), StringUtilPlus.UTF_8);
-                if (fromAppId.equals(wxMpClientConfig.getAppId())) {
+                if (fromAppId.equals(wxMpAuth.getAppId())) {
                     //装换消息对象
                     String decryptMsg = new String(Arrays.copyOfRange(bytes, 20, 20 + xmlLength), StringUtilPlus.UTF_8);
                     JAXBContext context = JAXBContext.newInstance(MsgDetailCb.class);
@@ -567,24 +582,24 @@ public class WxMpClient {
 
     public class User {
         //用户管理 - 获取用户基本信息
-        public MpUserData userInfo(String openid) throws BusinessException {
-            return userInfo(openid, null);
+        public MpUserData userInfo(String wxMpAppId, String openid) throws BusinessException {
+            return userInfo(wxMpAppId, openid, null);
         }
 
         //用户管理 - 获取用户基本信息
-        public MpUserData userInfo(String openid, String lang) throws BusinessException {
+        public MpUserData userInfo(String wxMpAppId, String openid, String lang) throws BusinessException {
             lang = StringUtilPlus.defaultString(lang, "zh_CN");
-            return wxMpUserApiProxy.userInfo(getClientToken(), openid, lang);
+            return wxMpUserApiProxy.userInfo(getClientToken(wxMpAppId), openid, lang);
         }
     }
 
     public class Mass {
         //基础消息能力 - 群发接口 - 根据标签进行群发
-        MassRsp massGroupMessageSend(ReplyMsgData request, boolean preview) throws BusinessException {
+        MassRsp massGroupMessageSend(String wxMpAppId, ReplyMsgData request, boolean preview) throws BusinessException {
             if (preview) {
-                return wxMpMassApiProxy.massMessagePreview(getClientToken(), request);
+                return wxMpMassApiProxy.massMessagePreview(getClientToken(wxMpAppId), request);
             } else {
-                return wxMpMassApiProxy.massGroupMessageSend(getClientToken(), request);
+                return wxMpMassApiProxy.massGroupMessageSend(getClientToken(wxMpAppId), request);
             }
         }
     }
@@ -592,97 +607,97 @@ public class WxMpClient {
     public class Subscribe {
 
         //订阅通知 - 从公共模板库中选用模板，到私有模板库中
-        public String privateTemplateAdd(String publicTemplateId, List<Integer> keywordIdList, String sceneDesc) throws BusinessException {
+        public String privateTemplateAdd(String wxMpAppId, String publicTemplateId, List<Integer> keywordIdList, String sceneDesc) throws BusinessException {
             WxMpTemplateParam request = new WxMpTemplateParam();
             request.setTid(publicTemplateId);
             request.setKidList(keywordIdList);
             request.setSceneDesc(sceneDesc);
-            return wxMpSubscribeMsgApiProxy.privateTemplateAdd(getClientToken(), request).getPriTmplId();
+            return wxMpSubscribeMsgApiProxy.privateTemplateAdd(getClientToken(wxMpAppId), request).getPriTmplId();
         }
 
         //订阅通知 - 删除私有模板库中的模板
-        public void privateTemplateDelete(String privateTemplateId) throws BusinessException {
+        public void privateTemplateDelete(String wxMpAppId, String privateTemplateId) throws BusinessException {
             WxMpTemplateData request = new WxMpTemplateData();
             request.setPriTmplId(privateTemplateId);
-            wxMpSubscribeMsgApiProxy.privateTemplateDelete(getClientToken(), request);
+            wxMpSubscribeMsgApiProxy.privateTemplateDelete(getClientToken(wxMpAppId), request);
         }
 
         //订阅通知 - 获取公众号类目
-        public List<WxMpCategoryData> categoryList() throws BusinessException {
-            return wxMpSubscribeMsgApiProxy.categoryList(getClientToken()).getData();
+        public List<WxMpCategoryData> categoryList(String wxMpAppId) throws BusinessException {
+            return wxMpSubscribeMsgApiProxy.categoryList(getClientToken(wxMpAppId)).getData();
         }
 
         //订阅通知 - 获取公共模板下的关键词列表
-        public List<WxMpPubTemplateKeywordData> publicTemplateKeywordsList(String publicTemplateId) throws BusinessException {
+        public List<WxMpPubTemplateKeywordData> publicTemplateKeywordsList(String wxMpAppId, String publicTemplateId) throws BusinessException {
             WxMpTemplateParam request = new WxMpTemplateParam();
             request.setTid(publicTemplateId);
-            return wxMpSubscribeMsgApiProxy.publicTemplateKeywordsList(getClientToken(), request).getData();
+            return wxMpSubscribeMsgApiProxy.publicTemplateKeywordsList(getClientToken(wxMpAppId), request).getData();
         }
 
         //订阅通知 - 获取类目下的公共模板
-        public WeixinRspV2<List<WxMpPubTemplateTitleData>> publicTemplatePage(String categoryIds, int start, int limit) throws BusinessException {
+        public WeixinRspV2<List<WxMpPubTemplateTitleData>> publicTemplatePage(String wxMpAppId, String categoryIds, int start, int limit) throws BusinessException {
             WxMpPubTemplateTitleParam request = new WxMpPubTemplateTitleParam();
             request.setIds(categoryIds);
             request.setStart(start);
             request.setLimit(limit);
-            return wxMpSubscribeMsgApiProxy.publicTemplatePage(getClientToken(), request);
+            return wxMpSubscribeMsgApiProxy.publicTemplatePage(getClientToken(wxMpAppId), request);
         }
 
         //订阅通知 - 获取私有的模板列表
-        public List<WxMpTemplateData> privateTemplateList() throws BusinessException {
-            return wxMpSubscribeMsgApiProxy.privateTemplateList(getClientToken()).getData();
+        public List<WxMpTemplateData> privateTemplateList(String wxMpAppId) throws BusinessException {
+            return wxMpSubscribeMsgApiProxy.privateTemplateList(getClientToken(wxMpAppId)).getData();
         }
 
         //订阅通知 - 发送订阅通知
-        public void sendSubscribeMsg(WxMpTemplateMsgParam request) throws BusinessException {
-            wxMpSubscribeMsgApiProxy.sendSubscribeMsg(getClientToken(), request);
+        public void sendSubscribeMsg(String wxMpAppId, WxMpTemplateMsgParam request) throws BusinessException {
+            wxMpSubscribeMsgApiProxy.sendSubscribeMsg(getClientToken(wxMpAppId), request);
         }
     }
 
     public class Template {
         //基础消息 - 模板消息 - 设置所属行业
-        public void industrySet(WxMpIndustryEnum primaryIndustry, WxMpIndustryEnum secondaryIndustry) throws BusinessException {
+        public void industrySet(String wxMpAppId, WxMpIndustryEnum primaryIndustry, WxMpIndustryEnum secondaryIndustry) throws BusinessException {
             WxMpIndustryParam request = new WxMpIndustryParam();
             request.setIndustryId1(primaryIndustry.getCode());
             request.setIndustryId2(secondaryIndustry.getCode());
-            wxMpTemplateMsgApiProxy.industrySet(getClientToken(), request);
+            wxMpTemplateMsgApiProxy.industrySet(getClientToken(wxMpAppId), request);
         }
 
         //基础消息 - 模板消息 - 获取设置的行业信息
-        public WxMpIndustryData industryInfo() throws BusinessException {
-            return wxMpTemplateMsgApiProxy.industryInfo(getClientToken());
+        public WxMpIndustryData industryInfo(String wxMpAppId) throws BusinessException {
+            return wxMpTemplateMsgApiProxy.industryInfo(getClientToken(wxMpAppId));
         }
 
         //基础消息 - 模板消息 - 获得模板ID
-        public String privateTemplateAdd(String shortTemplateId, List<String> keywordNameList) throws BusinessException {
+        public String privateTemplateAdd(String wxMpAppId, String shortTemplateId, List<String> keywordNameList) throws BusinessException {
             WxMpAddTemplateParam request = new WxMpAddTemplateParam();
             request.setTemplateIdShort(shortTemplateId);
             request.setKeywordNameList(keywordNameList);
-            return wxMpTemplateMsgApiProxy.privateTemplateAdd(getClientToken(), request).getTemplateId();
+            return wxMpTemplateMsgApiProxy.privateTemplateAdd(getClientToken(wxMpAppId), request).getTemplateId();
         }
 
         //基础消息 - 模板消息 - 获取模板列表
-        public List<cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData> privateTemplateList() throws BusinessException {
-            return wxMpTemplateMsgApiProxy.privateTemplateList(getClientToken()).getTemplateList();
+        public List<cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData> privateTemplateList(String wxMpAppId) throws BusinessException {
+            return wxMpTemplateMsgApiProxy.privateTemplateList(getClientToken(wxMpAppId)).getTemplateList();
         }
 
         //基础消息 - 模板消息 - 获取模板列表
-        public void privateTemplateDelete(String templateId) throws BusinessException {
+        public void privateTemplateDelete(String wxMpAppId, String templateId) throws BusinessException {
             cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData request = new cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData();
             request.setTemplateId(templateId);
-            wxMpTemplateMsgApiProxy.privateTemplateDelete(getClientToken(), request);
+            wxMpTemplateMsgApiProxy.privateTemplateDelete(getClientToken(wxMpAppId), request);
         }
 
         //基础消息 - 模板消息 - 发送模板消息
-        public String sendTemplateMsg(WxMpTemplateMsgParam request) throws BusinessException {
-            return wxMpTemplateMsgApiProxy.sendTemplateMsg(getClientToken(), request).getMsgId();
+        public String sendTemplateMsg(String wxMpAppId, WxMpTemplateMsgParam request) throws BusinessException {
+            return wxMpTemplateMsgApiProxy.sendTemplateMsg(getClientToken(wxMpAppId), request).getMsgId();
         }
 
     }
 
     public class Card {
         //微信卡券 - 创建卡券
-        public String createCard(WxMpCardData cardData) throws BusinessException {
+        public String createCard(String wxMpAppId, WxMpCardData cardData) throws BusinessException {
             WxMpCardParam card = new WxMpCardParam();
             if (cardData instanceof MemberCardData memberCardData) {
                 card.setCardType(CardType.MEMBER_CARD);
@@ -707,60 +722,61 @@ public class WxMpClient {
             }
             WxMpCardReq request = new WxMpCardReq();
             request.setCard(card);
-            return wxMpCardApiProxy.createCard(getClientToken(), request).getCardId();
+            return wxMpCardApiProxy.createCard(getClientToken(wxMpAppId), request).getCardId();
         }
 
         //微信卡券 - 查询卡券详情（含审核状态）
-        public WxMpCardData getCardDetail(WxMpCardData request) throws BusinessException {
-            return wxMpCardApiProxy.getCardDetail(getClientToken(), request);
+        public WxMpCardData getCardDetail(String wxMpAppId, WxMpCardData request) throws BusinessException {
+            return wxMpCardApiProxy.getCardDetail(getClientToken(wxMpAppId), request);
         }
 
         //微信卡券 - 投放卡券 - 二维码投放
-        public WxMpQrcodeData createQrcodeCard(WxMpQrcodeParam request) throws BusinessException {
-            return wxMpCardApiProxy.createQrcodeCard(getClientToken(), request);
+        public WxMpQrcodeData createQrcodeCard(String wxMpAppId, WxMpQrcodeParam request) throws BusinessException {
+            return wxMpCardApiProxy.createQrcodeCard(getClientToken(wxMpAppId), request);
         }
 
         //微信卡券 - 投放卡券 - 卡券货架投放
-        public WxMpLandingPageData createLandingPageCard(WxMpLandingPageParam request) throws BusinessException {
-            return wxMpCardApiProxy.createLandingPageCard(getClientToken(), request);
+        public WxMpLandingPageData createLandingPageCard(String wxMpAppId, WxMpLandingPageParam request) throws BusinessException {
+            return wxMpCardApiProxy.createLandingPageCard(getClientToken(wxMpAppId), request);
         }
 
         //微信卡券 - 激活会员卡(一键激活前置条件设置)
-        public void setActivateUserForm(WxMpActivateUserFormParam request) throws BusinessException {
-            wxMpCardApiProxy.setActivateUserForm(getClientToken(), request);
+        public void setActivateUserForm(String wxMpAppId, WxMpActivateUserFormParam request) throws BusinessException {
+            wxMpCardApiProxy.setActivateUserForm(getClientToken(wxMpAppId), request);
         }
 
         //微信卡券 - 激活会员卡
-        public void activateMemberCard(WxMpMemberCardActiveParam request) throws BusinessException {
-            wxMpCardApiProxy.activateMemberCard(getClientToken(), request);
+        public void activateMemberCard(String wxMpAppId, WxMpMemberCardActiveParam request) throws BusinessException {
+            wxMpCardApiProxy.activateMemberCard(getClientToken(wxMpAppId), request);
         }
 
         //微信卡券 - 拉取会员信息(一键激活的信息获取)
-        public WxMpMemberCardUserInfoData getUserInfo(String cardId, String code) throws BusinessException {
+        public WxMpMemberCardUserInfoData getUserInfo(String wxMpAppId, String cardId, String code) throws BusinessException {
             WxMpCardData request = new WxMpCardData();
             request.setCardId(cardId);
             request.setCode(code);
-            return wxMpCardApiProxy.getMemberCardUserInfo(getClientToken(), request);
+            return wxMpCardApiProxy.getMemberCardUserInfo(getClientToken(wxMpAppId), request);
         }
 
         //微信卡券 - 更新会员信息
-        public WxMpMemberCardUpdateData updateUserMemberCard(WxMpMemberCardUpdateParam request) throws BusinessException {
-            return wxMpCardApiProxy.updateUserMemberCard(getClientToken(), request);
+        public WxMpMemberCardUpdateData updateUserMemberCard(String wxMpAppId, WxMpMemberCardUpdateParam request) throws BusinessException {
+            return wxMpCardApiProxy.updateUserMemberCard(getClientToken(wxMpAppId), request);
         }
 
     }
 
-    public WxJsapiSignature createJsapiSignature(String url) throws BusinessException {
+    public WxJsapiSignature createJsapiSignature(String wxMpAppId, String url) throws BusinessException {
+        WxMpAuth wxMpAuth = choosWxMpAuth(wxMpAppId);
         long timestamp = System.currentTimeMillis() / 1000;//从1970年1月1日00:00:00至今的秒数
         String nonceStr = RandomUtilPlus.String.nextAlphanumeric(32);
-        String jsapiTicket = getTicket(TicketType.JSAPI);
+        String jsapiTicket = getTicket(wxMpAuth.getAppId(), TicketType.JSAPI);
         //注意这里参数名必须全部小写，且必须有序
         String needSign = String.format(WX_JS_API_TICKET_SIGN, jsapiTicket, nonceStr, timestamp, url);
         String signature = DigestUtilPlus.SHA.sign(needSign, DigestUtilPlus.SHAAlgo._1, Boolean.FALSE);
 
         log.debug("needSign:[{}]", needSign);
         WxJsapiSignature jsapiSignature = new WxJsapiSignature();
-        jsapiSignature.setAppId(wxMpClientConfig.getAppId());
+        jsapiSignature.setAppId(wxMpAuth.getAppId());
         jsapiSignature.setTimestamp(timestamp);
         jsapiSignature.setNonceStr(nonceStr);
         jsapiSignature.setUrl(url);//这个url不能删除，删除后jssdk会失败，文档上没有这个字段
@@ -768,11 +784,12 @@ public class WxMpClient {
         return jsapiSignature;
     }
 
-    private String getClientToken() throws BusinessException {
-        String tokenKey = getClientTokenKey();
+    private String getClientToken(String wxMpAppId) throws BusinessException {
+        WxMpAuth wxMpAuth = choosWxMpAuth(wxMpAppId);
+        String tokenKey = getClientTokenKey(wxMpAppId);
         return redisHelper.lockAndGet(WxCache.THIRD_WX_MP_V, tokenKey, Duration.ofSeconds(3), (locked) -> {
             if (locked) {
-                ClientTokenData clientTokenData = wxMpTokenApiProxy.getClientToken(wxMpClientConfig.getAppId(), wxMpClientConfig.getAppSecret());
+                ClientTokenData clientTokenData = wxMpTokenApiProxy.getClientToken(wxMpAuth.getAppId(), wxMpAuth.getAppSecret());
                 ThirdTokenRedisDto clientToken = new ThirdTokenRedisDto();
                 clientToken.setToken(clientTokenData.getAccessToken()); //获取到的凭证
                 clientToken.setExpireTime(LocalDateTime.now().plusSeconds(clientTokenData.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
@@ -790,11 +807,11 @@ public class WxMpClient {
         });
     }
 
-    private String getTicket(TicketType type) throws BusinessException {
-        String ticketKey = chooseTicketKey(type);
+    private String getTicket(String wxMpAppId, TicketType type) throws BusinessException {
+        String ticketKey = chooseTicketKey(wxMpAppId, type);
         return redisHelper.lockAndGet(WxCache.THIRD_WX_MP_V, ticketKey, Duration.ofSeconds(3), (locked) -> {
             if (locked) {
-                TicketRsp ticketRsp = wxMpTokenApiProxy.getTicket(getClientToken(), type.getCode());
+                TicketRsp ticketRsp = wxMpTokenApiProxy.getTicket(getClientToken(wxMpAppId), type.getCode());
                 TicketRedisDto ticketRedisDto = new TicketRedisDto();
                 ticketRedisDto.setTicket(ticketRsp.getTicket()); //获取到的凭证
                 ticketRedisDto.setExpireTime(LocalDateTime.now().plusSeconds(ticketRsp.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
@@ -812,15 +829,19 @@ public class WxMpClient {
         });
     }
 
-    private String getClientTokenKey() {
-        return "client_token:" + wxMpClientConfig.getAppId();
+    private String getClientTokenKey(String wxMpAppId) {
+        return "client_token:" + wxMpAppId;
     }
 
-    private String chooseTicketKey(TicketType type) {
+    private String chooseTicketKey(String wxMpAppId, TicketType type) {
         return switch (type) {
-            case JSAPI -> "jsapi_ticket:" + wxMpClientConfig.getAppId();
-            case WX_CARD -> "wx_card_ticket:" + wxMpClientConfig.getAppId();
-            case SDK -> "sdk_ticket:" + wxMpClientConfig.getAppId();
+            case JSAPI -> "jsapi_ticket:" + wxMpAppId;
+            case WX_CARD -> "wx_card_ticket:" + wxMpAppId;
+            case SDK -> "sdk_ticket:" + wxMpAppId;
         };
+    }
+
+    private WxMpAuth choosWxMpAuth(String wxMpAppId) {
+        return authMap.get(wxMpAppId);
     }
 }
