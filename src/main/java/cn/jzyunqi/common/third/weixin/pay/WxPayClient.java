@@ -53,6 +53,9 @@ import java.util.Map;
 public class WxPayClient {
 
     @Resource
+    private WxPayAuthRepository wxPayAuthRepository;
+
+    @Resource
     private WxPayOrderApiProxy wxPayOrderApiProxy;
 
     @Resource
@@ -63,9 +66,6 @@ public class WxPayClient {
 
     public final Order order = new Order();
     public final Callback cb = new Callback();
-
-    @Resource
-    private WxPayAuthRepository wxPayAuthRepository;
 
     @PostConstruct
     public void plantCertInit() throws BusinessException {

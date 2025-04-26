@@ -11,14 +11,14 @@ import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
 import cn.jzyunqi.common.third.weixin.mp.card.WxMpCardApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.card.enums.CardType;
-import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpActivateUserFormParam;
-import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpCardData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.CashCardData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.DiscountCardData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.GeneralCouponData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.GiftCardData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.GrouponCardData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.MemberCardData;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpActivateUserFormParam;
+import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpCardData;
 import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpCardParam;
 import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpCardReq;
 import cn.jzyunqi.common.third.weixin.mp.card.model.WxMpLandingPageData;
@@ -81,7 +81,6 @@ import cn.jzyunqi.common.utils.DigestUtilPlus;
 import cn.jzyunqi.common.utils.IOUtilPlus;
 import cn.jzyunqi.common.utils.RandomUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
-import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
@@ -94,8 +93,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -109,6 +106,9 @@ import java.util.stream.Stream;
 public class WxMpClient {
 
     private static final String WX_JS_API_TICKET_SIGN = "jsapi_ticket=%s&noncestr=%s&timestamp=%s&url=%s";
+
+    @Resource
+    private WxMpAuthRepository wxMpAuthRepository;
 
     @Resource
     private WxMpTokenApiProxy wxMpTokenApiProxy;
@@ -149,19 +149,6 @@ public class WxMpClient {
     public final Subscribe subscribe = new Subscribe();
     public final Template template = new Template();
     public final Card card = new Card();
-
-    @Resource
-    private WxMpAuthRepository wxMpAuthRepository;
-
-    private final Map<String, WxMpAuth> authMap = new ConcurrentHashMap<>();
-
-    @PostConstruct
-    public void init() {
-        List<WxMpAuth> wxMpAuthList = wxMpAuthRepository.getWxMpAuthList();
-        for (WxMpAuth wxMpAuth : wxMpAuthList) {
-            authMap.put(wxMpAuth.getAppId(), wxMpAuth);
-        }
-    }
 
     public class Kefu {
         //客服管理 - 添加客服账号（添加后不可用，需要再邀请）
@@ -407,7 +394,7 @@ public class WxMpClient {
          */
         public Object replyMessageNotice(String wxMpAppId, MsgSimpleCb msgSimpleCb, MsgDetailCb msgDetailCb, MessageReplyCallback callback) {
             //验证安全签名，如果有消息体，校验后解码消息体
-            WxMpAuth wxMpAuth = choosWxMpAuth(wxMpAppId);
+            WxMpAuth wxMpAuth = wxMpAuthRepository.choosWxMpAuth(wxMpAppId);
             if (msgDetailCb == null) {//没有消息体，属于连接测试
                 String needSign = signString(wxMpAuth.getVerificationToken(), msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce()).equals(msgSimpleCb.getSignature()) ? msgSimpleCb.getEchostr() : REPLAY_MESSAGE_FAILED;
                 log.debug("======WxMpClient replyMessageNotice needSign:{}, echostr:{}", needSign, msgSimpleCb.getEchostr());
@@ -443,7 +430,7 @@ public class WxMpClient {
          * @return 加密结果
          */
         private String encryptMsg(String wxMpAppId, String msg) {
-            WxMpAuth wxMpAuth = choosWxMpAuth(wxMpAppId);
+            WxMpAuth wxMpAuth = wxMpAuthRepository.choosWxMpAuth(wxMpAppId);
             Byte[] randomStrBytes = ArrayUtils.toObject(RandomUtilPlus.String.nextAlphanumeric(16).getBytes(StringUtilPlus.UTF_8));
             Byte[] textBytes = ArrayUtils.toObject(msg.getBytes(StringUtilPlus.UTF_8));
             Byte[] networkBytesOrder = ArrayUtils.toObject(getNetworkBytesOrder(textBytes.length));
@@ -766,7 +753,7 @@ public class WxMpClient {
     }
 
     public WxJsapiSignature createJsapiSignature(String wxMpAppId, String url) throws BusinessException {
-        WxMpAuth wxMpAuth = choosWxMpAuth(wxMpAppId);
+        WxMpAuth wxMpAuth = wxMpAuthRepository.choosWxMpAuth(wxMpAppId);
         long timestamp = System.currentTimeMillis() / 1000;//从1970年1月1日00:00:00至今的秒数
         String nonceStr = RandomUtilPlus.String.nextAlphanumeric(32);
         String jsapiTicket = getTicket(wxMpAuth.getAppId(), TicketType.JSAPI);
@@ -785,7 +772,7 @@ public class WxMpClient {
     }
 
     private String getClientToken(String wxMpAppId) throws BusinessException {
-        WxMpAuth wxMpAuth = choosWxMpAuth(wxMpAppId);
+        WxMpAuth wxMpAuth = wxMpAuthRepository.choosWxMpAuth(wxMpAppId);
         String tokenKey = getClientTokenKey(wxMpAppId);
         return redisHelper.lockAndGet(WxCache.THIRD_WX_MP_V, tokenKey, Duration.ofSeconds(3), (locked) -> {
             if (locked) {
@@ -839,9 +826,5 @@ public class WxMpClient {
             case WX_CARD -> "wx_card_ticket:" + wxMpAppId;
             case SDK -> "sdk_ticket:" + wxMpAppId;
         };
-    }
-
-    private WxMpAuth choosWxMpAuth(String wxMpAppId) {
-        return authMap.get(wxMpAppId);
     }
 }

@@ -1,8 +1,5 @@
 package cn.jzyunqi.common.third.weixin.pay;
 
-import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.third.weixin.mp.WxMpAuth;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.util.List;
@@ -29,5 +26,5 @@ public abstract class WxPayAuthRepository implements InitializingBean {
         return authMap.get(wxAppId);
     }
 
-    protected abstract List<WxPayAuth> getWxPayAuthList();
+    public abstract List<WxPayAuth> getWxPayAuthList();
 }
