@@ -26,5 +26,13 @@ public abstract class WxPayAuthRepository implements InitializingBean {
         return authMap.get(wxAppId);
     }
 
+    public void addWxPayAuth(WxPayAuth wxPayAuth) {
+        authMap.put(wxPayAuth.getWxAppId(), wxPayAuth);
+    }
+
+    public void removeWxPayAuth(String wxAppId) {
+        authMap.remove(wxAppId);
+    }
+
     public abstract List<WxPayAuth> getWxPayAuthList();
 }

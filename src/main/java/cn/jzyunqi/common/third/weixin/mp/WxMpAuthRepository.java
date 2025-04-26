@@ -1,7 +1,5 @@
 package cn.jzyunqi.common.third.weixin.mp;
 
-import cn.jzyunqi.common.third.weixin.pay.WxPayAuth;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.InitializingBean;
 
 import java.util.List;
@@ -26,6 +24,14 @@ public abstract class WxMpAuthRepository implements InitializingBean {
 
     public WxMpAuth choosWxMpAuth(String wxMpAppId) {
         return authMap.get(wxMpAppId);
+    }
+
+    public void addWxMpAuth(WxMpAuth wxMpAuth) {
+        authMap.put(wxMpAuth.getAppId(), wxMpAuth);
+    }
+
+    public void removeWxMpAuth(String wxMpAppId) {
+        authMap.remove(wxMpAppId);
     }
 
     public abstract List<WxMpAuth> getWxMpAuthList();
