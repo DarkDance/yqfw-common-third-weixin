@@ -2,6 +2,7 @@ package cn.jzyunqi.common.third.weixin.mp;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +17,7 @@ public abstract class WxMpAuthRepository implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        List<WxMpAuth> wxMpAuthList = getWxMpAuthList();
+        List<WxMpAuth> wxMpAuthList = initWxMpAuthList();
         for (WxMpAuth wxMpAuth : wxMpAuthList) {
             authMap.put(wxMpAuth.getAppId(), wxMpAuth);
         }
@@ -34,5 +35,9 @@ public abstract class WxMpAuthRepository implements InitializingBean {
         authMap.remove(wxMpAppId);
     }
 
-    public abstract List<WxMpAuth> getWxMpAuthList();
+    public List<WxMpAuth> getWxMpAuthList() {
+        return new ArrayList<>(authMap.values());
+    }
+
+    public abstract List<WxMpAuth> initWxMpAuthList();
 }

@@ -2,6 +2,7 @@ package cn.jzyunqi.common.third.weixin.pay;
 
 import org.springframework.beans.factory.InitializingBean;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,7 +17,7 @@ public abstract class WxPayAuthRepository implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        List<WxPayAuth> wxPayAuthList = getWxPayAuthList();
+        List<WxPayAuth> wxPayAuthList = initWxPayAuthList();
         for (WxPayAuth wxPayAuth : wxPayAuthList) {
             authMap.put(wxPayAuth.getWxAppId(), wxPayAuth);
         }
@@ -34,5 +35,9 @@ public abstract class WxPayAuthRepository implements InitializingBean {
         authMap.remove(wxAppId);
     }
 
-    public abstract List<WxPayAuth> getWxPayAuthList();
+    public List<WxPayAuth> getWxPayAuthList() {
+        return new ArrayList<>(authMap.values());
+    }
+
+    public abstract List<WxPayAuth> initWxPayAuthList();
 }
