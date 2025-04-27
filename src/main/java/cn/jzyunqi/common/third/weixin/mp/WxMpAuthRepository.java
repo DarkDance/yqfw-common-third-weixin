@@ -28,9 +28,7 @@ public abstract class WxMpAuthRepository implements InitializingBean {
     }
 
     public void addWxMpAuth(WxMpAuth wxMpAuth) {
-        if (!authMap.containsKey(wxMpAuth.getAppId())) {
-            authMap.put(wxMpAuth.getAppId(), wxMpAuth);
-        }
+        authMap.put(wxMpAuth.getAppId(), wxMpAuth);
     }
 
     public void removeWxMpAuth(String wxMpAppId) {
