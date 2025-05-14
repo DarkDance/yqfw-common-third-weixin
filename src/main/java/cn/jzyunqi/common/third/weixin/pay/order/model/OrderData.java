@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -17,6 +18,7 @@ import java.time.OffsetDateTime;
  */
 @Getter
 @Setter
+@ToString
 public class OrderData extends WeixinRspV1 {
 
     /**

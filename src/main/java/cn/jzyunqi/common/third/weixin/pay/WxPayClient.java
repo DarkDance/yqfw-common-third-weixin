@@ -139,6 +139,13 @@ public class WxPayClient {
             } else {
                 orderData = wxPayOrderApiProxy.queryOrderByOutTradeNo(wxPayAuth.getWxAppId(), outTradeNo, wxPayAuth.getMerchantId());
             }
+            if (orderData.getTradeState() == TradeState.SUCCESS) {
+                orderData.setActualPayAmount(BigDecimal.valueOf(orderData.getAmount().getPayerTotal()).divide(BigDecimal.valueOf(100), 2, RoundingMode.DOWN)); //订单总金额，单位为分
+                orderData.setResponseStr("主动查询订单成功");
+            } else {
+                log.error("======WeixinPayV3Helper queryOrder result[{}] not success:", orderData);
+                return new OrderData();
+            }
             return orderData;
         }
 
