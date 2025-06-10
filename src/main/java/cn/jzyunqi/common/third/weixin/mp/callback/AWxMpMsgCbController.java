@@ -62,10 +62,12 @@ public abstract class AWxMpMsgCbController {
         log.debug("""
 
                         ======Request Header    : {}
+                        ======Request AppId    : {}
                         ======Request Params    : {}
                         ======Request BodyStr   : {}
                         """,
                 headers,
+                appId,
                 msgSimpleCb,
                 msgDetailCbStr
         );
