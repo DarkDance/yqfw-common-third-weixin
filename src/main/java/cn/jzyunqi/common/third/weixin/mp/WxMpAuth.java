@@ -27,10 +27,10 @@ public class WxMpAuth {
     /**
      * 消息token
      */
-    private String verificationToken;//getMsgToken();
+    private String verificationToken;
 
     /**
      * 消息体加密密钥
      */
-    private String encryptKey;//getMsgEncodingAesKey();
+    private String encryptKey;
 }
