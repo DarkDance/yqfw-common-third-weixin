@@ -2,21 +2,29 @@ package cn.jzyunqi.common.third.weixin.mp;
 
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchangeWrapper;
 import cn.jzyunqi.common.third.weixin.common.utils.WxFormatUtils;
+import cn.jzyunqi.common.third.weixin.mp.callback.WxMpCbHelper;
+import cn.jzyunqi.common.third.weixin.mp.card.WxMpCardApi;
 import cn.jzyunqi.common.third.weixin.mp.card.WxMpCardApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.kefu.WxMpKefuApi;
 import cn.jzyunqi.common.third.weixin.mp.kefu.WxMpKfApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.mass.WxMpMassApi;
 import cn.jzyunqi.common.third.weixin.mp.mass.WxMpMassApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.material.WxMpMaterialApi;
 import cn.jzyunqi.common.third.weixin.mp.material.WxMpMaterialApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.menu.WxMpMenuApi;
 import cn.jzyunqi.common.third.weixin.mp.menu.WxMpMenuApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.subscribe.WxMpSubscribeMsgApi;
 import cn.jzyunqi.common.third.weixin.mp.subscribe.WxMpSubscribeMsgApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.template.WxMpTemplateMsgApi;
 import cn.jzyunqi.common.third.weixin.mp.template.WxMpTemplateMsgApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApi;
 import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApiProxy;
+import cn.jzyunqi.common.third.weixin.mp.user.WxMpUserApi;
 import cn.jzyunqi.common.third.weixin.mp.user.WxMpUserApiProxy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
-import org.springframework.http.codec.json.Jackson2JsonDecoder;
-import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
+import org.springframework.context.annotation.Primary;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
@@ -42,12 +50,23 @@ public class WxMpConfig {
     }
 
     @Bean
+    public WxMpCbHelper wxMpCbHelper() {
+        return new WxMpCbHelper();
+    }
+
+    @Bean
     public WxMpTokenApiProxy wxMpTokenApiProxy(WebClient.Builder webClientBuilder) {
         WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2Config).build();
         WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpTokenApiProxy.class);
+    }
+
+    @Bean
+    @Primary
+    public WxMpTokenApi wxMpTokenApi() {
+        return new WxMpTokenApi();
     }
 
     @Bean
@@ -60,12 +79,22 @@ public class WxMpConfig {
     }
 
     @Bean
+    public WxMpKefuApi wxMpKefuApi() {
+        return new WxMpKefuApi();
+    }
+
+    @Bean
     public WxMpMenuApiProxy wxMpMenuApiProxy(WebClient.Builder webClientBuilder) {
         WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2Config).build();
         WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpMenuApiProxy.class);
+    }
+
+    @Bean
+    public WxMpMenuApi wxMpMenuApi() {
+        return new WxMpMenuApi();
     }
 
     @Bean
@@ -78,12 +107,22 @@ public class WxMpConfig {
     }
 
     @Bean
+    public WxMpMaterialApi wxMpMaterialApi() {
+        return new WxMpMaterialApi();
+    }
+
+    @Bean
     public WxMpUserApiProxy wxMpUserApiProxy(WebClient.Builder webClientBuilder) {
         WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2Config).build();
         WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpUserApiProxy.class);
+    }
+
+    @Bean
+    public WxMpUserApi wxMpUserApi() {
+        return new WxMpUserApi();
     }
 
     @Bean
@@ -96,12 +135,22 @@ public class WxMpConfig {
     }
 
     @Bean
+    public WxMpMassApi wxMpMassApi() {
+        return new WxMpMassApi();
+    }
+
+    @Bean
     public WxMpSubscribeMsgApiProxy wxMpSubscribeMsgApiProxy(WebClient.Builder webClientBuilder) {
         WebClient webClient = webClientBuilder.clone().build();
         WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpSubscribeMsgApiProxy.class);
+    }
+
+    @Bean
+    public WxMpSubscribeMsgApi wxMpSubscribeMsgApi() {
+        return new WxMpSubscribeMsgApi();
     }
 
     @Bean
@@ -114,11 +163,21 @@ public class WxMpConfig {
     }
 
     @Bean
+    public WxMpTemplateMsgApi wxMpTemplateMsgApi() {
+        return new WxMpTemplateMsgApi();
+    }
+
+    @Bean
     public WxMpCardApiProxy wxMpCardApiProxy(WebClient.Builder webClientBuilder) {
         WebClient webClient = webClientBuilder.clone().codecs(WxFormatUtils::jackson2Config).build();
         WebClientAdapter webClientAdapter = WebClientAdapter.create(webClient);
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMpCardApiProxy.class);
+    }
+
+    @Bean
+    public WxMpCardApi wxMpCardApi() {
+        return new WxMpCardApi();
     }
 }
