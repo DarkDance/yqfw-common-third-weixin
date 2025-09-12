@@ -27,7 +27,10 @@ import jakarta.annotation.Resource;
  * @author wiiyaya
  * @since 2025/9/12
  */
-public class WxMpCardApi extends WxMpTokenApi {
+public class WxMpCardApi {
+
+    @Resource
+    private WxMpTokenApi wxMpTokenApi;
 
     @Resource
     private WxMpCardApiProxy wxMpCardApiProxy;
@@ -58,32 +61,32 @@ public class WxMpCardApi extends WxMpTokenApi {
         }
         WxMpCardReq request = new WxMpCardReq();
         request.setCard(card);
-        return wxMpCardApiProxy.createCard(getClientToken(wxMpAppId), request).getCardId();
+        return wxMpCardApiProxy.createCard(wxMpTokenApi.getClientToken(wxMpAppId), request).getCardId();
     }
 
     //微信卡券 - 查询卡券详情（含审核状态）
     public WxMpCardData getCardDetail(String wxMpAppId, WxMpCardData request) throws BusinessException {
-        return wxMpCardApiProxy.getCardDetail(getClientToken(wxMpAppId), request);
+        return wxMpCardApiProxy.getCardDetail(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //微信卡券 - 投放卡券 - 二维码投放
     public WxMpQrcodeData createQrcodeCard(String wxMpAppId, WxMpQrcodeParam request) throws BusinessException {
-        return wxMpCardApiProxy.createQrcodeCard(getClientToken(wxMpAppId), request);
+        return wxMpCardApiProxy.createQrcodeCard(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //微信卡券 - 投放卡券 - 卡券货架投放
     public WxMpLandingPageData createLandingPageCard(String wxMpAppId, WxMpLandingPageParam request) throws BusinessException {
-        return wxMpCardApiProxy.createLandingPageCard(getClientToken(wxMpAppId), request);
+        return wxMpCardApiProxy.createLandingPageCard(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //微信卡券 - 激活会员卡(一键激活前置条件设置)
     public void setActivateUserForm(String wxMpAppId, WxMpActivateUserFormParam request) throws BusinessException {
-        wxMpCardApiProxy.setActivateUserForm(getClientToken(wxMpAppId), request);
+        wxMpCardApiProxy.setActivateUserForm(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //微信卡券 - 激活会员卡
     public void activateMemberCard(String wxMpAppId, WxMpMemberCardActiveParam request) throws BusinessException {
-        wxMpCardApiProxy.activateMemberCard(getClientToken(wxMpAppId), request);
+        wxMpCardApiProxy.activateMemberCard(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //微信卡券 - 拉取会员信息(一键激活的信息获取)
@@ -91,11 +94,11 @@ public class WxMpCardApi extends WxMpTokenApi {
         WxMpCardData request = new WxMpCardData();
         request.setCardId(cardId);
         request.setCode(code);
-        return wxMpCardApiProxy.getMemberCardUserInfo(getClientToken(wxMpAppId), request);
+        return wxMpCardApiProxy.getMemberCardUserInfo(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //微信卡券 - 更新会员信息
     public WxMpMemberCardUpdateData updateUserMemberCard(String wxMpAppId, WxMpMemberCardUpdateParam request) throws BusinessException {
-        return wxMpCardApiProxy.updateUserMemberCard(getClientToken(wxMpAppId), request);
+        return wxMpCardApiProxy.updateUserMemberCard(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 }

@@ -13,7 +13,10 @@ import jakarta.annotation.Resource;
  * @author wiiyaya
  * @since 2025/9/12
  */
-public class WxMpMenuApi extends WxMpTokenApi {
+public class WxMpMenuApi {
+
+    @Resource
+    private WxMpTokenApi wxMpTokenApi;
 
     @Resource
     private WxMpMenuApiProxy wxMpMenuApiProxy;
@@ -21,38 +24,38 @@ public class WxMpMenuApi extends WxMpTokenApi {
     //自定义菜单 - 创建接口
     public WeixinRspV1 menuCreate(String wxMpAppId, WxMenuData request) throws BusinessException {
         if (request.getMatchRule() != null) {
-            return wxMpMenuApiProxy.selfMenuCreate(getClientToken(wxMpAppId), request);
+            return wxMpMenuApiProxy.selfMenuCreate(wxMpTokenApi.getClientToken(wxMpAppId), request);
         } else {
-            return wxMpMenuApiProxy.menuCreate(getClientToken(wxMpAppId), request);
+            return wxMpMenuApiProxy.menuCreate(wxMpTokenApi.getClientToken(wxMpAppId), request);
         }
     }
 
     //自定义菜单 - 查询接口（包括官网设置的菜单和AIP设置的菜单）
     public WxMpSelfMenuInfoRsp allMenuInfo(String wxMpAppId) throws BusinessException {
-        return wxMpMenuApiProxy.allMenuInfo(getClientToken(wxMpAppId));
+        return wxMpMenuApiProxy.allMenuInfo(wxMpTokenApi.getClientToken(wxMpAppId));
     }
 
     //自定义菜单 - 删除接口
     public WeixinRspV1 menuDelete(String wxMpAppId) throws BusinessException {
-        return wxMpMenuApiProxy.menuDelete(getClientToken(wxMpAppId));
+        return wxMpMenuApiProxy.menuDelete(wxMpTokenApi.getClientToken(wxMpAppId));
     }
 
     //自定义菜单 - 删除个性化菜单
     public WeixinRspV1 selfMenuDelete(String wxMpAppId, String menuId) throws BusinessException {
         WxMenuData request = new WxMenuData();
         request.setMenuId(menuId);
-        return wxMpMenuApiProxy.selfMenuDelete(getClientToken(wxMpAppId), request);
+        return wxMpMenuApiProxy.selfMenuDelete(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //自定义菜单 - 测试个性化菜单匹配结果
     public WxMenuData selfMenuTryMatch(String wxMpAppId, String openId) throws BusinessException {
         WxMenuTryMatchParam request = new WxMenuTryMatchParam();
         request.setUserId(openId);
-        return wxMpMenuApiProxy.selfMenuTryMatch(getClientToken(wxMpAppId), request);
+        return wxMpMenuApiProxy.selfMenuTryMatch(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //自定义菜单 - 获取自定义菜单配置(只能查询API定义的菜单)
     public WxMenuRsp selfMenuGet(String wxMpAppId) throws BusinessException {
-        return wxMpMenuApiProxy.selfMenuGet(getClientToken(wxMpAppId));
+        return wxMpMenuApiProxy.selfMenuGet(wxMpTokenApi.getClientToken(wxMpAppId));
     }
 }

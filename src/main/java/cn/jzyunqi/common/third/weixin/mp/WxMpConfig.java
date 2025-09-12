@@ -64,7 +64,6 @@ public class WxMpConfig {
     }
 
     @Bean
-    @Primary
     public WxMpTokenApi wxMpTokenApi() {
         return new WxMpTokenApi();
     }

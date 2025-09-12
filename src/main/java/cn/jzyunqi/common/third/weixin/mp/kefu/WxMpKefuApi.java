@@ -21,51 +21,54 @@ import java.time.LocalDateTime;
  * @author wiiyaya
  * @since 2025/9/12
  */
-public class WxMpKefuApi extends WxMpTokenApi {
+public class WxMpKefuApi {
+
+    @Resource
+    private WxMpTokenApi wxMpTokenApi;
 
     @Resource
     private WxMpKfApiProxy wxMpKfApiProxy;
 
     //客服管理 - 添加客服账号（添加后不可用，需要再邀请）
     public WeixinRspV1 kfAccountAdd(String wxMpAppId, WxMpKfAccountParam request) throws BusinessException {
-        return wxMpKfApiProxy.kfAccountAdd(getClientToken(wxMpAppId), request);
+        return wxMpKfApiProxy.kfAccountAdd(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //客服管理 - 邀请绑定客服账号
     public WeixinRspV1 kfAccountInviteWorker(String wxMpAppId, WxMpKfAccountParam request) throws BusinessException {
-        return wxMpKfApiProxy.kfAccountInviteWorker(getClientToken(wxMpAppId), request);
+        return wxMpKfApiProxy.kfAccountInviteWorker(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //客服管理 - 修改客服账号
     public WeixinRspV1 kfAccountUpdate(String wxMpAppId, WxMpKfAccountParam request) throws BusinessException {
-        return wxMpKfApiProxy.kfAccountUpdate(getClientToken(wxMpAppId), request);
+        return wxMpKfApiProxy.kfAccountUpdate(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //客服管理 - 删除客服账号
     public WeixinRspV1 kfAccountDel(String wxMpAppId, String kfAccount) throws BusinessException {
         WxMpKfAccountParam request = new WxMpKfAccountParam();
         request.setKfAccount(kfAccount);
-        return wxMpKfApiProxy.kfAccountDel(getClientToken(wxMpAppId), request);
+        return wxMpKfApiProxy.kfAccountDel(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //客服管理 - 设置客服账号的头像，文件大小为5M以内
     public WeixinRspV1 kfAccountUploadHeadImg(String wxMpAppId, String kfAccount, org.springframework.core.io.Resource media) throws BusinessException {
-        return wxMpKfApiProxy.kfAccountUploadHeadImg(getClientToken(wxMpAppId), kfAccount, media);
+        return wxMpKfApiProxy.kfAccountUploadHeadImg(wxMpTokenApi.getClientToken(wxMpAppId), kfAccount, media);
     }
 
     //客服管理 - 获取所有客服账号
     public WxMpKfListRsp kfList(String wxMpAppId) throws BusinessException {
-        return wxMpKfApiProxy.kfList(getClientToken(wxMpAppId));
+        return wxMpKfApiProxy.kfList(wxMpTokenApi.getClientToken(wxMpAppId));
     }
 
     //客服管理 - 获取所有客服在线账号
     public WxMpKfListRsp kfOnlineList(String wxMpAppId) throws BusinessException {
-        return wxMpKfApiProxy.kfOnlineList(getClientToken(wxMpAppId));
+        return wxMpKfApiProxy.kfOnlineList(wxMpTokenApi.getClientToken(wxMpAppId));
     }
 
     //客服消息 - 发消息
     public void sendKefuMessageWithResponse(String wxMpAppId, ReplyMsgData request) throws BusinessException {
-        wxMpKfApiProxy.sendKefuMessageWithResponse(getClientToken(wxMpAppId), request);
+        wxMpKfApiProxy.sendKefuMessageWithResponse(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //客服消息 - 发送客服输入状态
@@ -73,7 +76,7 @@ public class WxMpKefuApi extends WxMpTokenApi {
         WxMpKfTypingParam request = new WxMpKfTypingParam();
         request.setToUser(openid);
         request.setCommand(command);
-        wxMpKfApiProxy.sendKfTypingState(getClientToken(wxMpAppId), request);
+        wxMpKfApiProxy.sendKfTypingState(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //会话控制 - 创建会话
@@ -81,7 +84,7 @@ public class WxMpKefuApi extends WxMpTokenApi {
         WxMpKfSessionData request = new WxMpKfSessionData();
         request.setOpenId(openid);
         request.setKfAccount(kfAccount);
-        wxMpKfApiProxy.kfSessionCreate(getClientToken(wxMpAppId), request);
+        wxMpKfApiProxy.kfSessionCreate(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //会话控制 - 关闭会话
@@ -89,22 +92,22 @@ public class WxMpKefuApi extends WxMpTokenApi {
         WxMpKfSessionData request = new WxMpKfSessionData();
         request.setOpenId(openid);
         request.setKfAccount(kfAccount);
-        wxMpKfApiProxy.kfSessionClose(getClientToken(wxMpAppId), request);
+        wxMpKfApiProxy.kfSessionClose(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //会话控制 - 获取客户会话状态
     public WxMpKfSessionData kfSessionInfo(String wxMpAppId, String openid) throws BusinessException {
-        return wxMpKfApiProxy.kfSessionInfo(getClientToken(wxMpAppId), openid);
+        return wxMpKfApiProxy.kfSessionInfo(wxMpTokenApi.getClientToken(wxMpAppId), openid);
     }
 
     //会话控制 - 获取客服会话列表
     public WxMpKfSessionListRsp kfSessionList(String wxMpAppId, String kfAccount) throws BusinessException {
-        return wxMpKfApiProxy.kfSessionList(getClientToken(wxMpAppId), kfAccount);
+        return wxMpKfApiProxy.kfSessionList(wxMpTokenApi.getClientToken(wxMpAppId), kfAccount);
     }
 
     //会话控制 - 获取未接入会话列表
     public WxMpKfSessionListRsp kfSessionWaitCase(String wxMpAppId) throws BusinessException {
-        return wxMpKfApiProxy.kfSessionWaitCase(getClientToken(wxMpAppId));
+        return wxMpKfApiProxy.kfSessionWaitCase(wxMpTokenApi.getClientToken(wxMpAppId));
     }
 
     //获取聊天记录
@@ -114,6 +117,6 @@ public class WxMpKefuApi extends WxMpTokenApi {
         request.setEndTime(DateTimeUtilPlus.toEpochSecond(endTime));
         request.setMsgId(msgId);
         request.setNumber(number);
-        return wxMpKfApiProxy.kfMsgList(getClientToken(wxMpAppId), request);
+        return wxMpKfApiProxy.kfMsgList(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 }

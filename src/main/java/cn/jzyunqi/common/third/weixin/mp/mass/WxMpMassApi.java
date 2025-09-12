@@ -10,7 +10,10 @@ import jakarta.annotation.Resource;
  * @author wiiyaya
  * @since 2025/9/12
  */
-public class WxMpMassApi extends WxMpTokenApi {
+public class WxMpMassApi {
+
+    @Resource
+    private WxMpTokenApi wxMpTokenApi;
 
     @Resource
     private WxMpMassApiProxy wxMpMassApiProxy;
@@ -18,9 +21,9 @@ public class WxMpMassApi extends WxMpTokenApi {
     //基础消息能力 - 群发接口 - 根据标签进行群发
     public MassRsp massGroupMessageSend(String wxMpAppId, ReplyMsgData request, boolean preview) throws BusinessException {
         if (preview) {
-            return wxMpMassApiProxy.massMessagePreview(getClientToken(wxMpAppId), request);
+            return wxMpMassApiProxy.massMessagePreview(wxMpTokenApi.getClientToken(wxMpAppId), request);
         } else {
-            return wxMpMassApiProxy.massGroupMessageSend(getClientToken(wxMpAppId), request);
+            return wxMpMassApiProxy.massGroupMessageSend(wxMpTokenApi.getClientToken(wxMpAppId), request);
         }
     }
 }

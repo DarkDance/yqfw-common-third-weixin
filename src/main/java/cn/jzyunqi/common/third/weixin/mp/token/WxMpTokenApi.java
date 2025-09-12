@@ -54,7 +54,7 @@ public class WxMpTokenApi {
         return jsapiSignature;
     }
 
-    protected String getClientToken(String wxMpAppId) throws BusinessException {
+    public String getClientToken(String wxMpAppId) throws BusinessException {
         WxMpAuth wxMpAuth = wxMpAuthHelper.chooseWxMpAuth(wxMpAppId);
         String tokenKey = getClientTokenKey(wxMpAppId);
         return redisHelper.lockAndGet(WxCache.THIRD_WX_MP_V, tokenKey, Duration.ofSeconds(3), (locked) -> {

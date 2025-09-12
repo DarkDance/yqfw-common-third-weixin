@@ -10,7 +10,10 @@ import jakarta.annotation.Resource;
  * @author wiiyaya
  * @since 2025/9/12
  */
-public class WxMpUserApi extends WxMpTokenApi {
+public class WxMpUserApi {
+
+    @Resource
+    private WxMpTokenApi wxMpTokenApi;
 
     @Resource
     private WxMpUserApiProxy wxMpUserApiProxy;
@@ -23,6 +26,6 @@ public class WxMpUserApi extends WxMpTokenApi {
     //用户管理 - 获取用户基本信息
     public MpUserData userInfo(String wxMpAppId, String openid, String lang) throws BusinessException {
         lang = StringUtilPlus.defaultString(lang, "zh_CN");
-        return wxMpUserApiProxy.userInfo(getClientToken(wxMpAppId), openid, lang);
+        return wxMpUserApiProxy.userInfo(wxMpTokenApi.getClientToken(wxMpAppId), openid, lang);
     }
 }

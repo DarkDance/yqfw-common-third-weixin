@@ -15,7 +15,10 @@ import java.util.List;
  * @author wiiyaya
  * @since 2025/9/12
  */
-public class WxMpTemplateMsgApi extends WxMpTokenApi {
+public class WxMpTemplateMsgApi {
+
+    @Resource
+    private WxMpTokenApi wxMpTokenApi;
 
     @Resource
     private WxMpTemplateMsgApiProxy wxMpTemplateMsgApiProxy;
@@ -25,12 +28,12 @@ public class WxMpTemplateMsgApi extends WxMpTokenApi {
         WxMpIndustryParam request = new WxMpIndustryParam();
         request.setIndustryId1(primaryIndustry.getCode());
         request.setIndustryId2(secondaryIndustry.getCode());
-        wxMpTemplateMsgApiProxy.industrySet(getClientToken(wxMpAppId), request);
+        wxMpTemplateMsgApiProxy.industrySet(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //基础消息 - 模板消息 - 获取设置的行业信息
     public WxMpIndustryData industryInfo(String wxMpAppId) throws BusinessException {
-        return wxMpTemplateMsgApiProxy.industryInfo(getClientToken(wxMpAppId));
+        return wxMpTemplateMsgApiProxy.industryInfo(wxMpTokenApi.getClientToken(wxMpAppId));
     }
 
     //基础消息 - 模板消息 - 获得模板ID
@@ -38,23 +41,23 @@ public class WxMpTemplateMsgApi extends WxMpTokenApi {
         WxMpAddTemplateParam request = new WxMpAddTemplateParam();
         request.setTemplateIdShort(shortTemplateId);
         request.setKeywordNameList(keywordNameList);
-        return wxMpTemplateMsgApiProxy.privateTemplateAdd(getClientToken(wxMpAppId), request).getTemplateId();
+        return wxMpTemplateMsgApiProxy.privateTemplateAdd(wxMpTokenApi.getClientToken(wxMpAppId), request).getTemplateId();
     }
 
     //基础消息 - 模板消息 - 获取模板列表
     public List<cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData> privateTemplateList(String wxMpAppId) throws BusinessException {
-        return wxMpTemplateMsgApiProxy.privateTemplateList(getClientToken(wxMpAppId)).getTemplateList();
+        return wxMpTemplateMsgApiProxy.privateTemplateList(wxMpTokenApi.getClientToken(wxMpAppId)).getTemplateList();
     }
 
     //基础消息 - 模板消息 - 获取模板列表
     public void privateTemplateDelete(String wxMpAppId, String templateId) throws BusinessException {
         cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData request = new cn.jzyunqi.common.third.weixin.mp.template.model.WxMpTemplateData();
         request.setTemplateId(templateId);
-        wxMpTemplateMsgApiProxy.privateTemplateDelete(getClientToken(wxMpAppId), request);
+        wxMpTemplateMsgApiProxy.privateTemplateDelete(wxMpTokenApi.getClientToken(wxMpAppId), request);
     }
 
     //基础消息 - 模板消息 - 发送模板消息
     public String sendTemplateMsg(String wxMpAppId, WxMpTemplateMsgParam request) throws BusinessException {
-        return wxMpTemplateMsgApiProxy.sendTemplateMsg(getClientToken(wxMpAppId), request).getMsgId();
+        return wxMpTemplateMsgApiProxy.sendTemplateMsg(wxMpTokenApi.getClientToken(wxMpAppId), request).getMsgId();
     }
 }
