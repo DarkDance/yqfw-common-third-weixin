@@ -9,7 +9,7 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-public class WxMaClientConfig {
+public class WxMaAuth {
 
     /**
      * 应用唯一标识

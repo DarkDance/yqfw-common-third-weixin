@@ -36,7 +36,7 @@ public class WxMpTokenApi {
     private RedisHelper redisHelper;
 
     public WxJsapiSignature createJsapiSignature(String wxMpAppId, String url) throws BusinessException {
-        WxMpAuth wxMpAuth = wxMpAuthHelper.choosWxMpAuth(wxMpAppId);
+        WxMpAuth wxMpAuth = wxMpAuthHelper.chooseWxMpAuth(wxMpAppId);
         long timestamp = System.currentTimeMillis() / 1000;//从1970年1月1日00:00:00至今的秒数
         String nonceStr = RandomUtilPlus.String.nextAlphanumeric(32);
         String jsapiTicket = getTicket(wxMpAuth.getAppId(), TicketType.JSAPI);
@@ -55,7 +55,7 @@ public class WxMpTokenApi {
     }
 
     protected String getClientToken(String wxMpAppId) throws BusinessException {
-        WxMpAuth wxMpAuth = wxMpAuthHelper.choosWxMpAuth(wxMpAppId);
+        WxMpAuth wxMpAuth = wxMpAuthHelper.chooseWxMpAuth(wxMpAppId);
         String tokenKey = getClientTokenKey(wxMpAppId);
         return redisHelper.lockAndGet(WxCache.THIRD_WX_MP_V, tokenKey, Duration.ofSeconds(3), (locked) -> {
             if (locked) {

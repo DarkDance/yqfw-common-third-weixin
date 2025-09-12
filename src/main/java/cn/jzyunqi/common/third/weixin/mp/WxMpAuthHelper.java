@@ -6,5 +6,5 @@ package cn.jzyunqi.common.third.weixin.mp;
  */
 public interface WxMpAuthHelper {
 
-    WxMpAuth choosWxMpAuth(String wxMpAppId);
+    WxMpAuth chooseWxMpAuth(String wxMpAppId);
 }

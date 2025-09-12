@@ -72,7 +72,7 @@ public class WxMpCbHelper {
      */
     public Object replyMessageNotice(String wxMpAppId, MsgSimpleCb msgSimpleCb, MsgDetailCb msgDetailCb, MessageReplyCallback callback) {
         //验证安全签名，如果有消息体，校验后解码消息体
-        WxMpAuth wxMpAuth = wxMpAuthHelper.choosWxMpAuth(wxMpAppId);
+        WxMpAuth wxMpAuth = wxMpAuthHelper.chooseWxMpAuth(wxMpAppId);
         if (msgDetailCb == null) {//没有消息体，属于连接测试
             String needSign = signString(wxMpAuth.getVerificationToken(), msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce()).equals(msgSimpleCb.getSignature()) ? msgSimpleCb.getEchostr() : REPLAY_MESSAGE_FAILED;
             log.debug("======WxMpClient replyMessageNotice needSign:{}, echostr:{}", needSign, msgSimpleCb.getEchostr());
@@ -108,7 +108,7 @@ public class WxMpCbHelper {
      * @return 加密结果
      */
     private String encryptMsg(String wxMpAppId, String msg) {
-        WxMpAuth wxMpAuth = wxMpAuthHelper.choosWxMpAuth(wxMpAppId);
+        WxMpAuth wxMpAuth = wxMpAuthHelper.chooseWxMpAuth(wxMpAppId);
         Byte[] randomStrBytes = ArrayUtils.toObject(RandomUtilPlus.String.nextAlphanumeric(16).getBytes(StringUtilPlus.UTF_8));
         Byte[] textBytes = ArrayUtils.toObject(msg.getBytes(StringUtilPlus.UTF_8));
         Byte[] networkBytesOrder = ArrayUtils.toObject(getNetworkBytesOrder(textBytes.length));

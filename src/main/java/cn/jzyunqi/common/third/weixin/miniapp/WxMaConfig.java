@@ -1,6 +1,7 @@
 package cn.jzyunqi.common.third.weixin.miniapp;
 
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchangeWrapper;
+import cn.jzyunqi.common.third.weixin.miniapp.qrcode.WxMaQrcodeApi;
 import cn.jzyunqi.common.third.weixin.miniapp.qrcode.WxMaQrcodeApiProxy;
 import cn.jzyunqi.common.third.weixin.open.WxOpenClient;
 import cn.jzyunqi.common.third.weixin.open.user.WxOpenUserApiProxy;
@@ -37,5 +38,10 @@ public class WxMaConfig {
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxMaQrcodeApiProxy.class);
+    }
+
+    @Bean
+    public WxMaQrcodeApi wxMaQrcodeApi() {
+        return new WxMaQrcodeApi();
     }
 }
