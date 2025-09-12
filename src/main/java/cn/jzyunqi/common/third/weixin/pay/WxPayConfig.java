@@ -3,7 +3,10 @@ package cn.jzyunqi.common.third.weixin.pay;
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchangeWrapper;
 import cn.jzyunqi.common.third.weixin.common.utils.AuthUtils;
 import cn.jzyunqi.common.third.weixin.common.utils.WxFormatUtils;
+import cn.jzyunqi.common.third.weixin.pay.callback.WxPayCbHelper;
+import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApi;
 import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApiProxy;
+import cn.jzyunqi.common.third.weixin.pay.order.WxPayOrderApi;
 import cn.jzyunqi.common.third.weixin.pay.order.WxPayOrderApiProxy;
 import cn.jzyunqi.common.utils.StringUtilPlus;
 import lombok.extern.slf4j.Slf4j;
@@ -47,12 +50,17 @@ public class WxPayConfig {
     }
 
     @Bean
-    public WxPayOrderApiProxy wxPayOrderApiProxy(WebClient.Builder webClientBuilder, WxPayAuthRepository wxPayClientConfig) {
+    public WxPayCbHelper wxPayCbHelper() {
+        return new WxPayCbHelper();
+    }
+
+    @Bean
+    public WxPayOrderApiProxy wxPayOrderApiProxy(WebClient.Builder webClientBuilder, WxPayAuthHelper wxPayClientConfig) {
         WebClient webClient = webClientBuilder.clone()
                 .codecs(WxFormatUtils::jackson2Config)
                 .filter(ExchangeFilterFunction.ofRequestProcessor(request -> {
                     String wxAppId = (String) request.attribute("wxAppId").orElse(null);
-                    WxPayAuth auth = wxPayClientConfig.choosWxPayAuth(wxAppId);
+                    WxPayAuth auth = wxPayClientConfig.chooseWxPayAuth(wxAppId);
 
                     ClientRequest.Builder amendRequest = ClientRequest.from(request);
                     if (request.method() == HttpMethod.GET) {
@@ -95,12 +103,17 @@ public class WxPayConfig {
     }
 
     @Bean
-    public WxPayCertApiProxy wxPayCertApiProxy(WebClient.Builder webClientBuilder, WxPayAuthRepository wxPayClientConfig) {
+    public WxPayOrderApi wxPayOrderApi() {
+        return new WxPayOrderApi();
+    }
+
+    @Bean
+    public WxPayCertApiProxy wxPayCertApiProxy(WebClient.Builder webClientBuilder, WxPayAuthHelper wxPayClientConfig) {
         WebClient webClient = webClientBuilder.clone()
                 .codecs(WxFormatUtils::jackson2Config)
                 .filter(ExchangeFilterFunction.ofRequestProcessor(request -> {
                     String wxAppId = (String) request.attribute("wxAppId").orElse(null);
-                    WxPayAuth auth = wxPayClientConfig.choosWxPayAuth(wxAppId);
+                    WxPayAuth auth = wxPayClientConfig.chooseWxPayAuth(wxAppId);
 
                     ClientRequest filtered = ClientRequest.from(request)
                             .header(HEADER_AUTHORIZATION,
@@ -122,5 +135,10 @@ public class WxPayConfig {
         webClientAdapter.setBlockTimeout(Duration.ofSeconds(5));
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
         return factory.createClient(WxPayCertApiProxy.class);
+    }
+
+    @Bean
+    public WxPayCertApi wxPayCertApi() {
+        return new WxPayCertApi();
     }
 }
