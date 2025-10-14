@@ -40,7 +40,7 @@ public class WxPayConfig {
 
     @Bean
     @ConditionalOnMissingBean
-    public WxHttpExchangeWrapper responseCheckWrapper() {
+    public WxHttpExchangeWrapper wxHttpExchangeWrapper() {
         return new WxHttpExchangeWrapper();
     }
 
