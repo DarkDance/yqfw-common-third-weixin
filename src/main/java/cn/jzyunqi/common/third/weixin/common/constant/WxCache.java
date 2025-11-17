@@ -20,6 +20,11 @@ public enum WxCache implements Cache {
     THIRD_WX_MP_V(Duration.ZERO, Boolean.FALSE),
 
     /**
+     * 企业微信缓存
+     */
+    THIRD_WX_CP_V(Duration.ZERO, Boolean.FALSE),
+
+    /**
      * 微信支付缓存
      */
     THIRD_WX_PAY_H(Duration.ZERO, Boolean.FALSE);

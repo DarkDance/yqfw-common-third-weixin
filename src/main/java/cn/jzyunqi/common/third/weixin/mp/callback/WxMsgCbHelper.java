@@ -1,8 +1,6 @@
 package cn.jzyunqi.common.third.weixin.mp.callback;
 
 import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.third.weixin.mp.WxMpAuth;
-import cn.jzyunqi.common.third.weixin.mp.WxMpAuthHelper;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
@@ -11,7 +9,6 @@ import cn.jzyunqi.common.utils.DigestUtilPlus;
 import cn.jzyunqi.common.utils.IOUtilPlus;
 import cn.jzyunqi.common.utils.RandomUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
-import jakarta.annotation.Resource;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.Unmarshaller;
 import lombok.extern.slf4j.Slf4j;
@@ -29,15 +26,16 @@ import java.util.stream.Stream;
  * @since 2025/9/12
  */
 @Slf4j
-public class WxMpCbHelper {
+public class WxMsgCbHelper {
 
     private static final String RESPONSE_MSG =
-            "<xml>\n"
-                    + "<Encrypt><![CDATA[%1$s]]></Encrypt>\n"
-                    + "<MsgSignature><![CDATA[%2$s]]></MsgSignature>\n"
-                    + "<TimeStamp>%3$s</TimeStamp>\n"
-                    + "<Nonce><![CDATA[%4$s]]></Nonce>\n"
-                    + "</xml>";
+            """
+                    <xml>
+                    <Encrypt><![CDATA[%1$s]]></Encrypt>
+                    <MsgSignature><![CDATA[%2$s]]></MsgSignature>
+                    <TimeStamp>%3$s</TimeStamp>
+                    <Nonce><![CDATA[%4$s]]></Nonce>
+                    </xml>""";
 
     private static final String REPLAY_MESSAGE_FAILED = "failed";
     private static final String REPLAY_MESSAGE_SUCCESS = "success";
@@ -59,9 +57,6 @@ public class WxMpCbHelper {
         ReplyMsgData apply(MsgDetailCb decryptNotice) throws BusinessException;
     }
 
-    @Resource
-    private WxMpAuthHelper wxMpAuthHelper;
-
     /**
      * 解密并回复通知消息
      *
@@ -70,21 +65,20 @@ public class WxMpCbHelper {
      * @param callback    回调
      * @return 回复，根据情况返回回调数据或"failed"或"success"
      */
-    public Object replyMessageNotice(String wxMpAppId, MsgSimpleCb msgSimpleCb, MsgDetailCb msgDetailCb, MessageReplyCallback callback) {
+    public static Object replyMessageNotice(String appId, String verificationToken, String encryptKey, MsgSimpleCb msgSimpleCb, MsgDetailCb msgDetailCb, MessageReplyCallback callback) {
         //验证安全签名，如果有消息体，校验后解码消息体
-        WxMpAuth wxMpAuth = wxMpAuthHelper.chooseWxMpAuth(wxMpAppId);
         if (msgDetailCb == null) {//没有消息体，属于连接测试
-            String needSign = signString(wxMpAuth.getVerificationToken(), msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce()).equals(msgSimpleCb.getSignature()) ? msgSimpleCb.getEchostr() : REPLAY_MESSAGE_FAILED;
+            String needSign = signString(verificationToken, msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce()).equals(msgSimpleCb.getSignature()) ? msgSimpleCb.getEchostr() : REPLAY_MESSAGE_FAILED;
             log.debug("======WxMpClient replyMessageNotice needSign:{}, echostr:{}", needSign, msgSimpleCb.getEchostr());
             return needSign;
         } else {
             if (StringUtilPlus.isNotEmpty(msgDetailCb.getEncrypt())) {//消息是密文传输，需要解密
-                String selfMsgSignature = signString(wxMpAuth.getVerificationToken(), msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce(), msgDetailCb.getEncrypt());//组装消息验证码
+                String selfMsgSignature = signString(verificationToken, msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce(), msgDetailCb.getEncrypt());//组装消息验证码
                 if (!selfMsgSignature.equals(msgSimpleCb.getMsg_signature())) {
                     return REPLAY_MESSAGE_FAILED;
                 }
                 //解密消息
-                msgDetailCb = decryptMsg(wxMpAuth, msgDetailCb.getEncrypt());
+                msgDetailCb = decryptMsg(appId, encryptKey, msgDetailCb.getEncrypt());
                 if (msgDetailCb == null) {
                     return REPLAY_MESSAGE_FAILED;
                 }
@@ -107,12 +101,11 @@ public class WxMpCbHelper {
      * @param msg 消息字符串
      * @return 加密结果
      */
-    private String encryptMsg(String wxMpAppId, String msg) {
-        WxMpAuth wxMpAuth = wxMpAuthHelper.chooseWxMpAuth(wxMpAppId);
+    private static String encryptMsg(String appId, String verificationToken, String encryptKey, String msg) {
         Byte[] randomStrBytes = ArrayUtils.toObject(RandomUtilPlus.String.nextAlphanumeric(16).getBytes(StringUtilPlus.UTF_8));
         Byte[] textBytes = ArrayUtils.toObject(msg.getBytes(StringUtilPlus.UTF_8));
         Byte[] networkBytesOrder = ArrayUtils.toObject(getNetworkBytesOrder(textBytes.length));
-        Byte[] appidBytes = ArrayUtils.toObject(wxMpAuth.getAppId().getBytes(StringUtilPlus.UTF_8));
+        Byte[] appidBytes = ArrayUtils.toObject(appId.getBytes(StringUtilPlus.UTF_8));
 
         // randomStr + networkBytesOrder + text + appid
         List<Byte> byteList = new ArrayList<>();
@@ -122,7 +115,7 @@ public class WxMpCbHelper {
         byteList.addAll(CollectionUtilPlus.Array.asList(appidBytes));
 
         // ... + pad: 使用自定义的填充方式对明文进行补位填充
-        Byte[] padBytes = ArrayUtils.toObject(this.pkcs7Encode(byteList.size()));
+        Byte[] padBytes = ArrayUtils.toObject(pkcs7Encode(byteList.size()));
         byteList.addAll(CollectionUtilPlus.Array.asList(padBytes));
 
         // 获得最终的字节流, 未加密
@@ -130,13 +123,13 @@ public class WxMpCbHelper {
 
         try {
             // 加密
-            byte[] aesKey = DigestUtilPlus.Base64.decodeBase64(wxMpAuth.getEncryptKey());
+            byte[] aesKey = DigestUtilPlus.Base64.decodeBase64(encryptKey);
             byte[] aesIv = Arrays.copyOfRange(Base64.decodeBase64(aesKey), 0, 16);
             String encryptMsg = DigestUtilPlus.AES.encryptCBCNoPadding(unencrypted, aesKey, aesIv, true);
             //消息签名
             Long timestamp = System.currentTimeMillis() / 1000;
             String nonceStr = RandomUtilPlus.String.nextAlphanumeric(32);
-            String signature = signString(wxMpAuth.getVerificationToken(), timestamp.toString(), nonceStr, encryptMsg);
+            String signature = signString(verificationToken, timestamp.toString(), nonceStr, encryptMsg);
 
             return String.format(RESPONSE_MSG, encryptMsg, signature, timestamp, nonceStr);
         } catch (Exception e) {
@@ -151,9 +144,9 @@ public class WxMpCbHelper {
      * @param encryptMsg 加密字符串
      * @return 解密结果
      */
-    private MsgDetailCb decryptMsg(WxMpAuth wxMpAuth, String encryptMsg) {
+    private static MsgDetailCb decryptMsg(String appId, String encryptKey, String encryptMsg) {
         try {
-            byte[] aesKey = DigestUtilPlus.Base64.decodeBase64(wxMpAuth.getEncryptKey());
+            byte[] aesKey = DigestUtilPlus.Base64.decodeBase64(encryptKey);
             byte[] aesIv = Arrays.copyOfRange(Base64.decodeBase64(aesKey), 0, 16);
             String rst = DigestUtilPlus.AES.decryptCBCNoPadding(DigestUtilPlus.Base64.decodeBase64(encryptMsg), aesKey, aesIv);
             // 去除补位字符
@@ -162,7 +155,7 @@ public class WxMpCbHelper {
             int xmlLength = recoverNetworkBytesOrder(Arrays.copyOfRange(bytes, 16, 20));
             //检查id是否正确
             String fromAppId = new String(Arrays.copyOfRange(bytes, 20 + xmlLength, bytes.length), StringUtilPlus.UTF_8);
-            if (fromAppId.equals(wxMpAuth.getAppId())) {
+            if (fromAppId.equals(appId)) {
                 //装换消息对象
                 String decryptMsg = new String(Arrays.copyOfRange(bytes, 20, 20 + xmlLength), StringUtilPlus.UTF_8);
                 JAXBContext context = JAXBContext.newInstance(MsgDetailCb.class);
@@ -184,7 +177,7 @@ public class WxMpCbHelper {
      * @param decrypted 解密后的明文
      * @return 删除补位字符后的明文
      */
-    private byte[] pkcs7Decode(byte[] decrypted) {
+    private static byte[] pkcs7Decode(byte[] decrypted) {
         int pad = (int) decrypted[decrypted.length - 1];
         if (pad < 1 || pad > BLOCK_SIZE) {
             pad = 0;
@@ -195,7 +188,7 @@ public class WxMpCbHelper {
     /**
      * 还原4个字节的网络字节序
      */
-    private int recoverNetworkBytesOrder(byte[] orderBytes) {
+    private static int recoverNetworkBytesOrder(byte[] orderBytes) {
         int sourceNumber = 0;
         for (int i = 0; i < 4; i++) {
             sourceNumber <<= 8;
@@ -210,7 +203,7 @@ public class WxMpCbHelper {
      * @param needSignArray 待签名字符串
      * @return 签名
      */
-    private String signString(String... needSignArray) {
+    private static String signString(String... needSignArray) {
         String needSign = Stream.of(needSignArray)
                 .filter(StringUtilPlus::isNotEmpty)
                 .sorted(String::compareTo)
@@ -221,7 +214,7 @@ public class WxMpCbHelper {
     /**
      * 生成4个字节的网络字节序
      */
-    private byte[] getNetworkBytesOrder(int sourceNumber) {
+    private static byte[] getNetworkBytesOrder(int sourceNumber) {
         byte[] orderBytes = new byte[4];
         orderBytes[3] = (byte) (sourceNumber & 0xFF);
         orderBytes[2] = (byte) (sourceNumber >> 8 & 0xFF);
@@ -236,7 +229,7 @@ public class WxMpCbHelper {
      * @param count 需要进行填充补位操作的明文字节个数
      * @return 补齐用的字节数组
      */
-    private byte[] pkcs7Encode(int count) {
+    private static byte[] pkcs7Encode(int count) {
         // 计算需要填充的位数
         int amountToPad = BLOCK_SIZE - (count % BLOCK_SIZE);
         // 获得补位所用的字符

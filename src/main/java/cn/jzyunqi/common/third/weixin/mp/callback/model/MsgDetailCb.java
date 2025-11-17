@@ -32,6 +32,12 @@ public class MsgDetailCb {
     private String toUserName;
 
     /**
+     * 应用id（仅企业号）
+     */
+    @XmlElement(name = "AgentID")
+    private String agentID;
+
+    /**
      * 消息发送方
      */
     @XmlElement(name = "FromUserName")

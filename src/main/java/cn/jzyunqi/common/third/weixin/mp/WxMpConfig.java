@@ -2,7 +2,6 @@ package cn.jzyunqi.common.third.weixin.mp;
 
 import cn.jzyunqi.common.third.weixin.common.WxHttpExchangeWrapper;
 import cn.jzyunqi.common.third.weixin.common.utils.WxFormatUtils;
-import cn.jzyunqi.common.third.weixin.mp.callback.WxMpCbHelper;
 import cn.jzyunqi.common.third.weixin.mp.card.WxMpCardApi;
 import cn.jzyunqi.common.third.weixin.mp.card.WxMpCardApiProxy;
 import cn.jzyunqi.common.third.weixin.mp.kefu.WxMpKefuApi;
@@ -24,7 +23,6 @@ import cn.jzyunqi.common.third.weixin.mp.user.WxMpUserApiProxy;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
@@ -47,11 +45,6 @@ public class WxMpConfig {
     @Bean
     public WxMpClient wxMpClient() {
         return new WxMpClient();
-    }
-
-    @Bean
-    public WxMpCbHelper wxMpCbHelper() {
-        return new WxMpCbHelper();
     }
 
     @Bean

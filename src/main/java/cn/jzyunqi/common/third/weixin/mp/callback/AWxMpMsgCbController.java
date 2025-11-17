@@ -1,6 +1,8 @@
 package cn.jzyunqi.common.third.weixin.mp.callback;
 
 import cn.jzyunqi.common.exception.BusinessException;
+import cn.jzyunqi.common.third.weixin.mp.WxMpAuth;
+import cn.jzyunqi.common.third.weixin.mp.WxMpAuthHelper;
 import cn.jzyunqi.common.third.weixin.mp.WxMpClient;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.EventMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ImageMsgData;
@@ -45,9 +47,11 @@ public abstract class AWxMpMsgCbController {
 
     private static final String NOT_SUPPORT = "Not support now!";
 
-    @Resource
+    @Resource //供子类使用
     protected WxMpClient wxMpClient;
 
+    @Resource
+    private WxMpAuthHelper wxMpAuthHelper;
 
     /***
      * 微信公众号消息回调
@@ -71,7 +75,8 @@ public abstract class AWxMpMsgCbController {
                 msgSimpleCb,
                 msgDetailCbStr
         );
-        return wxMpClient.cb.replyMessageNotice(appId, msgSimpleCb, msgDetailCb, decryptNotice ->
+        WxMpAuth wxMpAuth = wxMpAuthHelper.chooseWxMpAuth(appId);
+        return WxMsgCbHelper.replyMessageNotice(appId, wxMpAuth.getVerificationToken(), wxMpAuth.getEncryptKey(), msgSimpleCb, msgDetailCb, decryptNotice ->
                 switch (decryptNotice.getMsgType()) {
                     case text -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
                     case image -> this.processImageMsg(BeanUtilPlus.copyAs(decryptNotice, ImageMsgData.class));

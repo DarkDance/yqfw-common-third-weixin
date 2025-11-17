@@ -1,6 +1,5 @@
 package cn.jzyunqi.common.third.weixin.mp;
 
-import cn.jzyunqi.common.third.weixin.mp.callback.WxMpCbHelper;
 import cn.jzyunqi.common.third.weixin.mp.card.WxMpCardApi;
 import cn.jzyunqi.common.third.weixin.mp.kefu.WxMpKefuApi;
 import cn.jzyunqi.common.third.weixin.mp.mass.WxMpMassApi;
@@ -33,9 +32,6 @@ public class WxMpClient {
 
     @Resource
     public WxMpMaterialApi material;
-
-    @Resource
-    public WxMpCbHelper cb;
 
     @Resource
     public WxMpUserApi user;
