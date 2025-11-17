@@ -2,17 +2,13 @@ package cn.jzyunqi.common.third.weixin.mp.callback.model;
 
 import cn.jzyunqi.common.third.weixin.mp.callback.enums.EventType;
 import cn.jzyunqi.common.third.weixin.mp.callback.enums.MsgType;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
-
-import java.io.Serial;
-import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author wiiyaya
@@ -26,16 +22,16 @@ import java.io.Serializable;
 public class MsgDetailCb {
 
     /**
-     * 消息接收方
+     * 消息接收方ID
      */
     @XmlElement(name = "ToUserName")
     private String toUserName;
 
     /**
-     * 应用id（仅企业号）
+     * 企业应用ID (仅企业号）
      */
     @XmlElement(name = "AgentID")
-    private String agentID;
+    private String agentId;
 
     /**
      * 消息发送方

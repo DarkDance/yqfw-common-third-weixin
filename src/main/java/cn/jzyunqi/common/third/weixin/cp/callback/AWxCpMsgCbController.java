@@ -4,31 +4,12 @@ import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.third.weixin.cp.WxCpAuth;
 import cn.jzyunqi.common.third.weixin.cp.WxCpAuthHelper;
 import cn.jzyunqi.common.third.weixin.cp.WxCpClient;
-import cn.jzyunqi.common.third.weixin.mp.WxMpAuth;
-import cn.jzyunqi.common.third.weixin.mp.WxMpClient;
 import cn.jzyunqi.common.third.weixin.mp.callback.WxMsgCbHelper;
 import cn.jzyunqi.common.third.weixin.mp.callback.WxMsgUtilPlus;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.EventMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.ImageMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.LinkMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.LocationEventData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.LocationMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.MemberCardEventData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.MenuMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.MiniProgramPageMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.MpNewsMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.MusicMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.NewsMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.ShortVideoMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.TextMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.ThumbMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.TransferCustomerServiceMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.VideoMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.VoiceMsgData;
-import cn.jzyunqi.common.third.weixin.mp.callback.model.WxCardMsgData;
 import cn.jzyunqi.common.utils.BeanUtilPlus;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -81,6 +62,10 @@ public class AWxCpMsgCbController {
         return WxMsgCbHelper.replyMessageNotice(appId, wxMpAuth.getVerificationToken(), wxMpAuth.getEncryptKey(), msgSimpleCb, msgDetailCb, decryptNotice ->
                 switch (decryptNotice.getMsgType()) {
                     case text -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
+                    case event -> switch (decryptNotice.getEvent()) {
+                        case subscribe -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
+                        default -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
+                    };
                     default -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
                 }
         );

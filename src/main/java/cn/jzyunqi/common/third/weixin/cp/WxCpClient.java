@@ -1,6 +1,6 @@
 package cn.jzyunqi.common.third.weixin.cp;
 
-import cn.jzyunqi.common.third.weixin.mp.token.WxMpTokenApi;
+import cn.jzyunqi.common.third.weixin.cp.token.WxCpTokenApi;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,5 +12,5 @@ import lombok.extern.slf4j.Slf4j;
 public class WxCpClient {
 
     @Resource
-    public WxMpTokenApi token;
+    public WxCpTokenApi token;
 }

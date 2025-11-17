@@ -21,6 +21,11 @@ public class WxCpAuth {
     private String corpId;
 
     /**
+     * 企业应用ID
+     */
+    private String agentId;
+
+    /**
      * 企业密码
      */
     private String corpSecret;
