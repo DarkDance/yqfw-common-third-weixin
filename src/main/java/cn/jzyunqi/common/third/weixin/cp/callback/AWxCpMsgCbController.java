@@ -81,7 +81,7 @@ public class AWxCpMsgCbController {
         return WxMsgCbHelper.replyMessageNotice(appId, wxMpAuth.getVerificationToken(), wxMpAuth.getEncryptKey(), msgSimpleCb, msgDetailCb, decryptNotice ->
                 switch (decryptNotice.getMsgType()) {
                     case text -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
-                    default -> throw new IllegalStateException("Unexpected value: " + decryptNotice.getMsgType());
+                    default -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
                 }
         );
     }
