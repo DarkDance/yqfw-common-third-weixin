@@ -1,30 +1,37 @@
 package cn.jzyunqi.common.third.weixin.cp;
 
-import cn.jzyunqi.common.third.weixin.mp.WxMpAuth;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * @author wiiyaya
  * @since 2025/11/17
  */
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class WxCpAuth extends WxMpAuth {
+public class WxCpAuth {
 
-    public String getCorpId() {
-        return super.getAppId();
-    }
+    /**
+     * 企业ID
+     */
+    private String corpId;
 
-    public void setCorpId(String corpId) {
-        super.setAppId(corpId);
-    }
+    /**
+     * 企业密码
+     */
+    private String corpSecret;
 
-    public String getCorpSecret() {
-        return super.getAppSecret();
-    }
+    /**
+     * 消息token
+     */
+    private String verificationToken;
 
-    public void setCorpSecret(String corpSecret) {
-        super.setAppSecret(corpSecret);
-    }
+    /**
+     * 消息体加密密钥
+     */
+    private String encryptKey;
 }
