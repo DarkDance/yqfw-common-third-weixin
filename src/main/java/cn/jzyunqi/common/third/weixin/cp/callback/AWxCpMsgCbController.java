@@ -4,7 +4,6 @@ import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.third.weixin.cp.WxCpAuth;
 import cn.jzyunqi.common.third.weixin.cp.WxCpAuthHelper;
 import cn.jzyunqi.common.third.weixin.cp.WxCpClient;
-import cn.jzyunqi.common.third.weixin.mp.callback.WxMsgCbHelper;
 import cn.jzyunqi.common.third.weixin.mp.callback.WxMsgUtilPlus;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
@@ -59,7 +58,7 @@ public class AWxCpMsgCbController {
                 msgDetailCbStr
         );
         WxCpAuth wxMpAuth = wxCpAuthHelper.chooseWxCpAuth(appId);
-        return WxMsgCbHelper.replyMessageNotice(appId, wxMpAuth.getVerificationToken(), wxMpAuth.getEncryptKey(), msgSimpleCb, msgDetailCb, decryptNotice ->
+        return WxCpMsgCbHelper.replyMessageNotice(wxMpAuth.getCorpId(), wxMpAuth.getVerificationToken(), wxMpAuth.getEncryptKey(), msgSimpleCb, msgDetailCb, decryptNotice ->
                 switch (decryptNotice.getMsgType()) {
                     case text -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
                     case event -> switch (decryptNotice.getEvent()) {
