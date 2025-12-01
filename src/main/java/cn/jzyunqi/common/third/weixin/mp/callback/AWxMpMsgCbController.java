@@ -76,7 +76,7 @@ public abstract class AWxMpMsgCbController {
                 msgDetailCbStr
         );
         WxMpAuth wxMpAuth = wxMpAuthHelper.chooseWxMpAuth(appId);
-        return WxMsgCbHelper.replyMessageNotice(appId, wxMpAuth.getVerificationToken(), wxMpAuth.getEncryptKey(), msgSimpleCb, msgDetailCb, decryptNotice ->
+        return WxMpMsgCbHelper.replyMessageNotice(appId, wxMpAuth.getVerificationToken(), wxMpAuth.getEncryptKey(), msgSimpleCb, msgDetailCb, decryptNotice ->
                 switch (decryptNotice.getMsgType()) {
                     case text -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
                     case image -> this.processImageMsg(BeanUtilPlus.copyAs(decryptNotice, ImageMsgData.class));

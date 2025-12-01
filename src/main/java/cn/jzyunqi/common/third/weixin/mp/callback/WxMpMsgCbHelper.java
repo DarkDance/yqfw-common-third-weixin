@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  * @since 2025/9/12
  */
 @Slf4j
-public class WxMsgCbHelper {
+public class WxMpMsgCbHelper {
 
     private static final String RESPONSE_MSG =
             """
