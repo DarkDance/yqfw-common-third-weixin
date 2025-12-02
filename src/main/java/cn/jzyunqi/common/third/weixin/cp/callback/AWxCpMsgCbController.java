@@ -77,7 +77,7 @@ public class AWxCpMsgCbController {
         return null;
     }
 
-    private ReplyMsgData processMsgAuditNotifyEvent(EventMsgData eventMsgData) {
+    protected ReplyMsgData processMsgAuditNotifyEvent(EventMsgData eventMsgData) {
         return null;
     }
 
