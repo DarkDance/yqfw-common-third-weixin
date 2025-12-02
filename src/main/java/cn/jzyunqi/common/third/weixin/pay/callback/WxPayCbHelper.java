@@ -116,7 +116,7 @@ public class WxPayCbHelper {
         //获取证书
         try {
             PlantCertRedisDto plantCertRedisDto = wxPayCertApi.plantCert(wxPayAuth, weixinPemSerial);
-            boolean matchResult = DigestUtilPlus.RSA256.verifySignPublicKey(waitSign.getBytes(StringUtilPlus.UTF_8), weixinSign, DigestUtilPlus.Base64.decodeBase64(plantCertRedisDto.getPublicKey()));
+            boolean matchResult = DigestUtilPlus.RSA.verifyWithSHA256(waitSign.getBytes(StringUtilPlus.UTF_8), weixinSign, DigestUtilPlus.Base64.decodeBase64(plantCertRedisDto.getPublicKey()));
             if (!matchResult) {
                 throw new SSLException("sign not match!");
             }

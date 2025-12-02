@@ -148,8 +148,14 @@ public abstract class AWxMpMsgCbController {
                             this.processTransferCustomerServiceMsg(BeanUtilPlus.copyAs(decryptNotice, TransferCustomerServiceMsgData.class));
                     case miniprogrampage ->
                             this.processMiniProgramPageMsg(BeanUtilPlus.copyAs(decryptNotice, MiniProgramPageMsgData.class));
+                    default -> this.processUnsupportedMessage(decryptNotice);
                 }
         );
+    }
+
+    private ReplyMsgData processUnsupportedMessage(MsgDetailCb decryptNotice) {
+        log.warn("WxMp unsupported message: [{}]", decryptNotice.getMsgType());
+        return null;
     }
 
     private ReplyMsgData processUnsupportedEvent(MsgDetailCb eventMsgData) {

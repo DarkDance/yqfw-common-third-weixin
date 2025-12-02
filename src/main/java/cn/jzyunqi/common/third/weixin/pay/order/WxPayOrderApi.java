@@ -79,7 +79,7 @@ public class WxPayOrderApi {
         );
         String sign = null;
         try {
-            sign = DigestUtilPlus.RSA256.signPrivateKey(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(wxPayAuth.getMerchantPrivateKey()), Boolean.TRUE);
+            sign = DigestUtilPlus.RSA.signWithSHA256(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(wxPayAuth.getMerchantPrivateKey()), Boolean.TRUE);
         } catch (Exception e) {
             log.error("=====unifiedJsapiOrder sign error", e);
         }
@@ -208,7 +208,7 @@ public class WxPayOrderApi {
         );
         String sign = null;
         try {
-            sign = DigestUtilPlus.RSA256.signPrivateKey(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(wxPayAuth.getMerchantPrivateKey()), Boolean.TRUE);
+            sign = DigestUtilPlus.RSA.signWithSHA256(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(wxPayAuth.getMerchantPrivateKey()), Boolean.TRUE);
         } catch (Exception e) {
             log.error("=====unifiedAppOrder sign error", e);
         }

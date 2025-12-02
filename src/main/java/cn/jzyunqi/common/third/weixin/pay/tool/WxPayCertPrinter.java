@@ -87,7 +87,7 @@ public class WxPayCertPrinter {
         String timestamp = "1625984027";
         String bodyS = "123";
         String waitSign = String.format("%s\n%s\n%s\n", timestamp, nonce2, bodyS);
-        boolean rst = DigestUtilPlus.RSA256.verifySignPublicKey(waitSign.getBytes(StringUtilPlus.UTF_8), signature, DigestUtilPlus.Base64.decodeBase64(weixinServerPublicKeyStr));
+        boolean rst = DigestUtilPlus.RSA.verifyWithSHA256(waitSign.getBytes(StringUtilPlus.UTF_8), signature, DigestUtilPlus.Base64.decodeBase64(weixinServerPublicKeyStr));
         System.out.println(rst);
     }
 }

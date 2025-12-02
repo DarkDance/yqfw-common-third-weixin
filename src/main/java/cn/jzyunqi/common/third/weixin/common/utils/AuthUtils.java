@@ -69,7 +69,7 @@ public class AuthUtils {
         log.debug("=====needSignContent: [{}]", needSignContent);
         String sign = StringUtilPlus.EMPTY;
         try {
-            sign = DigestUtilPlus.RSA256.signPrivateKey(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(merchantPrivateKey), Boolean.TRUE);
+            sign = DigestUtilPlus.RSA.signWithSHA256(needSignContent.getBytes(StringUtilPlus.UTF_8), DigestUtilPlus.Base64.decodeBase64(merchantPrivateKey), Boolean.TRUE);
         } catch (Exception e) {
             log.error("=====headerSign error: ", e);
         }
