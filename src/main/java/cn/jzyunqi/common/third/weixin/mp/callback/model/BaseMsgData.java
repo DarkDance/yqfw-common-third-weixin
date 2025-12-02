@@ -31,4 +31,9 @@ public class BaseMsgData {
      * 消息id，64位整型
      */
     private Long msgId;
+
+    /**
+     * 企业应用ID (仅企业号）
+     */
+    private String agentId;
 }

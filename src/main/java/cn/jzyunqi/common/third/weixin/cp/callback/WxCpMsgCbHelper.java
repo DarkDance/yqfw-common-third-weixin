@@ -175,11 +175,11 @@ public class WxCpMsgCbHelper {
         try {
             byte[] aesKey = DigestUtilPlus.Base64.decodeBase64(encryptKey + "=");
             byte[] aesIv = Arrays.copyOfRange(aesKey, 0, 16);
-            String rst = DigestUtilPlus.AES.decryptCBCNoPadding(DigestUtilPlus.Base64.decodeBase64(encryptMsg), aesKey, aesIv);
+            byte[] rst = DigestUtilPlus.AES.decryptCBCNoPadding(DigestUtilPlus.Base64.decodeBase64(encryptMsg), aesKey, aesIv);
             // 去除补位字符
-            byte[] bytes = pkcs7Decode(rst.getBytes(StringUtilPlus.UTF_8));
+            byte[] bytes = pkcs7Decode(rst);
             // 分离16位随机字符串,网络字节序和AppId
-            int xmlLength = recoverNetworkBytesOrder(Arrays.copyOfRange(bytes, 16, 20));
+            int xmlLength = recoverNetworkBytesOrder(Arrays.copyOfRange(bytes, 16, 21));
             //检查id是否正确
             String fromAppId = new String(Arrays.copyOfRange(bytes, 20 + xmlLength, bytes.length), StringUtilPlus.UTF_8);
             if (fromAppId.equals(appId)) {

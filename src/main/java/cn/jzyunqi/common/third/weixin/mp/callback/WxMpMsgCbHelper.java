@@ -148,9 +148,9 @@ public class WxMpMsgCbHelper {
         try {
             byte[] aesKey = DigestUtilPlus.Base64.decodeBase64(encryptKey);
             byte[] aesIv = Arrays.copyOfRange(Base64.decodeBase64(aesKey), 0, 16);
-            String rst = DigestUtilPlus.AES.decryptCBCNoPadding(DigestUtilPlus.Base64.decodeBase64(encryptMsg), aesKey, aesIv);
+            byte[] rst = DigestUtilPlus.AES.decryptCBCNoPadding(DigestUtilPlus.Base64.decodeBase64(encryptMsg), aesKey, aesIv);
             // 去除补位字符
-            byte[] bytes = pkcs7Decode(rst.getBytes(StringUtilPlus.UTF_8));
+            byte[] bytes = pkcs7Decode(rst);
             // 分离16位随机字符串,网络字节序和AppId
             int xmlLength = recoverNetworkBytesOrder(Arrays.copyOfRange(bytes, 16, 20));
             //检查id是否正确

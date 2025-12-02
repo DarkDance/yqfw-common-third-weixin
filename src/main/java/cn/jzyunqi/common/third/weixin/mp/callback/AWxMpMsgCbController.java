@@ -142,6 +142,7 @@ public abstract class AWxMpMsgCbController {
                                 this.processUserConsumeCardEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
                         case user_view_card ->
                                 this.processUserViewCardEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        default -> this.processUnsupportedEvent(decryptNotice);
                     };
                     case transfer_customer_service ->
                             this.processTransferCustomerServiceMsg(BeanUtilPlus.copyAs(decryptNotice, TransferCustomerServiceMsgData.class));
@@ -149,6 +150,11 @@ public abstract class AWxMpMsgCbController {
                             this.processMiniProgramPageMsg(BeanUtilPlus.copyAs(decryptNotice, MiniProgramPageMsgData.class));
                 }
         );
+    }
+
+    private ReplyMsgData processUnsupportedEvent(MsgDetailCb eventMsgData) {
+        log.warn("WxMp unsupported event: [{}]", eventMsgData.getEvent());
+        return null;
     }
 
     private ReplyMsgData processViewMiniProgramEvent(MenuMsgData menuMsgData) {

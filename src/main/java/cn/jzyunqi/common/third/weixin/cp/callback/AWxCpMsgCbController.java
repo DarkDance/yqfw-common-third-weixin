@@ -5,6 +5,7 @@ import cn.jzyunqi.common.third.weixin.cp.WxCpAuth;
 import cn.jzyunqi.common.third.weixin.cp.WxCpAuthHelper;
 import cn.jzyunqi.common.third.weixin.cp.WxCpClient;
 import cn.jzyunqi.common.third.weixin.mp.callback.WxMsgUtilPlus;
+import cn.jzyunqi.common.third.weixin.mp.callback.model.EventMsgData;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgSimpleCb;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
@@ -63,11 +64,21 @@ public class AWxCpMsgCbController {
                     case text -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
                     case event -> switch (decryptNotice.getEvent()) {
                         case subscribe -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
-                        default -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
+                        case msgaudit_notify -> this.processMsgAuditNotifyEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        default -> this.processUnsupportedEvent(decryptNotice);
                     };
                     default -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
                 }
         );
+    }
+
+    private ReplyMsgData processUnsupportedEvent(MsgDetailCb eventMsgData) {
+        log.warn("WxCp unsupported event: [{}]", eventMsgData.getEvent());
+        return null;
+    }
+
+    private ReplyMsgData processMsgAuditNotifyEvent(EventMsgData eventMsgData) {
+        return null;
     }
 
     protected ReplyMsgData processTextMsg(TextMsgData textMsgCb) throws BusinessException {
