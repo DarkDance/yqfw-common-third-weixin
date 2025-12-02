@@ -58,13 +58,13 @@ public class AWxCpMsgCbController {
                 msgSimpleCb,
                 msgDetailCbStr
         );
-        WxCpAuth wxMpAuth = wxCpAuthHelper.chooseWxCpAuth(appId);
-        return WxCpMsgCbHelper.replyMessageNotice(wxMpAuth.getCorpId(), wxMpAuth.getVerificationToken(), wxMpAuth.getEncryptKey(), msgSimpleCb, msgDetailCb, decryptNotice ->
+        WxCpAuth wxCpAuth = wxCpAuthHelper.chooseWxCpAuth(appId);
+        return WxCpMsgCbHelper.replyMessageNotice(wxCpAuth.getCorpId(), wxCpAuth.getVerificationToken(), wxCpAuth.getEncryptKey(), msgSimpleCb, msgDetailCb, decryptNotice ->
                 switch (decryptNotice.getMsgType()) {
                     case text -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
                     case event -> switch (decryptNotice.getEvent()) {
                         case subscribe -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
-                        case msgaudit_notify -> this.processMsgAuditNotifyEvent(BeanUtilPlus.copyAs(decryptNotice, EventMsgData.class));
+                        case msgaudit_notify -> this.processMsgAuditNotifyEvent(wxCpAuth);
                         default -> this.processUnsupportedEvent(decryptNotice);
                     };
                     default -> this.processTextMsg(BeanUtilPlus.copyAs(decryptNotice, TextMsgData.class));
@@ -77,7 +77,7 @@ public class AWxCpMsgCbController {
         return null;
     }
 
-    protected ReplyMsgData processMsgAuditNotifyEvent(EventMsgData eventMsgData) {
+    protected ReplyMsgData processMsgAuditNotifyEvent(WxCpAuth wxCpAuth) {
         return null;
     }
 

@@ -82,5 +82,126 @@ public enum MsgType {
      * 发送小程序卡片（要求小程序与公众号已关联）
      */
     miniprogrampage,
+
+    /**
+     * 撤回消息
+     */
+    revoke,
+
+    /**
+     * 同意消息
+     */
+    agree,
+
+    /**
+     * 不同意消息
+     */
+    disagree,
+
+    /**
+     * 卡片消息
+     */
+    card,
+
+    /**
+     * 表情消息
+     */
+    emotion,
+
+    /**
+     * 文件消息
+     */
+    file,
+
+    /**
+     * 小程序消息
+     */
+    weapp,
+
+    /**
+     * 会话记录消息
+     */
+    chatrecord,
+
+    /**
+     * 待办消息
+     */
+    todo,
+
+    /**
+     * 投票消息
+     */
+    vote,
+
+    /**
+     * 填表消息
+     */
+    collect,
+
+    /**
+     * 红包消息
+     */
+    redpacket,
+
+    /**
+     * 会议邀请消息
+     */
+    meeting,
+
+    /**
+     * 会议控制消息
+     */
+    meeting_notification,
+
+    /**
+     * 在线文档消息
+     */
+    docmsg,
+
+    /**
+     * MarkDown格式消息
+     */
+    markdown,
+
+    /**
+     * 日程消息
+     */
+    calendar,
+
+    /**
+     * 混合消息
+     */
+    mixed,
+
+    /**
+     * 音频存档消息
+     */
+    meeting_voice_call,
+
+    /**
+     * 音频共享文档消息
+     */
+    voip_doc_share,
+
+    /**
+     * 互通红包消息
+     */
+    external_redpacket,
+
+    /**
+     * 视频号消息
+     */
+    sphfeed,
+
+    /**
+     * 音视频通话
+     */
+    voiptext,
+
+    /**
+     * 微盘文件
+     */
+    qydiskfile,
+
     ;
 }
