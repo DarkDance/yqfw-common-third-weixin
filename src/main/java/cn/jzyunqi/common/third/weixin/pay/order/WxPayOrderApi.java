@@ -55,7 +55,7 @@ public class WxPayOrderApi {
         unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
         unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
         unifiedOrderParam.setOutTradeNo(outTradeNo);
-        unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
+        unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_REGION).plusMinutes(expiresInMinutes));
         unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
 
         PayAmountData payAmountData = new PayAmountData();
@@ -144,7 +144,7 @@ public class WxPayOrderApi {
         unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
         unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
         unifiedOrderParam.setOutTradeNo(outTradeNo);
-        unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
+        unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_REGION).plusMinutes(expiresInMinutes));
         unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
 
         PayAmountData payAmountData = new PayAmountData();
@@ -166,7 +166,7 @@ public class WxPayOrderApi {
         unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
         unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
         unifiedOrderParam.setOutTradeNo(outTradeNo);
-        unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
+        unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_REGION).plusMinutes(expiresInMinutes));
         unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
 
         PayAmountData payAmountData = new PayAmountData();
@@ -189,7 +189,7 @@ public class WxPayOrderApi {
         unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
         unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
         unifiedOrderParam.setOutTradeNo(outTradeNo);
-        unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_ID).plusMinutes(expiresInMinutes));
+        unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_REGION).plusMinutes(expiresInMinutes));
         unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
 
         PayAmountData payAmountData = new PayAmountData();
