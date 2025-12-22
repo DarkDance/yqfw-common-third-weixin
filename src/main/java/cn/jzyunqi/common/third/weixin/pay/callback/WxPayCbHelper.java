@@ -47,7 +47,7 @@ public class WxPayCbHelper {
                     nonce.getBytes(StringUtilPlus.UTF_8),
                     associatedData.getBytes(StringUtilPlus.UTF_8)
             );
-            OrderData orderData = WxFormatUtils.OBJECT_MAPPER.readValue(realCallback, OrderData.class);
+            OrderData orderData = WxFormatUtils.JSON_MAPPER.readValue(realCallback, OrderData.class);
             if (orderData.getTradeState() == TradeState.SUCCESS) {
                 orderData.setActualPayAmount(BigDecimal.valueOf(orderData.getAmount().getPayerTotal()).divide(BigDecimal.valueOf(100), 2, RoundingMode.DOWN)); //订单总金额，单位为分
                 orderData.setResponseStr("接口回调:" + realCallback);
@@ -80,7 +80,7 @@ public class WxPayCbHelper {
                     nonce.getBytes(StringUtilPlus.UTF_8),
                     associatedData.getBytes(StringUtilPlus.UTF_8)
             );
-            OrderRefundData orderRefundV3Rsp = WxFormatUtils.OBJECT_MAPPER.readValue(realCallback, OrderRefundData.class);
+            OrderRefundData orderRefundV3Rsp = WxFormatUtils.JSON_MAPPER.readValue(realCallback, OrderRefundData.class);
             if (orderRefundV3Rsp.getStatus() == RefundStatus.SUCCESS) {
                 orderRefundV3Rsp.setActualRefundAmount(BigDecimal.valueOf(orderRefundV3Rsp.getAmount().getPayerTotal()).divide(BigDecimal.valueOf(100), 2, RoundingMode.DOWN)); //订单总金额，单位为分
                 orderRefundV3Rsp.setResponseStr(realCallback);

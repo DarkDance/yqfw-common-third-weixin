@@ -5,7 +5,6 @@ import cn.jzyunqi.common.third.weixin.common.enums.WeixinPaySubType;
 import cn.jzyunqi.common.third.weixin.common.utils.WxFormatUtils;
 import cn.jzyunqi.common.third.weixin.pay.WxPayAuth;
 import cn.jzyunqi.common.third.weixin.pay.WxPayAuthHelper;
-import cn.jzyunqi.common.third.weixin.pay.cert.WxPayCertApi;
 import cn.jzyunqi.common.third.weixin.pay.order.enums.TradeState;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderData;
 import cn.jzyunqi.common.third.weixin.pay.order.model.OrderRefundData;
@@ -21,9 +20,9 @@ import cn.jzyunqi.common.utils.DateTimeUtilPlus;
 import cn.jzyunqi.common.utils.DigestUtilPlus;
 import cn.jzyunqi.common.utils.RandomUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import tools.jackson.core.JacksonException;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -53,7 +52,7 @@ public class WxPayOrderApi {
         UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
         unifiedOrderParam.setAppId(appId);
         unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
-        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
+        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.Ext.replaceEmoji(simpleDesc).toString(), 0, 128));
         unifiedOrderParam.setOutTradeNo(outTradeNo);
         unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_REGION).plusMinutes(expiresInMinutes));
         unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
@@ -129,8 +128,8 @@ public class WxPayOrderApi {
         OrderRefundData orderRefundData = wxPayOrderApiProxy.refundApply(wxPayAuth.getWxAppId(), refundOrderParam);
         orderRefundData.setActualRefundAmount(BigDecimal.valueOf(orderRefundData.getAmount().getPayerRefund()).divide(BigDecimal.valueOf(100), 2, RoundingMode.DOWN));
         try {
-            orderRefundData.setResponseStr(WxFormatUtils.OBJECT_MAPPER.writeValueAsString(orderRefundData));
-        } catch (JsonProcessingException e) {
+            orderRefundData.setResponseStr(WxFormatUtils.JSON_MAPPER.writeValueAsString(orderRefundData));
+        } catch (JacksonException e) {
             log.warn("=====refundApply orderRefundData parse error", e);
         }
         return orderRefundData;
@@ -142,7 +141,7 @@ public class WxPayOrderApi {
         UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
         unifiedOrderParam.setAppId(wxPayAuth.getWxAppId());//只能是公众号的appId
         unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
-        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
+        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.Ext.replaceEmoji(simpleDesc).toString(), 0, 128));
         unifiedOrderParam.setOutTradeNo(outTradeNo);
         unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_REGION).plusMinutes(expiresInMinutes));
         unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
@@ -164,7 +163,7 @@ public class WxPayOrderApi {
         UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
         unifiedOrderParam.setAppId(wxPayAuth.getWxAppId());//只能是公众号的appId
         unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
-        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
+        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.Ext.replaceEmoji(simpleDesc).toString(), 0, 128));
         unifiedOrderParam.setOutTradeNo(outTradeNo);
         unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_REGION).plusMinutes(expiresInMinutes));
         unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
@@ -187,7 +186,7 @@ public class WxPayOrderApi {
         UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
         unifiedOrderParam.setAppId(wxPayAuth.getWxAppId());//只能是开放平台的appId
         unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
-        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
+        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.Ext.replaceEmoji(simpleDesc).toString(), 0, 128));
         unifiedOrderParam.setOutTradeNo(outTradeNo);
         unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_REGION).plusMinutes(expiresInMinutes));
         unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());

@@ -1,28 +1,28 @@
 package cn.jzyunqi.common.third.weixin.mp.template.enums;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
-import java.io.IOException;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DatabindException;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.ValueDeserializer;
 
 /**
  * @author wiiyaya
  * @since 2024/9/26
  * 将{"first_class":"xxx","second_class":"xxx"}转换为枚举值
  */
-public class WxMpIndustryDeserializer extends JsonDeserializer<WxMpIndustryEnum> {
+public class WxMpIndustryDeserializer extends ValueDeserializer<WxMpIndustryEnum> {
+
     @Override
-    public WxMpIndustryEnum deserialize(JsonParser parser, DeserializationContext deserializationContext) throws IOException {
+    public WxMpIndustryEnum deserialize(JsonParser parser, DeserializationContext deserializationContext) throws JacksonException {
         if (!parser.isExpectedStartObjectToken()) {
-            throw JsonMappingException.from(parser, "Expected an object but got " + parser.getCurrentToken());
+            throw DatabindException.from(parser, "Expected an object but got " + parser.currentToken());
         }
         parser.nextToken();
-        String firstClass = parser.getText().trim();
+        String firstClass = parser.getString().trim();
 
         parser.nextToken();
-        String secondClass = parser.getText().trim();
+        String secondClass = parser.getString().trim();
 
         return WxMpIndustryEnum.valueOf(firstClass, secondClass);
     }

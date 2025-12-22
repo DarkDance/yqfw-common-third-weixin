@@ -3,10 +3,9 @@ package cn.jzyunqi.common.third.weixin.mp.template.model;
 import cn.jzyunqi.common.third.weixin.common.model.WeixinRspV1;
 import cn.jzyunqi.common.third.weixin.mp.template.enums.WxMpIndustryDeserializer;
 import cn.jzyunqi.common.third.weixin.mp.template.enums.WxMpIndustryEnum;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.Setter;
+import tools.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * @author wiiyaya
