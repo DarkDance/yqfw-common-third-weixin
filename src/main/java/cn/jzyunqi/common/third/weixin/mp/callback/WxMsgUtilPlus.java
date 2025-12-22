@@ -6,8 +6,8 @@ import cn.jzyunqi.common.third.weixin.mp.callback.model.ItemListParam;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.ReplyMsgData;
 import cn.jzyunqi.common.utils.BooleanUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
+import org.jspecify.annotations.Nullable;
 
-import jakarta.annotation.Nullable;
 import java.util.List;
 
 /**
