@@ -70,7 +70,7 @@ public class WxPayCertApi {
                         plantCertRedisDto.setPublicKey(weixinPublicKey);
                         weixinPem.put(certData.getSerialNo(), plantCertRedisDto);
 
-                        if (StringUtilPlus.CS.equals(plantCertRedisDto.getSerialNo(), weixinPemSerial)) {
+                        if (StringUtilPlus.equals(plantCertRedisDto.getSerialNo(), weixinPemSerial)) {
                             needReturn = plantCertRedisDto;
                         }
                     }

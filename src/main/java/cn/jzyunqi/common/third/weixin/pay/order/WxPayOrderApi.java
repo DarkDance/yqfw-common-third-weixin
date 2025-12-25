@@ -52,7 +52,7 @@ public class WxPayOrderApi {
         UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
         unifiedOrderParam.setAppId(appId);
         unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
-        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.Ext.replaceEmoji(simpleDesc).toString(), 0, 128));
+        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
         unifiedOrderParam.setOutTradeNo(outTradeNo);
         unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_REGION).plusMinutes(expiresInMinutes));
         unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
@@ -141,7 +141,7 @@ public class WxPayOrderApi {
         UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
         unifiedOrderParam.setAppId(wxPayAuth.getWxAppId());//只能是公众号的appId
         unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
-        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.Ext.replaceEmoji(simpleDesc).toString(), 0, 128));
+        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
         unifiedOrderParam.setOutTradeNo(outTradeNo);
         unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_REGION).plusMinutes(expiresInMinutes));
         unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
@@ -163,7 +163,7 @@ public class WxPayOrderApi {
         UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
         unifiedOrderParam.setAppId(wxPayAuth.getWxAppId());//只能是公众号的appId
         unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
-        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.Ext.replaceEmoji(simpleDesc).toString(), 0, 128));
+        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
         unifiedOrderParam.setOutTradeNo(outTradeNo);
         unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_REGION).plusMinutes(expiresInMinutes));
         unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
@@ -186,7 +186,7 @@ public class WxPayOrderApi {
         UnifiedOrderParam unifiedOrderParam = new UnifiedOrderParam();
         unifiedOrderParam.setAppId(wxPayAuth.getWxAppId());//只能是开放平台的appId
         unifiedOrderParam.setMchId(wxPayAuth.getMerchantId());
-        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.Ext.replaceEmoji(simpleDesc).toString(), 0, 128));
+        unifiedOrderParam.setDescription(StringUtilPlus.substring(StringUtilPlus.replaceEmoji(simpleDesc).toString(), 0, 128));
         unifiedOrderParam.setOutTradeNo(outTradeNo);
         unifiedOrderParam.setTimeExpire(ZonedDateTime.now(DateTimeUtilPlus.CHINA_ZONE_REGION).plusMinutes(expiresInMinutes));
         unifiedOrderParam.setNotifyUrl(wxPayAuth.getPayCallbackUrl());
