@@ -36,7 +36,7 @@ public class WxHttpExchangeWrapper {
             resultObj = proceedingJoinPoint.proceed();
         } catch (Throwable e) {
             log.debug("======wxHttpExchange[{}] proceed throw exception=======", proceedingJoinPoint.getSignature().getName());
-            throw new BusinessException("common_error_wx_http_exchange_error", e);
+            throw new BusinessException(e, "common_error_wx_http_exchange_error");
         }
         log.debug("======wxHttpExchange[{}] proceed success=======", proceedingJoinPoint.getSignature().getName());
         if (resultObj instanceof WeixinRspV1 weixinRsp) {
