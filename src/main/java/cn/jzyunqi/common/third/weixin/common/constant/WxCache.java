@@ -17,17 +17,17 @@ public enum WxCache implements Cache {
     /**
      * 微信公众号缓存
      */
-    THIRD_WX_MP_V(Duration.ZERO, Boolean.FALSE),
+    THIRD_WX_MP_V(Duration.ofHours(3), Boolean.FALSE),
 
     /**
      * 企业微信缓存
      */
-    THIRD_WX_CP_V(Duration.ZERO, Boolean.FALSE),
+    THIRD_WX_CP_V(Duration.ofHours(3), Boolean.FALSE),
 
     /**
-     * 微信支付缓存
+     * 微信支付证书缓存
      */
-    THIRD_WX_PAY_H(Duration.ZERO, Boolean.FALSE);
+    THIRD_WX_PAY_H(Duration.ofDays(5 * 366), Boolean.FALSE);
 
     private final Duration expiration;
 
