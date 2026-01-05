@@ -36,6 +36,7 @@ public class WxCpTokenApi {
                 ClientTokenData clientTokenData = wxCpTokenApiProxy.getCpToken(wxCpAuth.getCorpId(), wxCpAuth.getCorpSecret());
                 ThirdTokenRedisDto clientToken = new ThirdTokenRedisDto();
                 clientToken.setToken(clientTokenData.getAccessToken()); //获取到的凭证
+                clientToken.setCreateTime(LocalDateTime.now());
                 clientToken.setExpireTime(LocalDateTime.now().plusSeconds(clientTokenData.getExpiresIn()).minusSeconds(120)); //凭证有效时间，单位：秒
 
                 redisHelper.vPut(WxCache.THIRD_WX_CP_V, corpId, clientToken);
