@@ -1,7 +1,7 @@
 package cn.jzyunqi.common.third.weixin.pay.cert;
 
 import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.feature.redis.RedisHelper;
+import cn.jzyunqi.common.support.spring.redis.RedisHelper;
 import cn.jzyunqi.common.third.weixin.common.constant.WxCache;
 import cn.jzyunqi.common.third.weixin.pay.WxPayAuth;
 import cn.jzyunqi.common.third.weixin.pay.cert.model.PlantCertData;

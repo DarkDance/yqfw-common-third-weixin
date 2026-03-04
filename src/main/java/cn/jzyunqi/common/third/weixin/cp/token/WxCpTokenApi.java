@@ -1,7 +1,7 @@
 package cn.jzyunqi.common.third.weixin.cp.token;
 
 import cn.jzyunqi.common.exception.BusinessException;
-import cn.jzyunqi.common.feature.redis.RedisHelper;
+import cn.jzyunqi.common.support.spring.redis.RedisHelper;
 import cn.jzyunqi.common.model.ThirdTokenRedisDto;
 import cn.jzyunqi.common.third.weixin.common.constant.WxCache;
 import cn.jzyunqi.common.third.weixin.cp.WxCpAuth;
