@@ -61,6 +61,58 @@ yqfw-common-third-weixin
         │   │── WxMaAuthHelper.java #小程序账户供应助手接口
         │   │── WxMaClient.java #小程序客户端
         │   └── WxMaConfig.java #小程序客户端配置类
+        │── mp #公众号子模块
+        │   │── callback #公众号消息回调包
+        │   │   ├── enums #枚举包
+        │   │   └── model #模型类
+        │   │── card #卡券包
+        │   │   ├── enums #枚举包
+        │   │   └── model #模型类
+        │   │── kefu #客服包
+        │   │   ├── enums #枚举包
+        │   │   └── model #模型类
+        │   │── mass #群发包
+        │   │   └── model #模型类
+        │   │── material #素材包
+        │   │   ├── enums #枚举包
+        │   │   └── model #模型类
+        │   │── menu #菜单包
+        │   │   ├── enums #枚举包
+        │   │   └── model #模型类
+        │   │── subscribe #订阅通知包
+        │   │   └── model #模型类
+        │   │── template #模板消息包
+        │   │   ├── enums #枚举包
+        │   │   └── model #模型类
+        │   │── token #token包
+        │   │   ├── enums #枚举包
+        │   │   └── model #模型类
+        │   │── user #用户包
+        │   │   └── model #模型类
+        │   │── WxMpAuth.java #公众号账户信息
+        │   │── WxMpAuthHelper.java #公众号账户供应助手接口
+        │   │── WxMpClient.java #公众号客户端
+        │   └── WxMpConfig.java #公众号客户端配置类
+        │── open #开放平台子模块
+        │   │── user #用户包
+        │   │   └── model #模型类
+        │   │── WxOpenAuth.java #开放平台账户信息
+        │   │── WxOpenAuthHelper.java #开放平台账户供应助手接口
+        │   │── WxOpenClient.java #开放平台客户端
+        │   └── WxOpenConfig.java #开放平台客户端配置类
+        └── pay #微信支付子模块
+            │── callback #支付回调包
+            │   └── model #模型类
+            │── cert #证书包
+            │   └── model #模型类
+            │── order #订单包
+            │   ├── enums #枚举包
+            │   └── model #模型类
+            │── tool #工具包
+            │── WxPayAuth.java #微信支付账户信息
+            │── WxPayAuthHelper.java #微信支付账户供应助手接口
+            │── WxPayClient.java #微信支付客户端
+            └── WxPayConfig.java #微信支付客户端配置类
 ```
 
 # 三、使用说明
