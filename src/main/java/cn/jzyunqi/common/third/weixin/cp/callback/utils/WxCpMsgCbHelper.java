@@ -1,4 +1,4 @@
-package cn.jzyunqi.common.third.weixin.cp.callback;
+package cn.jzyunqi.common.third.weixin.cp.callback.utils;
 
 import cn.jzyunqi.common.exception.BusinessException;
 import cn.jzyunqi.common.third.weixin.mp.callback.model.MsgDetailCb;
