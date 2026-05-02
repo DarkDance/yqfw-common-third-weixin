@@ -68,7 +68,7 @@ public class WxMpTokenApi {
                 redisHelper.vPut(WxCache.THIRD_WX_MP_V, tokenKey, clientToken);
                 return clientTokenData.getAccessToken();
             } else {
-                ThirdTokenRedisDto clientToken = (ThirdTokenRedisDto) redisHelper.vGet(WxCache.THIRD_WX_MP_V, tokenKey);
+                ThirdTokenRedisDto clientToken = redisHelper.vGet(WxCache.THIRD_WX_MP_V, tokenKey);
                 if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
                     return clientToken.getToken();
                 } else {
@@ -90,7 +90,7 @@ public class WxMpTokenApi {
                 redisHelper.vPut(WxCache.THIRD_WX_MP_V, ticketKey, ticketRedisDto);
                 return ticketRsp.getTicket();
             } else {
-                TicketRedisDto ticketRedisDto = (TicketRedisDto) redisHelper.vGet(WxCache.THIRD_WX_MP_V, ticketKey);
+                TicketRedisDto ticketRedisDto = redisHelper.vGet(WxCache.THIRD_WX_MP_V, ticketKey);
                 if (ticketRedisDto != null && LocalDateTime.now().isBefore(ticketRedisDto.getExpireTime())) {
                     return ticketRedisDto.getTicket();
                 } else {

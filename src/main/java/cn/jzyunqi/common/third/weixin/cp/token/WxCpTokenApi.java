@@ -42,7 +42,7 @@ public class WxCpTokenApi {
                 redisHelper.vPut(WxCache.THIRD_WX_CP_V, corpId, clientToken);
                 return clientTokenData.getAccessToken();
             } else {
-                ThirdTokenRedisDto clientToken = (ThirdTokenRedisDto) redisHelper.vGet(WxCache.THIRD_WX_CP_V, corpId);
+                ThirdTokenRedisDto clientToken = redisHelper.vGet(WxCache.THIRD_WX_CP_V, corpId);
                 if (clientToken != null && LocalDateTime.now().isBefore(clientToken.getExpireTime())) {
                     return clientToken.getToken();
                 } else {

@@ -1,6 +1,8 @@
 package cn.jzyunqi.common.third.weixin.common.constant;
 
+import cn.jzyunqi.common.model.ThirdTokenRedisDto;
 import cn.jzyunqi.common.support.spring.redis.Cache;
+import cn.jzyunqi.common.third.weixin.pay.cert.model.PlantCertRedisDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,19 +19,21 @@ public enum WxCache implements Cache {
     /**
      * 微信公众号缓存
      */
-    THIRD_WX_MP_V(Duration.ofHours(3), Boolean.FALSE),
+    THIRD_WX_MP_V(Duration.ofHours(3), Boolean.FALSE, ThirdTokenRedisDto.class),
 
     /**
      * 企业微信缓存
      */
-    THIRD_WX_CP_V(Duration.ofHours(3), Boolean.FALSE),
+    THIRD_WX_CP_V(Duration.ofHours(3), Boolean.FALSE, ThirdTokenRedisDto.class),
 
     /**
      * 微信支付证书缓存
      */
-    THIRD_WX_PAY_H(Duration.ofDays(5 * 366), Boolean.FALSE);
+    THIRD_WX_PAY_H(Duration.ofDays(5 * 366), Boolean.FALSE, PlantCertRedisDto.class);
 
     private final Duration expiration;
 
     private final Boolean autoRenew;
+
+    private final Object valueType;
 }

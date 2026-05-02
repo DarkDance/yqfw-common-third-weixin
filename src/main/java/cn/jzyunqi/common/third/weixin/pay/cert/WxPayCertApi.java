@@ -37,7 +37,7 @@ public class WxPayCertApi {
     public PlantCertRedisDto plantCert(WxPayAuth wxPayAuth, String weixinPemSerial) throws BusinessException {
         //如果没有证书编号且已经下载过证书了，忽略这个请求
         if (StringUtilPlus.isBlank(weixinPemSerial)) {
-            Map<String, Object> redisWeixinPem = redisHelper.hGetAll(WxCache.THIRD_WX_PAY_H, wxPayAuth.getMerchantId());
+            Map<String, PlantCertRedisDto> redisWeixinPem = redisHelper.hGetAll(WxCache.THIRD_WX_PAY_H, wxPayAuth.getMerchantId());
             if (CollectionUtilPlus.Map.isNotEmpty(redisWeixinPem)) {
                 return null;
             }
@@ -84,7 +84,7 @@ public class WxPayCertApi {
                 if (StringUtilPlus.isBlank(weixinPemSerial)) {
                     return null;
                 }
-                PlantCertRedisDto plantCertRedisDto = (PlantCertRedisDto) redisHelper.hGet(WxCache.THIRD_WX_PAY_H, redisKey, weixinPemSerial);
+                PlantCertRedisDto plantCertRedisDto = redisHelper.hGet(WxCache.THIRD_WX_PAY_H, redisKey, weixinPemSerial);
                 if (plantCertRedisDto != null && LocalDateTime.now().isBefore(plantCertRedisDto.getExpireTime())) {
                     return plantCertRedisDto;
                 } else {
