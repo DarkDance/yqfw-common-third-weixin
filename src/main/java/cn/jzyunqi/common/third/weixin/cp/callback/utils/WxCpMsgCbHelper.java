@@ -70,25 +70,29 @@ public class WxCpMsgCbHelper {
         if (msgDetailCb == null) {//没有消息体，属于连接测试
             String selfMsgSignature = signString(verificationToken, msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce(), msgSimpleCb.getEchostr());
             if (!selfMsgSignature.equals(msgSimpleCb.getMsg_signature())) {
+                log.error("======WxMpClient[{}] replyMessageNotice signature not match: [{}]-[{}]", appId, selfMsgSignature, msgSimpleCb.getMsg_signature());
                 return REPLAY_MESSAGE_FAILED;
             }
             //解密消息
             String echostr = decryptMsg(appId, encryptKey, msgSimpleCb.getEchostr());
             if (StringUtilPlus.isBlank(echostr)) {
+                log.error("======WxMpClient[{}] replyMessageNotice decrypt echostr failed", appId);
                 return REPLAY_MESSAGE_FAILED;
             }
-            log.debug("======WxCpClient replyMessageNotice needSign:{}, echostr:{}", selfMsgSignature, echostr);
+            log.debug("======WxCpClient[{}] replyMessageNotice needSign:{}, echostr:{}", appId, selfMsgSignature, echostr);
             return echostr;
         } else {
             if (StringUtilPlus.isNotEmpty(msgDetailCb.getEncrypt())) {//消息是密文传输，需要解密
                 String selfMsgSignature = signString(verificationToken, msgSimpleCb.getTimestamp(), msgSimpleCb.getNonce(), msgDetailCb.getEncrypt());//组装消息验证码
                 if (!selfMsgSignature.equals(msgSimpleCb.getMsg_signature())) {
+                    log.error("======WxMpClient[{}] replyMessageNotice signature not match: [{}]-[{}]", appId, selfMsgSignature, msgSimpleCb.getMsg_signature());
                     return REPLAY_MESSAGE_FAILED;
                 }
                 //解密消息
                 String decryptMsg = decryptMsg(appId, encryptKey, msgDetailCb.getEncrypt());
                 msgDetailCb = parseMsgDetail(decryptMsg);
                 if (msgDetailCb == null) {
+                    log.error("======WxMpClient[{}] replyMessageNotice decrypt message failed", appId);
                     return REPLAY_MESSAGE_FAILED;
                 }
             }
@@ -98,7 +102,7 @@ public class WxCpMsgCbHelper {
                 log.debug("======WxMpClient replyMessageNotice reply:{}", reply);
                 return reply == null ? REPLAY_MESSAGE_SUCCESS : reply;
             } catch (BusinessException e) {
-                log.error("======WxMpClient replyMessageNotice error:", e);
+                log.error("======WxMpClient[{}] replyMessageNotice error:", appId, e);
                 return REPLAY_MESSAGE_FAILED;
             }
         }
