@@ -236,6 +236,7 @@ public class WxCpMsgCbHelper {
                 .filter(StringUtilPlus::isNotEmpty)
                 .sorted(String::compareTo)
                 .collect(Collectors.joining(StringUtilPlus.EMPTY));
+        log.info("======needSign: [{}], needSignArray: {}", needSign, Arrays.toString(needSignArray));
         return DigestUtilPlus.SHA.sign(needSign, DigestUtilPlus.SHAAlgo._1, Boolean.FALSE);
     }
 
