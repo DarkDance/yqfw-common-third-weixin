@@ -117,6 +117,7 @@ public class WxCpMsgCbHelper {
             Unmarshaller unmarshaller = context.createUnmarshaller();
             return (MsgDetailCb) unmarshaller.unmarshal(IOUtilPlus.toInputStream(decryptMsg, StringUtilPlus.UTF_8));
         } catch (JAXBException e) {
+            log.error("======WxMpClient parseMsgDetail error:", e);
             throw new RuntimeException(e);
         }
 
