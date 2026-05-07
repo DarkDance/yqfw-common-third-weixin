@@ -10,7 +10,6 @@ import cn.jzyunqi.common.utils.IOUtilPlus;
 import cn.jzyunqi.common.utils.RandomUtilPlus;
 import cn.jzyunqi.common.utils.StringUtilPlus;
 import jakarta.xml.bind.JAXBContext;
-import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -116,7 +115,7 @@ public class WxCpMsgCbHelper {
             JAXBContext context = JAXBContext.newInstance(MsgDetailCb.class);
             Unmarshaller unmarshaller = context.createUnmarshaller();
             return (MsgDetailCb) unmarshaller.unmarshal(IOUtilPlus.toInputStream(decryptMsg, StringUtilPlus.UTF_8));
-        } catch (JAXBException e) {
+        } catch (Exception e) {
             log.error("======WxMpClient parseMsgDetail error:", e);
             throw new RuntimeException(e);
         }
